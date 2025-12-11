@@ -1,0 +1,41 @@
+﻿syntax = "proto3";
+
+package board.v1;
+
+option go_package = "github.com/smarrog/notification-service/proto/v1;v1";
+
+message Event {
+  string event_id = 1;
+  int64 occurred_at = 2;
+  int64 user_id = 3;
+  string producer = 4;
+
+  oneof payload {
+    TaskCreated task_created = 5;
+    TaskUpdated task_updated = 6;
+    TaskMoved task_moved = 7;
+  }
+}
+
+message TaskSnapshot {
+  int64 task_id = 1;
+  int64 column_id = 2;
+  int64 board_id = 3;
+  string title = 4;
+  string description = 5;
+  int64 assignee_id = 6;
+}
+
+message TaskCreated {
+  TaskSnapshot snapshot = 1;
+}
+
+message TaskUpdated {
+  TaskSnapshot snapshot = 1;
+}
+
+message TaskMoved {
+  TaskSnapshot snapshot = 1;
+  int64 to_column_id = 2;
+  int64 to_board_id = 3;
+}
