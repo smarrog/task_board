@@ -1,4 +1,4 @@
-﻿package logger
+package logger
 
 import (
 	"os"
@@ -6,13 +6,16 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func New(globalLevel zerolog.Level) zerolog.Logger {
+func New(globalLevel zerolog.Level) *zerolog.Logger {
 	zerolog.SetGlobalLevel(globalLevel)
 
-	return zerolog.
+	logger := zerolog.
 		New(os.Stdout).
 		With().
 		Timestamp().
 		Caller().
+		Str("service", "notification-service").
 		Logger()
+
+	return &logger
 }

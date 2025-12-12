@@ -1,27 +1,28 @@
-﻿package config
+package config
 
 import (
 	"os"
 	"strings"
 
 	"github.com/rs/zerolog"
-	consts "github.com/smarrog/notification-service/internal/app"
 )
 
 type Config struct {
 	LogLevel     zerolog.Level
-	KafkaBrokers []string
+	KafkaGroupId string
+	KafkaBrokers string
 	KafkaTopics  []string
 }
 
-func Load() Config {
+func Load() *Config {
 	cfg := Config{
 		LogLevel:     strToLogLevel(getEnv("LOG_LEVEL", "info")),
-		KafkaBrokers: splitStringToSlice(getEnv("KAFKA_BROKERS", "kafka:9092")),
-		KafkaTopics:  splitStringToSlice(getEnv("KAFKA_TOPICS", consts.KAFKA_TOPIC_EVENTS)),
+		KafkaGroupId: getEnv("KAFKA_GROUP_ID", "notification-service"),
+		KafkaBrokers: getEnv("KAFKA_BROKERS", "kafka:9092"),
+		KafkaTopics:  splitStringToSlice(getEnv("KAFKA_TOPICS", "board-events")),
 	}
 
-	return cfg
+	return &cfg
 }
 
 func splitStringToSlice(s string) []string {

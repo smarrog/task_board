@@ -1,4 +1,4 @@
-﻿package notification_service
+package main
 
 import (
 	"context"
@@ -7,7 +7,9 @@ import (
 	"syscall"
 
 	"github.com/smarrog/notification-service/internal/config"
+	"github.com/smarrog/notification-service/internal/kafka"
 	"github.com/smarrog/notification-service/internal/logger"
+	"github.com/smarrog/notification-service/internal/processor"
 )
 
 func main() {
@@ -16,6 +18,10 @@ func main() {
 
 	cfg := config.Load()
 	log := logger.New(cfg.LogLevel)
+	proc := processor.NewProcessor(log)
+	consumer := kafka.NewConsumer(cfg, log, proc.Handle)
+
+	consumer.Start(ctx)
 
 	log.Info().Msg("Notification service was started")
 
