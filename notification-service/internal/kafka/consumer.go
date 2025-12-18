@@ -5,7 +5,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/rs/zerolog"
-	"github.com/smarrog/notification-service/internal/config"
+	"github.com/smarrog/task-board/notification-service/internal/config"
 )
 
 type HandlerFunc func(ctx context.Context, msg *kafka.Message) error

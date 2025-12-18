@@ -1,8 +1,8 @@
 ﻿syntax = "proto3";
 
-package board.v1;
+package events.v1;
 
-option go_package = "github.com/smarrog/notification-service/proto/v1;v1";
+option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
 
 message Event {
   string event_id = 1;

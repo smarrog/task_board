@@ -1,3 +1,3 @@
-﻿.PHONY: proto-notification
-proto-notification:
-	cd notification-service && make proto
+﻿.PHONY: proto-shared
+proto-shared:
+	cd shared && make proto

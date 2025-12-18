@@ -6,10 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/smarrog/notification-service/internal/config"
-	"github.com/smarrog/notification-service/internal/kafka"
-	"github.com/smarrog/notification-service/internal/logger"
-	"github.com/smarrog/notification-service/internal/processor"
+	"github.com/smarrog/task-board/notification-service/internal/config"
+	"github.com/smarrog/task-board/notification-service/internal/kafka"
+	"github.com/smarrog/task-board/notification-service/internal/processor"
+	"github.com/smarrog/task-board/shared/logger"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	defer stop()
 
 	cfg := config.Load()
-	log := logger.New(cfg.LogLevel)
+	log := logger.New("notification-service", cfg.LogLevel)
 	proc := processor.NewProcessor(log)
 	consumer := kafka.NewConsumer(cfg, log, proc.Handle)
 

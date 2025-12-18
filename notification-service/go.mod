@@ -1,4 +1,4 @@
-module github.com/smarrog/notification-service
+module github.com/smarrog/task-board/notification-service
 
 go 1.25
 

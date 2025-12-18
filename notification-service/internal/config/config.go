@@ -1,10 +1,11 @@
 package config
 
 import (
-	"os"
 	"strings"
 
 	"github.com/rs/zerolog"
+	"github.com/smarrog/task-board/shared/env"
+	"github.com/smarrog/task-board/shared/logger"
 )
 
 type Config struct {
@@ -16,37 +17,11 @@ type Config struct {
 
 func Load() *Config {
 	cfg := Config{
-		LogLevel:     strToLogLevel(getEnv("LOG_LEVEL", "info")),
-		KafkaGroupId: getEnv("KAFKA_GROUP_ID", "notification-service"),
-		KafkaBrokers: getEnv("KAFKA_BROKERS", "kafka:9092"),
-		KafkaTopics:  splitStringToSlice(getEnv("KAFKA_TOPICS", "board-events")),
+		LogLevel:     logger.StrToLogLevel(env.GetEnv("LOG_LEVEL", "info")),
+		KafkaGroupId: env.GetEnv("KAFKA_GROUP_ID", "notification-service"),
+		KafkaBrokers: env.GetEnv("KAFKA_BROKERS", "kafka:9092"),
+		KafkaTopics:  strings.Split(env.GetEnv("KAFKA_TOPICS", "board-events"), ","),
 	}
 
 	return &cfg
-}
-
-func splitStringToSlice(s string) []string {
-	return strings.Split(s, ",")
-}
-
-func getEnv(key, def string) string {
-	if value, ok := os.LookupEnv(key); ok {
-		return value
-	}
-	return def
-}
-
-func strToLogLevel(s string) zerolog.Level {
-	switch strings.ToLower(s) {
-	case "debug":
-		return zerolog.DebugLevel
-	case "warn":
-		return zerolog.WarnLevel
-	case "error":
-		return zerolog.ErrorLevel
-	case "fatal":
-		return zerolog.FatalLevel
-	default:
-		return zerolog.InfoLevel
-	}
 }
