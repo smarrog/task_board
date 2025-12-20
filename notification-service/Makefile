@@ -1,4 +1,4 @@
-﻿APP_NAME = notification-service
+APP_NAME = notification-service
 CMD_DIR = ./cmd/notification-service
 
 .PHONY: build

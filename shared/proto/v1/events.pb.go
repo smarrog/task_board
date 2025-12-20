@@ -387,17 +387,17 @@ var File_v1_events_proto protoreflect.FileDescriptor
 
 const file_v1_events_proto_rawDesc = "" +
 	"\n" +
-	"\x0fv1/events.proto\x12\tevents.v1\"\xb4\x02\n" +
+	"\x0fv1/events.proto\x12\ftaskboard.v1\"\xbd\x02\n" +
 	"\x05Event\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x1f\n" +
 	"\voccurred_at\x18\x02 \x01(\x03R\n" +
 	"occurredAt\x12\x17\n" +
 	"\auser_id\x18\x03 \x01(\x03R\x06userId\x12\x1a\n" +
-	"\bproducer\x18\x04 \x01(\tR\bproducer\x12;\n" +
-	"\ftask_created\x18\x05 \x01(\v2\x16.events.v1.TaskCreatedH\x00R\vtaskCreated\x12;\n" +
-	"\ftask_updated\x18\x06 \x01(\v2\x16.events.v1.TaskUpdatedH\x00R\vtaskUpdated\x125\n" +
+	"\bproducer\x18\x04 \x01(\tR\bproducer\x12>\n" +
+	"\ftask_created\x18\x05 \x01(\v2\x19.taskboard.v1.TaskCreatedH\x00R\vtaskCreated\x12>\n" +
+	"\ftask_updated\x18\x06 \x01(\v2\x19.taskboard.v1.TaskUpdatedH\x00R\vtaskUpdated\x128\n" +
 	"\n" +
-	"task_moved\x18\a \x01(\v2\x14.events.v1.TaskMovedH\x00R\ttaskMovedB\t\n" +
+	"task_moved\x18\a \x01(\v2\x17.taskboard.v1.TaskMovedH\x00R\ttaskMovedB\t\n" +
 	"\apayload\"\xb8\x01\n" +
 	"\fTaskSnapshot\x12\x17\n" +
 	"\atask_id\x18\x01 \x01(\x03R\x06taskId\x12\x1b\n" +
@@ -406,16 +406,16 @@ const file_v1_events_proto_rawDesc = "" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x05 \x01(\tR\vdescription\x12\x1f\n" +
 	"\vassignee_id\x18\x06 \x01(\x03R\n" +
-	"assigneeId\"B\n" +
-	"\vTaskCreated\x123\n" +
-	"\bsnapshot\x18\x01 \x01(\v2\x17.events.v1.TaskSnapshotR\bsnapshot\"B\n" +
-	"\vTaskUpdated\x123\n" +
-	"\bsnapshot\x18\x01 \x01(\v2\x17.events.v1.TaskSnapshotR\bsnapshot\"\x82\x01\n" +
-	"\tTaskMoved\x123\n" +
-	"\bsnapshot\x18\x01 \x01(\v2\x17.events.v1.TaskSnapshotR\bsnapshot\x12 \n" +
+	"assigneeId\"E\n" +
+	"\vTaskCreated\x126\n" +
+	"\bsnapshot\x18\x01 \x01(\v2\x1a.taskboard.v1.TaskSnapshotR\bsnapshot\"E\n" +
+	"\vTaskUpdated\x126\n" +
+	"\bsnapshot\x18\x01 \x01(\v2\x1a.taskboard.v1.TaskSnapshotR\bsnapshot\"\x85\x01\n" +
+	"\tTaskMoved\x126\n" +
+	"\bsnapshot\x18\x01 \x01(\v2\x1a.taskboard.v1.TaskSnapshotR\bsnapshot\x12 \n" +
 	"\fto_column_id\x18\x02 \x01(\x03R\n" +
 	"toColumnId\x12\x1e\n" +
-	"\vto_board_id\x18\x03 \x01(\x03R\ttoBoardIdB'Z%github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
+	"\vto_board_id\x18\x03 \x01(\x03R\ttoBoardIdB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
 
 var (
 	file_v1_events_proto_rawDescOnce sync.Once
@@ -431,19 +431,19 @@ func file_v1_events_proto_rawDescGZIP() []byte {
 
 var file_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_v1_events_proto_goTypes = []any{
-	(*Event)(nil),        // 0: events.v1.Event
-	(*TaskSnapshot)(nil), // 1: events.v1.TaskSnapshot
-	(*TaskCreated)(nil),  // 2: events.v1.TaskCreated
-	(*TaskUpdated)(nil),  // 3: events.v1.TaskUpdated
-	(*TaskMoved)(nil),    // 4: events.v1.TaskMoved
+	(*Event)(nil),        // 0: taskboard.v1.Event
+	(*TaskSnapshot)(nil), // 1: taskboard.v1.TaskSnapshot
+	(*TaskCreated)(nil),  // 2: taskboard.v1.TaskCreated
+	(*TaskUpdated)(nil),  // 3: taskboard.v1.TaskUpdated
+	(*TaskMoved)(nil),    // 4: taskboard.v1.TaskMoved
 }
 var file_v1_events_proto_depIdxs = []int32{
-	2, // 0: events.v1.Event.task_created:type_name -> events.v1.TaskCreated
-	3, // 1: events.v1.Event.task_updated:type_name -> events.v1.TaskUpdated
-	4, // 2: events.v1.Event.task_moved:type_name -> events.v1.TaskMoved
-	1, // 3: events.v1.TaskCreated.snapshot:type_name -> events.v1.TaskSnapshot
-	1, // 4: events.v1.TaskUpdated.snapshot:type_name -> events.v1.TaskSnapshot
-	1, // 5: events.v1.TaskMoved.snapshot:type_name -> events.v1.TaskSnapshot
+	2, // 0: taskboard.v1.Event.task_created:type_name -> taskboard.v1.TaskCreated
+	3, // 1: taskboard.v1.Event.task_updated:type_name -> taskboard.v1.TaskUpdated
+	4, // 2: taskboard.v1.Event.task_moved:type_name -> taskboard.v1.TaskMoved
+	1, // 3: taskboard.v1.TaskCreated.snapshot:type_name -> taskboard.v1.TaskSnapshot
+	1, // 4: taskboard.v1.TaskUpdated.snapshot:type_name -> taskboard.v1.TaskSnapshot
+	1, // 5: taskboard.v1.TaskMoved.snapshot:type_name -> taskboard.v1.TaskSnapshot
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name

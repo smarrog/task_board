@@ -1,6 +1,6 @@
-﻿syntax = "proto3";
+syntax = "proto3";
 
-package events.v1;
+package taskboard.v1;
 
 option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
 

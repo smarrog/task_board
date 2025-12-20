@@ -12,7 +12,7 @@ type Config struct {
 
 func Load() *Config {
 	cfg := Config{
-		LogLevel: logger.StrToLogLevel(env.GetEnv("LOG_LEVEL", "info")),
+		LogLevel: logger.StrToLogLevel(env.GetString("LOG_LEVEL", "info")),
 	}
 
 	return &cfg

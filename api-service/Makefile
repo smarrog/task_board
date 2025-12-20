@@ -1,4 +1,4 @@
-﻿APP_NAME = api-service
+APP_NAME = api-service
 CMD_DIR = ./cmd/api-service
 
 .PHONY: build

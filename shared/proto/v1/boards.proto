@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package taskboard.v1;
+
+option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
+
+import "v1/common.proto";
+
+message Board {
+  string id = 1;
+  string owner_id = 2;
+  string title = 3;
+  string description = 4;
+}
+
+message CreateBoardRequest {
+  BaseRequest base = 1;
+  string owner_id = 2;
+  string title = 3;
+  string description = 4;
+}
+message CreateBoardResponse {
+  Board board = 1;
+}
+
+message GetBoardRequest {
+  BaseRequest base = 1;
+  string board_id = 2;
+}
+message GetBoardResponse {
+  Board board = 1;
+}
+
+message ListBoardsRequest {
+  BaseRequest base = 1;
+  string owner_id = 2;
+}
+message ListBoardsResponse {
+  repeated Board boards = 1;
+}
+
+message UpdateBoardRequest {
+  BaseRequest base = 1;
+  string board_id = 2;
+  string owner_id = 3;
+  string title = 4;
+  string description = 5;
+}
+message UpdateBoardResponse {
+  Board board = 1;
+}
+
+message DeleteBoardRequest {
+  BaseRequest base = 1;
+  string board_id = 2;
+}
+message DeleteBoardResponse {}
+
+service BoardsService {
+  rpc CreateBoard(CreateBoardRequest) returns (CreateBoardResponse);
+  rpc GetBoard(GetBoardRequest) returns (GetBoardResponse);
+  rpc ListBoards(ListBoardsRequest) returns (ListBoardsResponse);
+  rpc UpdateBoard(UpdateBoardRequest) returns (UpdateBoardResponse);
+  rpc DeleteBoard(DeleteBoardRequest) returns (DeleteBoardResponse);
+}

@@ -17,15 +17,17 @@ func main() {
 	defer stop()
 
 	cfg := config.Load()
-	log := logger.New("notification-service", cfg.LogLevel)
+	log := logger.New(cfg.AppName, cfg.LogLevel)
 	proc := processor.NewProcessor(log)
 	consumer := kafka.NewConsumer(cfg, log, proc.Handle)
 
-	consumer.Start(ctx)
+	if err := consumer.Start(ctx); err != nil {
+		log.Fatal().Err(err).Msg("Failed to start")
+	}
 
-	log.Info().Msg("Notification service was started")
+	log.Info().Msg("Started")
 
 	<-ctx.Done()
 
-	log.Info().Msg("Notification service was stopped")
+	log.Info().Msg("Stopped")
 }

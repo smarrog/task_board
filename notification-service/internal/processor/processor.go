@@ -10,21 +10,17 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Processor interface {
-	Handle(ctx context.Context, msg *kafka.Message) error
-}
-
-type processor struct {
+type Processor struct {
 	logger *zerolog.Logger
 }
 
-func NewProcessor(logger *zerolog.Logger) Processor {
-	return &processor{
+func NewProcessor(logger *zerolog.Logger) *Processor {
+	return &Processor{
 		logger: logger,
 	}
 }
 
-func (p *processor) Handle(ctx context.Context, msg *kafka.Message) error {
+func (p *Processor) Handle(ctx context.Context, msg *kafka.Message) error {
 	var evt v1.Event
 
 	if err := proto.Unmarshal(msg.Value, &evt); err != nil {
@@ -43,7 +39,7 @@ func (p *processor) Handle(ctx context.Context, msg *kafka.Message) error {
 	}
 }
 
-func (p *processor) handleTaskCreatedEvent(ctx context.Context, event *v1.Event, payload *v1.Event_TaskCreated) error {
+func (p *Processor) handleTaskCreatedEvent(ctx context.Context, event *v1.Event, payload *v1.Event_TaskCreated) error {
 	s := payload.TaskCreated.GetSnapshot()
 
 	p.logger.Info().
@@ -58,7 +54,7 @@ func (p *processor) handleTaskCreatedEvent(ctx context.Context, event *v1.Event,
 	return nil
 }
 
-func (p *processor) handleTaskUpdatedEvent(ctx context.Context, event *v1.Event, payload *v1.Event_TaskUpdated) error {
+func (p *Processor) handleTaskUpdatedEvent(ctx context.Context, event *v1.Event, payload *v1.Event_TaskUpdated) error {
 	s := payload.TaskUpdated.GetSnapshot()
 
 	p.logger.Info().
@@ -72,7 +68,7 @@ func (p *processor) handleTaskUpdatedEvent(ctx context.Context, event *v1.Event,
 	return nil
 }
 
-func (p *processor) handleTaskMovedEvent(ctx context.Context, event *v1.Event, payload *v1.Event_TaskMoved) error {
+func (p *Processor) handleTaskMovedEvent(ctx context.Context, event *v1.Event, payload *v1.Event_TaskMoved) error {
 	s := payload.TaskMoved.GetSnapshot()
 
 	p.logger.Info().

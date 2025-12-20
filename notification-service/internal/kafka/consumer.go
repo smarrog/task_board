@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"errors"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/rs/zerolog"
@@ -10,18 +11,14 @@ import (
 
 type HandlerFunc func(ctx context.Context, msg *kafka.Message) error
 
-type Consumer interface {
-	Start(ctx context.Context)
-}
-
-type consumer struct {
+type Consumer struct {
 	reader  *kafka.Consumer
 	logger  *zerolog.Logger
 	cfg     *config.Config
 	handler HandlerFunc
 }
 
-func NewConsumer(cfg *config.Config, logger *zerolog.Logger, handlerFunc HandlerFunc) Consumer {
+func NewConsumer(cfg *config.Config, logger *zerolog.Logger, handlerFunc HandlerFunc) *Consumer {
 	kafkaCfg := &kafka.ConfigMap{
 		"bootstrap.servers":       cfg.KafkaBrokers,
 		"group.id":                cfg.KafkaGroupId,
@@ -35,7 +32,7 @@ func NewConsumer(cfg *config.Config, logger *zerolog.Logger, handlerFunc Handler
 		logger.Fatal().Err(err).Msg("Failed to create kafka consumer")
 	}
 
-	return &consumer{
+	return &Consumer{
 		reader:  reader,
 		logger:  logger,
 		cfg:     cfg,
@@ -43,9 +40,9 @@ func NewConsumer(cfg *config.Config, logger *zerolog.Logger, handlerFunc Handler
 	}
 }
 
-func (c *consumer) Start(ctx context.Context) {
+func (c *Consumer) Start(ctx context.Context) error {
 	if err := c.reader.SubscribeTopics(c.cfg.KafkaTopics, nil); err != nil {
-		c.logger.Fatal().Err(err).Msg("Failed to subscribe to topics")
+		return errors.New("failed to subscribe to topics")
 	}
 
 	defer func(reader *kafka.Consumer) {
@@ -58,7 +55,7 @@ func (c *consumer) Start(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			return
+			return nil
 		default:
 		}
 

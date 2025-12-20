@@ -1,9 +1,9 @@
-﻿#!/usr/bin/env python3
+#!/usr/bin/env python3
 import argparse
 from pathlib import Path
 from textwrap import dedent
 
-DEFAULT_VERSION = "1.25"
+DEFAULT_VERSION = "1.23.2"
 DEFAULT_MODULE_PREFIX = "github.com/smarrog/"
 
 # Дерево директорий по стандартному Go Project Layout

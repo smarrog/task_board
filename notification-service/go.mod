@@ -1,6 +1,6 @@
 module github.com/smarrog/task-board/notification-service
 
-go 1.25
+go 1.23.2
 
 require (
 	github.com/confluentinc/confluent-kafka-go/v2 v2.12.0 // indirect

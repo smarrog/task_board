@@ -1,6 +1,8 @@
-﻿package logger
+package logger
 
 import (
+	"strings"
+
 	"github.com/rs/zerolog"
 )
 
@@ -22,7 +24,7 @@ var logLevelToStringMap = map[zerolog.Level]string{
 }
 
 func StrToLogLevel(s string) zerolog.Level {
-	if value, ok := strToLogLevelMap[s]; ok {
+	if value, ok := strToLogLevelMap[strings.ToLower(s)]; ok {
 		return value
 	}
 	return defaultLogLevel

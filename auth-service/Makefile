@@ -1,4 +1,4 @@
-﻿APP_NAME = auth-service
+APP_NAME = auth-service
 CMD_DIR = ./cmd/auth-service
 
 .PHONY: build
