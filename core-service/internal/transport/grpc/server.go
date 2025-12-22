@@ -6,8 +6,6 @@ import (
 	"github.com/rs/zerolog"
 	v1 "github.com/smarrog/task-board/shared/proto/v1"
 	"google.golang.org/grpc"
-
-	boardsvc "github.com/smarrog/task-board/core-service/internal/service/boards"
 )
 
 type Server struct {
@@ -15,12 +13,15 @@ type Server struct {
 	server *grpc.Server
 }
 
-func NewServer(log *zerolog.Logger, boards *boardsvc.Service) *Server {
+func NewServer(
+	log *zerolog.Logger,
+	boardsHandler *BoardsHandler,
+) *Server {
 	s := grpc.NewServer()
 
 	RegisterHealth(s)
 
-	v1.RegisterBoardsServiceServer(s, NewBoardsHandler(log, boards))
+	v1.RegisterBoardsServiceServer(s, boardsHandler)
 
 	return &Server{
 		log:    log,

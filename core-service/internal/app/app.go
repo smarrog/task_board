@@ -6,17 +6,18 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/smarrog/task-board/core-service/internal/config"
-	boardsrepo "github.com/smarrog/task-board/core-service/internal/repo/boards"
-	boardsvc "github.com/smarrog/task-board/core-service/internal/service/boards"
+	"github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/infrastructure/persistence"
 	"github.com/smarrog/task-board/core-service/internal/transport/grpc"
+	boarduc "github.com/smarrog/task-board/core-service/internal/usecase/board"
 )
 
 type App struct {
 	cfg  *config.Config
 	grpc *grpc.Server
 	pg   *pgxpool.Pool
-	// services
-	boards *boardsvc.Service
+	// usecases (kept for future extension)
+	createBoard *boarduc.CreateBoardUseCase
 }
 
 func New(cfg *config.Config, log *zerolog.Logger) (*App, error) {
@@ -25,16 +26,15 @@ func New(cfg *config.Config, log *zerolog.Logger) (*App, error) {
 		return nil, err
 	}
 
-	boardsRepo := boardsrepo.NewRepo(pg)
-	boardsSvc := boardsvc.NewSvc(boardsRepo)
+	boardsRepo := persistence.NewBoardRepository(pg)
 
-	grpcServer := grpc.NewServer(log, boardsSvc)
+	boardsHandler := createBoardsHandler(log, boardsRepo)
+	grpcServer := grpc.NewServer(log, boardsHandler)
 
 	return &App{
-		cfg:    cfg,
-		grpc:   grpcServer,
-		pg:     pg,
-		boards: boardsSvc,
+		cfg:  cfg,
+		grpc: grpcServer,
+		pg:   pg,
 	}, nil
 }
 
@@ -79,4 +79,15 @@ func newPG(cfg *config.Config) (*pgxpool.Pool, error) {
 	}
 
 	return pool, nil
+}
+
+func createBoardsHandler(log *zerolog.Logger, boardsRepo board.Repository) *grpc.BoardsHandler {
+	createBoard := boarduc.NewCreateBoardUseCase(boardsRepo)
+	getBoard := boarduc.NewGetBoardUseCase(boardsRepo)
+	listBoards := boarduc.NewListBoardsUseCase(boardsRepo)
+	updateBoard := boarduc.NewUpdateBoardUseCase(boardsRepo)
+	deleteBoard := boarduc.NewDeleteBoardUseCase(boardsRepo)
+
+	boardsHandler := grpc.NewBoardsHandler(log, createBoard, getBoard, listBoards, updateBoard, deleteBoard)
+	return boardsHandler
 }
