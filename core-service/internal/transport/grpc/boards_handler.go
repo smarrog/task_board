@@ -2,15 +2,11 @@ package grpc
 
 import (
 	"context"
-	"errors"
 
 	"github.com/rs/zerolog"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
-	domain "github.com/smarrog/task-board/core-service/internal/domain/board"
+	boarddo "github.com/smarrog/task-board/core-service/internal/domain/board"
 	boarduc "github.com/smarrog/task-board/core-service/internal/usecase/board"
-	"github.com/smarrog/task-board/shared/proto/v1"
+	"github.com/smarrog/task-board/shared/proto/base/v1"
 )
 
 type BoardsHandler struct {
@@ -44,36 +40,47 @@ func NewBoardsHandler(
 }
 
 func (h *BoardsHandler) CreateBoard(ctx context.Context, req *v1.CreateBoardRequest) (*v1.CreateBoardResponse, error) {
-	b, err := h.createBoard.Execute(ctx, req.GetOwnerId(), req.GetTitle(), req.GetDescription())
+	input := boarduc.CreateBoardInput{
+		OwnerId:     req.OwnerId,
+		Title:       req.Title,
+		Description: req.Description,
+	}
+	output, err := h.createBoard.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
 	return &v1.CreateBoardResponse{
-		Board: toProtoBoard(b),
+		Board: toProtoBoard(output.Board),
 	}, nil
 }
 
 func (h *BoardsHandler) GetBoard(ctx context.Context, req *v1.GetBoardRequest) (*v1.GetBoardResponse, error) {
-	b, err := h.getBoard.Execute(ctx, req.GetBoardId())
+	input := boarduc.GetBoardInput{
+		BoardId: req.GetBoardId(),
+	}
+	output, err := h.getBoard.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
 	return &v1.GetBoardResponse{
-		Board: toProtoBoard(b),
+		Board: toProtoBoard(output.Board),
 	}, nil
 }
 
 func (h *BoardsHandler) ListBoards(ctx context.Context, req *v1.ListBoardsRequest) (*v1.ListBoardsResponse, error) {
-	boards, err := h.listBoards.Execute(ctx, req.GetOwnerId())
+	input := boarduc.ListBoardsInput{
+		OwnerId: req.GetOwnerId(),
+	}
+	output, err := h.listBoards.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
-	out := make([]*v1.Board, 0, len(boards))
-	for _, b := range boards {
-		out = append(out, toProtoBoard(b))
+	out := make([]*v1.Board, len(output.Boards))
+	for i, b := range output.Boards {
+		out[i] = toProtoBoard(b)
 	}
 
 	return &v1.ListBoardsResponse{
@@ -82,25 +89,35 @@ func (h *BoardsHandler) ListBoards(ctx context.Context, req *v1.ListBoardsReques
 }
 
 func (h *BoardsHandler) UpdateBoard(ctx context.Context, req *v1.UpdateBoardRequest) (*v1.UpdateBoardResponse, error) {
-	b, err := h.updateBoard.Execute(ctx, req.GetOwnerId(), req.GetBoardId(), req.GetTitle(), req.GetDescription())
+	input := boarduc.UpdateBoardInput{
+		OwnerId:     req.GetOwnerId(),
+		BoardId:     req.GetBoardId(),
+		Title:       req.GetTitle(),
+		Description: req.GetDescription(),
+	}
+	output, err := h.updateBoard.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
 	return &v1.UpdateBoardResponse{
-		Board: toProtoBoard(b),
+		Board: toProtoBoard(output.Board),
 	}, nil
 }
 
 func (h *BoardsHandler) DeleteBoard(ctx context.Context, req *v1.DeleteBoardRequest) (*v1.DeleteBoardResponse, error) {
-	if err := h.deleteBoard.Execute(ctx, req.GetBoardId()); err != nil {
+	input := boarduc.DeleteBoardInput{
+		BoardId: req.GetBoardId(),
+	}
+	_, err := h.deleteBoard.Execute(ctx, input)
+	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
 	return &v1.DeleteBoardResponse{}, nil
 }
 
-func toProtoBoard(b *domain.Board) *v1.Board {
+func toProtoBoard(b *boarddo.Board) *v1.Board {
 	return &v1.Board{
 		Id:          b.Id().String(),
 		OwnerId:     b.OwnerId().String(),
@@ -114,20 +131,5 @@ func mapBoardsErr(err error) error {
 		return nil
 	}
 
-	if errors.Is(err, domain.ErrInvalidUUID) ||
-		errors.Is(err, domain.ErrTitleEmpty) ||
-		errors.Is(err, domain.ErrTitleTooLong) ||
-		errors.Is(err, domain.ErrDescriptionTooLong) {
-		return status.Error(codes.InvalidArgument, err.Error())
-	}
-
-	if errors.Is(err, domain.ErrBoardNotFound) {
-		return status.Error(codes.NotFound, err.Error())
-	}
-
-	if errors.Is(err, domain.ErrOwnerMismatch) {
-		return status.Error(codes.PermissionDenied, err.Error())
-	}
-
-	return status.Error(codes.Internal, "internal error")
+	return mapCommonErr(err)
 }

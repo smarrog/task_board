@@ -1,0 +1,104 @@
+﻿package task
+
+import (
+	"time"
+
+	"github.com/smarrog/task-board/core-service/internal/domain/column"
+	"github.com/smarrog/task-board/core-service/internal/domain/common"
+)
+
+type Task struct {
+	id          Id
+	columnId    column.Id
+	position    int
+	title       common.Title
+	description common.Description
+	assigneeId  common.UserId
+	createdAt   time.Time
+	updatedAt   time.Time
+	events      []common.DomainEvent
+}
+
+func New(
+	columnId column.Id,
+	position int,
+	title common.Title,
+	desc common.Description,
+	assigneeId common.UserId,
+) *Task {
+	now := time.Now().UTC()
+	t := &Task{
+		id:          NewId(),
+		columnId:    columnId,
+		position:    position,
+		title:       title,
+		description: desc,
+		assigneeId:  assigneeId,
+		createdAt:   now,
+		updatedAt:   now,
+	}
+	t.events = append(t.events, CreatedEvent{
+		Id:          t.id,
+		ColumnId:    columnId,
+		Position:    position,
+		Title:       title,
+		Description: desc,
+		AssigneeId:  assigneeId,
+	})
+	return t
+}
+
+func Rehydrate(
+	id Id,
+	columnId column.Id,
+	position int,
+	title common.Title,
+	desc common.Description,
+	assigneeId common.UserId,
+	createdAt time.Time,
+	updatedAt time.Time,
+) *Task {
+	return &Task{
+		id:          id,
+		columnId:    columnId,
+		position:    position,
+		title:       title,
+		description: desc,
+		assigneeId:  assigneeId,
+		createdAt:   createdAt,
+		updatedAt:   updatedAt,
+	}
+}
+
+func (t *Task) Id() Id                          { return t.id }
+func (t *Task) ColumnId() column.Id             { return t.columnId }
+func (t *Task) Position() int                   { return t.position }
+func (t *Task) Title() common.Title             { return t.title }
+func (t *Task) Description() common.Description { return t.description }
+func (t *Task) AssigneeId() common.UserId       { return t.assigneeId }
+func (t *Task) CreatedAt() time.Time            { return t.createdAt }
+func (t *Task) UpdatedAt() time.Time            { return t.updatedAt }
+
+func (t *Task) Update(columnId column.Id, position int, title common.Title, desc common.Description, assigneeId common.UserId) {
+	t.columnId = columnId
+	t.position = position
+	t.title = title
+	t.description = desc
+	t.assigneeId = assigneeId
+	t.events = append(t.events, UpdatedEvent{
+		Id:          t.id,
+		Title:       t.title,
+		Description: t.description,
+		AssigneeId:  assigneeId,
+	})
+}
+
+func (t *Task) PullEvents() []common.DomainEvent {
+	if len(t.events) == 0 {
+		return nil
+	}
+	out := make([]common.DomainEvent, len(t.events))
+	copy(out, t.events)
+	t.events = nil
+	return out
+}

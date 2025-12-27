@@ -4,7 +4,7 @@ package taskboard.v1;
 
 option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
 
-import "v1/common.proto";
+import "base/v1/common.proto";
 
 message Board {
   string id = 1;
@@ -20,7 +20,8 @@ message CreateBoardRequest {
   string description = 4;
 }
 message CreateBoardResponse {
-  Board board = 1;
+  BaseResponse base = 1;
+  Board board = 2;
 }
 
 message GetBoardRequest {
@@ -28,7 +29,8 @@ message GetBoardRequest {
   string board_id = 2;
 }
 message GetBoardResponse {
-  Board board = 1;
+  BaseResponse base = 1;
+  Board board = 2;
 }
 
 message ListBoardsRequest {
@@ -36,7 +38,8 @@ message ListBoardsRequest {
   string owner_id = 2;
 }
 message ListBoardsResponse {
-  repeated Board boards = 1;
+  BaseResponse base = 1;
+  repeated Board boards = 2;
 }
 
 message UpdateBoardRequest {
@@ -47,14 +50,17 @@ message UpdateBoardRequest {
   string description = 5;
 }
 message UpdateBoardResponse {
-  Board board = 1;
+  BaseResponse base = 1;
+  Board board = 2;
 }
 
 message DeleteBoardRequest {
   BaseRequest base = 1;
   string board_id = 2;
 }
-message DeleteBoardResponse {}
+message DeleteBoardResponse {
+  BaseResponse base = 1;
+}
 
 service BoardsService {
   rpc CreateBoard(CreateBoardRequest) returns (CreateBoardResponse);

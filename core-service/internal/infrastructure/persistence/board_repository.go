@@ -8,20 +8,42 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/domain/common"
 )
 
-type BoardRepository struct {
-	pg *pgxpool.Pool
+type BoardsRepo struct {
+	pg     *pgxpool.Pool
+	log    *zerolog.Logger
+	outbox *OutboxRepo
 }
 
-func NewBoardRepository(pg *pgxpool.Pool) *BoardRepository {
-	return &BoardRepository{pg: pg}
+func NewBoardsRepo(pg *pgxpool.Pool, log *zerolog.Logger, outbox *OutboxRepo) *BoardsRepo {
+	return &BoardsRepo{
+		pg:     pg,
+		log:    log,
+		outbox: outbox,
+	}
 }
 
-func (r *BoardRepository) Save(ctx context.Context, b *board.Board) error {
-	_, err := r.pg.Exec(ctx, `
+func (r *BoardsRepo) Save(ctx context.Context, b *board.Board) error {
+	tx, txErr := r.pg.Begin(ctx)
+	if txErr != nil {
+		return txErr
+	}
+
+	var err error
+	defer func() {
+		if err != nil {
+			if errRollback := tx.Rollback(ctx); errRollback != nil {
+				r.log.Error().Err(errRollback).Msg("failed to rollback transaction")
+			}
+		}
+	}()
+
+	_, err = tx.Exec(ctx, `
         INSERT INTO boards (id, owner_id, title, description, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6)
         ON CONFLICT (id) DO UPDATE
@@ -41,53 +63,61 @@ func (r *BoardRepository) Save(ctx context.Context, b *board.Board) error {
 		return err
 	}
 
+	events := b.PullEvents()
+	if len(events) != 0 {
+		err = r.outbox.SaveEvents(ctx, tx, events)
+		if err != nil {
+			return err
+		}
+	}
+
+	if err = tx.Commit(ctx); err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (r *BoardRepository) Get(ctx context.Context, id board.BoardId) (*board.Board, error) {
-	var (
-		ownerID   uuid.UUID
-		titleRaw  string
-		descRaw   string
-		createdAt time.Time
-		updatedAt time.Time
-	)
+func (r *BoardsRepo) Get(ctx context.Context, id board.Id) (*board.Board, error) {
+	var ownerIdRaw uuid.UUID
+	var titleRaw, descRaw string
+	var createdAt, updatedAt time.Time
 
 	err := r.pg.QueryRow(ctx, `
         SELECT owner_id, title, description, created_at, updated_at
         FROM boards
         WHERE id = $1
-    `, id.UUID()).Scan(&ownerID, &titleRaw, &descRaw, &createdAt, &updatedAt)
+    `, id.UUID()).Scan(&ownerIdRaw, &titleRaw, &descRaw, &createdAt, &updatedAt)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return nil, board.ErrBoardNotFound
+		return nil, board.ErrNotFound
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	o, err := board.UserIdFromUUID(ownerID)
+	ownerId, err := common.UserIdFromUUID(ownerIdRaw)
 	if err != nil {
 		return nil, err
 	}
-	t, err := board.NewTitle(titleRaw)
+	title, err := common.NewTitle(titleRaw)
 	if err != nil {
 		return nil, err
 	}
-	d, err := board.NewDescription(descRaw)
+	desc, err := common.NewDescription(descRaw)
 	if err != nil {
 		return nil, err
 	}
 
-	return board.RehydrateBoard(id, o, t, d, createdAt, updatedAt), nil
+	return board.Rehydrate(id, ownerId, title, desc, createdAt, updatedAt), nil
 }
 
-func (r *BoardRepository) ListByOwner(ctx context.Context, ownerID board.UserId) ([]*board.Board, error) {
+func (r *BoardsRepo) ListByOwner(ctx context.Context, ownerId common.UserId) ([]*board.Board, error) {
 	rows, err := r.pg.Query(ctx, `
         SELECT id, title, description, created_at, updated_at
         FROM boards
         WHERE owner_id = $1
         ORDER BY created_at DESC, id
-    `, ownerID.UUID())
+    `, ownerId.UUID())
 	if err != nil {
 		return nil, err
 	}
@@ -105,19 +135,19 @@ func (r *BoardRepository) ListByOwner(ctx context.Context, ownerID board.UserId)
 		if err := rows.Scan(&idRaw, &titleRaw, &descRaw, &createdAt, &updatedAt); err != nil {
 			return nil, err
 		}
-		id, err := board.BoardIdFromUUID(idRaw)
+		id, err := board.IdFromUUID(idRaw)
 		if err != nil {
 			return nil, err
 		}
-		t, err := board.NewTitle(titleRaw)
+		t, err := common.NewTitle(titleRaw)
 		if err != nil {
 			return nil, err
 		}
-		d, err := board.NewDescription(descRaw)
+		d, err := common.NewDescription(descRaw)
 		if err != nil {
 			return nil, err
 		}
-		out = append(out, board.RehydrateBoard(id, ownerID, t, d, createdAt, updatedAt))
+		out = append(out, board.Rehydrate(id, ownerId, t, d, createdAt, updatedAt))
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -125,13 +155,30 @@ func (r *BoardRepository) ListByOwner(ctx context.Context, ownerID board.UserId)
 	return out, nil
 }
 
-func (r *BoardRepository) Delete(ctx context.Context, id board.BoardId) error {
-	ct, err := r.pg.Exec(ctx, `DELETE FROM boards WHERE id = $1`, id.UUID())
+func (r *BoardsRepo) Delete(ctx context.Context, id board.Id) error {
+	tx, txErr := r.pg.Begin(ctx)
+	if txErr != nil {
+		return txErr
+	}
+
+	var err error
+	defer func() {
+		if err != nil {
+			if errRollback := tx.Rollback(ctx); errRollback != nil {
+				r.log.Error().Err(errRollback).Msg("failed to rollback transaction")
+			}
+		}
+	}()
+
+	ct, err := tx.Exec(ctx, `DELETE FROM boards WHERE id = $1`, id.UUID())
 	if err != nil {
 		return err
 	}
 	if ct.RowsAffected() == 0 {
-		return board.ErrBoardNotFound
+		return board.ErrNotFound
 	}
+
+	// TODO send event to outbox
+
 	return nil
 }

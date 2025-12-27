@@ -15,8 +15,8 @@ CREATE INDEX IF NOT EXISTS idx_boards_owner_id ON boards(owner_id);
 CREATE TABLE IF NOT EXISTS columns (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     board_id UUID NOT NULL REFERENCES boards(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
     position INT NOT NULL,
+    title TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -27,10 +27,10 @@ CREATE UNIQUE INDEX ux_columns_board_position ON columns(board_id, position);
 CREATE TABLE IF NOT EXISTS tasks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     column_id UUID NOT NULL REFERENCES columns(id) ON DELETE CASCADE,
+    position INT NOT NULL,
     title TEXT NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     assignee_id UUID NULL,
-    position INT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

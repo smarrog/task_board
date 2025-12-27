@@ -5,35 +5,47 @@ import (
 	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/domain/common"
 )
 
 type UpdateBoardUseCase struct {
 	repo board.Repository
 }
 
+type UpdateBoardInput struct {
+	BoardId     string
+	OwnerId     string
+	Title       string
+	Description string
+}
+
+type UpdateBoardOutput struct {
+	Board *board.Board
+}
+
 func NewUpdateBoardUseCase(repo board.Repository) *UpdateBoardUseCase {
 	return &UpdateBoardUseCase{repo: repo}
 }
 
-func (uc *UpdateBoardUseCase) Execute(ctx context.Context, ownerID, boardID, title, description string) (*board.Board, error) {
-	oid, err := board.UserIdFromString(ownerID)
+func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInput) (*UpdateBoardOutput, error) {
+	bid, err := board.IdFromString(input.BoardId)
 	if err != nil {
-		return nil, fmt.Errorf("owner_id: %w", err)
+		return nil, err
 	}
 
-	bid, err := board.BoardIdFromString(boardID)
+	oid, err := common.UserIdFromString(input.Title)
 	if err != nil {
-		return nil, fmt.Errorf("board_id: %w", err)
+		return nil, fmt.Errorf("board owner_id: %w", err)
 	}
 
-	t, err := board.NewTitle(title)
+	t, err := common.NewTitle(input.Title)
 	if err != nil {
-		return nil, fmt.Errorf("title: %w", err)
+		return nil, fmt.Errorf("board: %w", err)
 	}
 
-	d, err := board.NewDescription(description)
+	d, err := common.NewDescription(input.Description)
 	if err != nil {
-		return nil, fmt.Errorf("description: %w", err)
+		return nil, fmt.Errorf("board: %w", err)
 	}
 
 	b, err := uc.repo.Get(ctx, bid)
@@ -46,8 +58,15 @@ func (uc *UpdateBoardUseCase) Execute(ctx context.Context, ownerID, boardID, tit
 	}
 
 	b.Update(t, d)
-	if err := uc.repo.Save(ctx, b); err != nil {
+
+	err = uc.repo.Save(ctx, b)
+	if err != nil {
 		return nil, fmt.Errorf("save board: %w", err)
 	}
-	return b, nil
+
+	output := &UpdateBoardOutput{
+		Board: b,
+	}
+
+	return output, nil
 }

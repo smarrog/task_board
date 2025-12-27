@@ -11,14 +11,22 @@ type GetBoardUseCase struct {
 	repo board.Repository
 }
 
+type GetBoardInput struct {
+	BoardId string
+}
+
+type GetBoardOutput struct {
+	Board *board.Board
+}
+
 func NewGetBoardUseCase(repo board.Repository) *GetBoardUseCase {
 	return &GetBoardUseCase{repo: repo}
 }
 
-func (uc *GetBoardUseCase) Execute(ctx context.Context, boardId string) (*board.Board, error) {
-	id, err := board.BoardIdFromString(boardId)
+func (uc *GetBoardUseCase) Execute(ctx context.Context, input GetBoardInput) (*GetBoardOutput, error) {
+	id, err := board.IdFromString(input.BoardId)
 	if err != nil {
-		return nil, fmt.Errorf("board_id: %w", err)
+		return nil, err
 	}
 
 	b, err := uc.repo.Get(ctx, id)
@@ -26,5 +34,9 @@ func (uc *GetBoardUseCase) Execute(ctx context.Context, boardId string) (*board.
 		return nil, fmt.Errorf("get board: %w", err)
 	}
 
-	return b, nil
+	output := &GetBoardOutput{
+		Board: b,
+	}
+
+	return output, nil
 }

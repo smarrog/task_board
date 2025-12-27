@@ -1,0 +1,66 @@
+﻿syntax = "proto3";
+
+package taskboard.v1;
+
+option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
+
+import "base/v1/common.proto";
+
+message Task {
+  string id = 1;
+  string column_id = 2;
+  int32 position = 3;
+  string title = 4;
+  string description = 5;
+  string assignee_id = 6;
+}
+
+message CreateTaskRequest {
+  BaseRequest base = 1;
+  string column_id = 2;
+  int32 position = 3;
+  string title = 4;
+  string description = 5;
+  string assignee_id = 6;
+}
+message CreateTaskResponse {
+  BaseResponse base = 1;
+  Task task = 2;
+}
+
+message GetTaskRequest {
+  BaseRequest base = 1;
+  string task_id = 2;
+}
+message GetTaskResponse {
+  BaseResponse base = 1;
+  Task task = 2;
+}
+
+message UpdateTaskRequest {
+  BaseRequest base = 1;
+  string task_id = 2;
+  string column_id = 3;
+  int32 position = 4;
+  string title = 5;
+  string description = 6;
+}
+message UpdateTaskResponse {
+  BaseResponse base = 1;
+  Task task = 2;
+}
+
+message DeleteTaskRequest {
+  BaseRequest base = 1;
+  string task_id = 2;
+}
+message DeleteTaskResponse {
+  BaseResponse base = 1;
+}
+
+service TasksService {
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
+}

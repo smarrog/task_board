@@ -7,35 +7,48 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/smarrog/task-board/core-service/internal/config"
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/domain/column"
+	"github.com/smarrog/task-board/core-service/internal/domain/task"
 	"github.com/smarrog/task-board/core-service/internal/infrastructure/persistence"
 	"github.com/smarrog/task-board/core-service/internal/transport/grpc"
 	boarduc "github.com/smarrog/task-board/core-service/internal/usecase/board"
+	columnuc "github.com/smarrog/task-board/core-service/internal/usecase/column"
+	taskuc "github.com/smarrog/task-board/core-service/internal/usecase/task"
+	"github.com/smarrog/task-board/shared/logger"
 )
 
 type App struct {
+	log  *zerolog.Logger
 	cfg  *config.Config
 	grpc *grpc.Server
 	pg   *pgxpool.Pool
-	// usecases (kept for future extension)
-	createBoard *boarduc.CreateBoardUseCase
 }
 
-func New(cfg *config.Config, log *zerolog.Logger) (*App, error) {
+func (a *App) Init() error {
+	cfg := config.Load()
+	log := logger.New(cfg.AppName, cfg.LogLevel)
+
+	a.cfg = cfg
+	a.log = log
+
 	pg, err := newPG(cfg)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	boardsRepo := persistence.NewBoardRepository(pg)
+	outboxRepo := persistence.NewOutboxRepo(pg)
+	boardsRepo := persistence.NewBoardsRepo(pg, log, outboxRepo)
+	columnsRepo := persistence.NewColumnsRepo(pg, log, outboxRepo)
+	tasksRepo := persistence.NewTasksRepo(pg, log, outboxRepo)
 
 	boardsHandler := createBoardsHandler(log, boardsRepo)
-	grpcServer := grpc.NewServer(log, boardsHandler)
+	columnsHandler := createColumnsHandler(log, columnsRepo)
+	tasksHandler := createTasksHandler(log, tasksRepo)
 
-	return &App{
-		cfg:  cfg,
-		grpc: grpcServer,
-		pg:   pg,
-	}, nil
+	a.pg = pg
+	a.grpc = grpc.NewServer(log, boardsHandler, columnsHandler, tasksHandler)
+
+	return nil
 }
 
 func (a *App) Run(ctx context.Context) error {
@@ -53,6 +66,8 @@ func (a *App) Run(ctx context.Context) error {
 		return err
 	}
 }
+
+func (a *App) Log() *zerolog.Logger { return a.log }
 
 func newPG(cfg *config.Config) (*pgxpool.Pool, error) {
 	pgCfg, err := pgxpool.ParseConfig(cfg.PostgresDSN)
@@ -90,4 +105,24 @@ func createBoardsHandler(log *zerolog.Logger, boardsRepo board.Repository) *grpc
 
 	boardsHandler := grpc.NewBoardsHandler(log, createBoard, getBoard, listBoards, updateBoard, deleteBoard)
 	return boardsHandler
+}
+
+func createColumnsHandler(log *zerolog.Logger, columnsRepo column.Repository) *grpc.ColumnsHandler {
+	createColumn := columnuc.NewCreateColumnUseCase(columnsRepo)
+	getColumn := columnuc.NewGetColumnUseCase(columnsRepo)
+	updateColumn := columnuc.NewUpdateColumnUseCase(columnsRepo)
+	deleteColumn := columnuc.NewDeleteColumnUseCase(columnsRepo)
+
+	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, updateColumn, deleteColumn)
+	return columnsHandler
+}
+
+func createTasksHandler(log *zerolog.Logger, tasksRepo task.Repository) *grpc.TasksHandler {
+	createTask := taskuc.NewCreateTaskUseCase(tasksRepo)
+	getTask := taskuc.NewGetTaskUseCase(tasksRepo)
+	updateTask := taskuc.NewUpdateTaskUseCase(tasksRepo)
+	deleteTask := taskuc.NewDeleteTaskUseCase(tasksRepo)
+
+	tasksHandler := grpc.NewTasksHandler(log, createTask, getTask, updateTask, deleteTask)
+	return tasksHandler
 }

@@ -1,16 +1,14 @@
 package board
 
-import "errors"
+import (
+	"errors"
+	"fmt"
 
-// Domain (business) errors. Keep them sentinel so upper layers can map them.
+	"github.com/smarrog/task-board/core-service/internal/domain/common"
+)
+
 var (
-	ErrInvalidUUID   = errors.New("invalid uuid")
+	ErrNotFound      = fmt.Errorf("%s %w", "board", common.ErrNotFound)
 	ErrOwnerRequired = errors.New("owner_id is required")
-	ErrOwnerMismatch = errors.New("owner_id does not match board owner")
-
-	ErrTitleEmpty         = errors.New("title is empty")
-	ErrTitleTooLong       = errors.New("title is too long")
-	ErrDescriptionTooLong = errors.New("description is too long")
-	
-	ErrBoardNotFound = errors.New("board not found")
+	ErrOwnerMismatch = errors.New("owner_id does not match real owner")
 )

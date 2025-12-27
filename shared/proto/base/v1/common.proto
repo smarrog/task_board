@@ -7,3 +7,7 @@ option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
 message BaseRequest {
   string requester_id = 1;
 }
+
+message BaseResponse {
+
+}

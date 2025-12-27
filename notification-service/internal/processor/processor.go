@@ -6,7 +6,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/rs/zerolog"
-	v1 "github.com/smarrog/task-board/shared/proto/v1"
+	"github.com/smarrog/task-board/shared/proto/events/v1"
 	"google.golang.org/protobuf/proto"
 )
 

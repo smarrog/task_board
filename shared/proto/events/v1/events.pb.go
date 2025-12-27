@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.33.2
-// source: v1/events.proto
+// source: events/v1/events.proto
 
 package v1
 
@@ -39,7 +39,7 @@ type Event struct {
 
 func (x *Event) Reset() {
 	*x = Event{}
-	mi := &file_v1_events_proto_msgTypes[0]
+	mi := &file_events_v1_events_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -51,7 +51,7 @@ func (x *Event) String() string {
 func (*Event) ProtoMessage() {}
 
 func (x *Event) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_events_proto_msgTypes[0]
+	mi := &file_events_v1_events_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -64,7 +64,7 @@ func (x *Event) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Event.ProtoReflect.Descriptor instead.
 func (*Event) Descriptor() ([]byte, []int) {
-	return file_v1_events_proto_rawDescGZIP(), []int{0}
+	return file_events_v1_events_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Event) GetEventId() string {
@@ -165,7 +165,7 @@ type TaskSnapshot struct {
 
 func (x *TaskSnapshot) Reset() {
 	*x = TaskSnapshot{}
-	mi := &file_v1_events_proto_msgTypes[1]
+	mi := &file_events_v1_events_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -177,7 +177,7 @@ func (x *TaskSnapshot) String() string {
 func (*TaskSnapshot) ProtoMessage() {}
 
 func (x *TaskSnapshot) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_events_proto_msgTypes[1]
+	mi := &file_events_v1_events_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -190,7 +190,7 @@ func (x *TaskSnapshot) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskSnapshot.ProtoReflect.Descriptor instead.
 func (*TaskSnapshot) Descriptor() ([]byte, []int) {
-	return file_v1_events_proto_rawDescGZIP(), []int{1}
+	return file_events_v1_events_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *TaskSnapshot) GetTaskId() int64 {
@@ -244,7 +244,7 @@ type TaskCreated struct {
 
 func (x *TaskCreated) Reset() {
 	*x = TaskCreated{}
-	mi := &file_v1_events_proto_msgTypes[2]
+	mi := &file_events_v1_events_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -256,7 +256,7 @@ func (x *TaskCreated) String() string {
 func (*TaskCreated) ProtoMessage() {}
 
 func (x *TaskCreated) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_events_proto_msgTypes[2]
+	mi := &file_events_v1_events_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -269,7 +269,7 @@ func (x *TaskCreated) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskCreated.ProtoReflect.Descriptor instead.
 func (*TaskCreated) Descriptor() ([]byte, []int) {
-	return file_v1_events_proto_rawDescGZIP(), []int{2}
+	return file_events_v1_events_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *TaskCreated) GetSnapshot() *TaskSnapshot {
@@ -288,7 +288,7 @@ type TaskUpdated struct {
 
 func (x *TaskUpdated) Reset() {
 	*x = TaskUpdated{}
-	mi := &file_v1_events_proto_msgTypes[3]
+	mi := &file_events_v1_events_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -300,7 +300,7 @@ func (x *TaskUpdated) String() string {
 func (*TaskUpdated) ProtoMessage() {}
 
 func (x *TaskUpdated) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_events_proto_msgTypes[3]
+	mi := &file_events_v1_events_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -313,7 +313,7 @@ func (x *TaskUpdated) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskUpdated.ProtoReflect.Descriptor instead.
 func (*TaskUpdated) Descriptor() ([]byte, []int) {
-	return file_v1_events_proto_rawDescGZIP(), []int{3}
+	return file_events_v1_events_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *TaskUpdated) GetSnapshot() *TaskSnapshot {
@@ -334,7 +334,7 @@ type TaskMoved struct {
 
 func (x *TaskMoved) Reset() {
 	*x = TaskMoved{}
-	mi := &file_v1_events_proto_msgTypes[4]
+	mi := &file_events_v1_events_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -346,7 +346,7 @@ func (x *TaskMoved) String() string {
 func (*TaskMoved) ProtoMessage() {}
 
 func (x *TaskMoved) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_events_proto_msgTypes[4]
+	mi := &file_events_v1_events_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -359,7 +359,7 @@ func (x *TaskMoved) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TaskMoved.ProtoReflect.Descriptor instead.
 func (*TaskMoved) Descriptor() ([]byte, []int) {
-	return file_v1_events_proto_rawDescGZIP(), []int{4}
+	return file_events_v1_events_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *TaskMoved) GetSnapshot() *TaskSnapshot {
@@ -383,11 +383,11 @@ func (x *TaskMoved) GetToBoardId() int64 {
 	return 0
 }
 
-var File_v1_events_proto protoreflect.FileDescriptor
+var File_events_v1_events_proto protoreflect.FileDescriptor
 
-const file_v1_events_proto_rawDesc = "" +
+const file_events_v1_events_proto_rawDesc = "" +
 	"\n" +
-	"\x0fv1/events.proto\x12\ftaskboard.v1\"\xbd\x02\n" +
+	"\x16events/v1/events.proto\x12\ftaskboard.v1\"\xbd\x02\n" +
 	"\x05Event\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12\x1f\n" +
 	"\voccurred_at\x18\x02 \x01(\x03R\n" +
@@ -418,26 +418,26 @@ const file_v1_events_proto_rawDesc = "" +
 	"\vto_board_id\x18\x03 \x01(\x03R\ttoBoardIdB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
 
 var (
-	file_v1_events_proto_rawDescOnce sync.Once
-	file_v1_events_proto_rawDescData []byte
+	file_events_v1_events_proto_rawDescOnce sync.Once
+	file_events_v1_events_proto_rawDescData []byte
 )
 
-func file_v1_events_proto_rawDescGZIP() []byte {
-	file_v1_events_proto_rawDescOnce.Do(func() {
-		file_v1_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_v1_events_proto_rawDesc), len(file_v1_events_proto_rawDesc)))
+func file_events_v1_events_proto_rawDescGZIP() []byte {
+	file_events_v1_events_proto_rawDescOnce.Do(func() {
+		file_events_v1_events_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_events_v1_events_proto_rawDesc), len(file_events_v1_events_proto_rawDesc)))
 	})
-	return file_v1_events_proto_rawDescData
+	return file_events_v1_events_proto_rawDescData
 }
 
-var file_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_v1_events_proto_goTypes = []any{
+var file_events_v1_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_events_v1_events_proto_goTypes = []any{
 	(*Event)(nil),        // 0: taskboard.v1.Event
 	(*TaskSnapshot)(nil), // 1: taskboard.v1.TaskSnapshot
 	(*TaskCreated)(nil),  // 2: taskboard.v1.TaskCreated
 	(*TaskUpdated)(nil),  // 3: taskboard.v1.TaskUpdated
 	(*TaskMoved)(nil),    // 4: taskboard.v1.TaskMoved
 }
-var file_v1_events_proto_depIdxs = []int32{
+var file_events_v1_events_proto_depIdxs = []int32{
 	2, // 0: taskboard.v1.Event.task_created:type_name -> taskboard.v1.TaskCreated
 	3, // 1: taskboard.v1.Event.task_updated:type_name -> taskboard.v1.TaskUpdated
 	4, // 2: taskboard.v1.Event.task_moved:type_name -> taskboard.v1.TaskMoved
@@ -451,12 +451,12 @@ var file_v1_events_proto_depIdxs = []int32{
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_v1_events_proto_init() }
-func file_v1_events_proto_init() {
-	if File_v1_events_proto != nil {
+func init() { file_events_v1_events_proto_init() }
+func file_events_v1_events_proto_init() {
+	if File_events_v1_events_proto != nil {
 		return
 	}
-	file_v1_events_proto_msgTypes[0].OneofWrappers = []any{
+	file_events_v1_events_proto_msgTypes[0].OneofWrappers = []any{
 		(*Event_TaskCreated)(nil),
 		(*Event_TaskUpdated)(nil),
 		(*Event_TaskMoved)(nil),
@@ -465,17 +465,17 @@ func file_v1_events_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_events_proto_rawDesc), len(file_v1_events_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_events_v1_events_proto_rawDesc), len(file_events_v1_events_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_v1_events_proto_goTypes,
-		DependencyIndexes: file_v1_events_proto_depIdxs,
-		MessageInfos:      file_v1_events_proto_msgTypes,
+		GoTypes:           file_events_v1_events_proto_goTypes,
+		DependencyIndexes: file_events_v1_events_proto_depIdxs,
+		MessageInfos:      file_events_v1_events_proto_msgTypes,
 	}.Build()
-	File_v1_events_proto = out.File
-	file_v1_events_proto_goTypes = nil
-	file_v1_events_proto_depIdxs = nil
+	File_events_v1_events_proto = out.File
+	file_events_v1_events_proto_goTypes = nil
+	file_events_v1_events_proto_depIdxs = nil
 }

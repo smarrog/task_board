@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.33.2
-// source: v1/boards.proto
+// source: base/v1/boards.proto
 
 package v1
 
@@ -33,7 +33,7 @@ type Board struct {
 
 func (x *Board) Reset() {
 	*x = Board{}
-	mi := &file_v1_boards_proto_msgTypes[0]
+	mi := &file_base_v1_boards_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +45,7 @@ func (x *Board) String() string {
 func (*Board) ProtoMessage() {}
 
 func (x *Board) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[0]
+	mi := &file_base_v1_boards_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +58,7 @@ func (x *Board) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Board.ProtoReflect.Descriptor instead.
 func (*Board) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{0}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Board) GetId() string {
@@ -101,7 +101,7 @@ type CreateBoardRequest struct {
 
 func (x *CreateBoardRequest) Reset() {
 	*x = CreateBoardRequest{}
-	mi := &file_v1_boards_proto_msgTypes[1]
+	mi := &file_base_v1_boards_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -113,7 +113,7 @@ func (x *CreateBoardRequest) String() string {
 func (*CreateBoardRequest) ProtoMessage() {}
 
 func (x *CreateBoardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[1]
+	mi := &file_base_v1_boards_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -126,7 +126,7 @@ func (x *CreateBoardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBoardRequest.ProtoReflect.Descriptor instead.
 func (*CreateBoardRequest) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{1}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *CreateBoardRequest) GetBase() *BaseRequest {
@@ -159,14 +159,15 @@ func (x *CreateBoardRequest) GetDescription() string {
 
 type CreateBoardResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Board         *Board                 `protobuf:"bytes,1,opt,name=board,proto3" json:"board,omitempty"`
+	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Board         *Board                 `protobuf:"bytes,2,opt,name=board,proto3" json:"board,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateBoardResponse) Reset() {
 	*x = CreateBoardResponse{}
-	mi := &file_v1_boards_proto_msgTypes[2]
+	mi := &file_base_v1_boards_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -178,7 +179,7 @@ func (x *CreateBoardResponse) String() string {
 func (*CreateBoardResponse) ProtoMessage() {}
 
 func (x *CreateBoardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[2]
+	mi := &file_base_v1_boards_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -191,7 +192,14 @@ func (x *CreateBoardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateBoardResponse.ProtoReflect.Descriptor instead.
 func (*CreateBoardResponse) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{2}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateBoardResponse) GetBase() *BaseResponse {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *CreateBoardResponse) GetBoard() *Board {
@@ -211,7 +219,7 @@ type GetBoardRequest struct {
 
 func (x *GetBoardRequest) Reset() {
 	*x = GetBoardRequest{}
-	mi := &file_v1_boards_proto_msgTypes[3]
+	mi := &file_base_v1_boards_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -223,7 +231,7 @@ func (x *GetBoardRequest) String() string {
 func (*GetBoardRequest) ProtoMessage() {}
 
 func (x *GetBoardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[3]
+	mi := &file_base_v1_boards_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -236,7 +244,7 @@ func (x *GetBoardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBoardRequest.ProtoReflect.Descriptor instead.
 func (*GetBoardRequest) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{3}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *GetBoardRequest) GetBase() *BaseRequest {
@@ -255,14 +263,15 @@ func (x *GetBoardRequest) GetBoardId() string {
 
 type GetBoardResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Board         *Board                 `protobuf:"bytes,1,opt,name=board,proto3" json:"board,omitempty"`
+	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Board         *Board                 `protobuf:"bytes,2,opt,name=board,proto3" json:"board,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetBoardResponse) Reset() {
 	*x = GetBoardResponse{}
-	mi := &file_v1_boards_proto_msgTypes[4]
+	mi := &file_base_v1_boards_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -274,7 +283,7 @@ func (x *GetBoardResponse) String() string {
 func (*GetBoardResponse) ProtoMessage() {}
 
 func (x *GetBoardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[4]
+	mi := &file_base_v1_boards_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -287,7 +296,14 @@ func (x *GetBoardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBoardResponse.ProtoReflect.Descriptor instead.
 func (*GetBoardResponse) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{4}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetBoardResponse) GetBase() *BaseResponse {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *GetBoardResponse) GetBoard() *Board {
@@ -307,7 +323,7 @@ type ListBoardsRequest struct {
 
 func (x *ListBoardsRequest) Reset() {
 	*x = ListBoardsRequest{}
-	mi := &file_v1_boards_proto_msgTypes[5]
+	mi := &file_base_v1_boards_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -319,7 +335,7 @@ func (x *ListBoardsRequest) String() string {
 func (*ListBoardsRequest) ProtoMessage() {}
 
 func (x *ListBoardsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[5]
+	mi := &file_base_v1_boards_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -332,7 +348,7 @@ func (x *ListBoardsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBoardsRequest.ProtoReflect.Descriptor instead.
 func (*ListBoardsRequest) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{5}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ListBoardsRequest) GetBase() *BaseRequest {
@@ -351,14 +367,15 @@ func (x *ListBoardsRequest) GetOwnerId() string {
 
 type ListBoardsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Boards        []*Board               `protobuf:"bytes,1,rep,name=boards,proto3" json:"boards,omitempty"`
+	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Boards        []*Board               `protobuf:"bytes,2,rep,name=boards,proto3" json:"boards,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListBoardsResponse) Reset() {
 	*x = ListBoardsResponse{}
-	mi := &file_v1_boards_proto_msgTypes[6]
+	mi := &file_base_v1_boards_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -370,7 +387,7 @@ func (x *ListBoardsResponse) String() string {
 func (*ListBoardsResponse) ProtoMessage() {}
 
 func (x *ListBoardsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[6]
+	mi := &file_base_v1_boards_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -383,7 +400,14 @@ func (x *ListBoardsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListBoardsResponse.ProtoReflect.Descriptor instead.
 func (*ListBoardsResponse) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{6}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListBoardsResponse) GetBase() *BaseResponse {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *ListBoardsResponse) GetBoards() []*Board {
@@ -406,7 +430,7 @@ type UpdateBoardRequest struct {
 
 func (x *UpdateBoardRequest) Reset() {
 	*x = UpdateBoardRequest{}
-	mi := &file_v1_boards_proto_msgTypes[7]
+	mi := &file_base_v1_boards_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -418,7 +442,7 @@ func (x *UpdateBoardRequest) String() string {
 func (*UpdateBoardRequest) ProtoMessage() {}
 
 func (x *UpdateBoardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[7]
+	mi := &file_base_v1_boards_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -431,7 +455,7 @@ func (x *UpdateBoardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBoardRequest.ProtoReflect.Descriptor instead.
 func (*UpdateBoardRequest) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{7}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *UpdateBoardRequest) GetBase() *BaseRequest {
@@ -471,14 +495,15 @@ func (x *UpdateBoardRequest) GetDescription() string {
 
 type UpdateBoardResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Board         *Board                 `protobuf:"bytes,1,opt,name=board,proto3" json:"board,omitempty"`
+	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Board         *Board                 `protobuf:"bytes,2,opt,name=board,proto3" json:"board,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *UpdateBoardResponse) Reset() {
 	*x = UpdateBoardResponse{}
-	mi := &file_v1_boards_proto_msgTypes[8]
+	mi := &file_base_v1_boards_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -490,7 +515,7 @@ func (x *UpdateBoardResponse) String() string {
 func (*UpdateBoardResponse) ProtoMessage() {}
 
 func (x *UpdateBoardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[8]
+	mi := &file_base_v1_boards_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -503,7 +528,14 @@ func (x *UpdateBoardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateBoardResponse.ProtoReflect.Descriptor instead.
 func (*UpdateBoardResponse) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{8}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *UpdateBoardResponse) GetBase() *BaseResponse {
+	if x != nil {
+		return x.Base
+	}
+	return nil
 }
 
 func (x *UpdateBoardResponse) GetBoard() *Board {
@@ -523,7 +555,7 @@ type DeleteBoardRequest struct {
 
 func (x *DeleteBoardRequest) Reset() {
 	*x = DeleteBoardRequest{}
-	mi := &file_v1_boards_proto_msgTypes[9]
+	mi := &file_base_v1_boards_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -535,7 +567,7 @@ func (x *DeleteBoardRequest) String() string {
 func (*DeleteBoardRequest) ProtoMessage() {}
 
 func (x *DeleteBoardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[9]
+	mi := &file_base_v1_boards_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +580,7 @@ func (x *DeleteBoardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBoardRequest.ProtoReflect.Descriptor instead.
 func (*DeleteBoardRequest) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{9}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteBoardRequest) GetBase() *BaseRequest {
@@ -567,13 +599,14 @@ func (x *DeleteBoardRequest) GetBoardId() string {
 
 type DeleteBoardResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteBoardResponse) Reset() {
 	*x = DeleteBoardResponse{}
-	mi := &file_v1_boards_proto_msgTypes[10]
+	mi := &file_base_v1_boards_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -585,7 +618,7 @@ func (x *DeleteBoardResponse) String() string {
 func (*DeleteBoardResponse) ProtoMessage() {}
 
 func (x *DeleteBoardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_boards_proto_msgTypes[10]
+	mi := &file_base_v1_boards_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -598,14 +631,21 @@ func (x *DeleteBoardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteBoardResponse.ProtoReflect.Descriptor instead.
 func (*DeleteBoardResponse) Descriptor() ([]byte, []int) {
-	return file_v1_boards_proto_rawDescGZIP(), []int{10}
+	return file_base_v1_boards_proto_rawDescGZIP(), []int{10}
 }
 
-var File_v1_boards_proto protoreflect.FileDescriptor
+func (x *DeleteBoardResponse) GetBase() *BaseResponse {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
 
-const file_v1_boards_proto_rawDesc = "" +
+var File_base_v1_boards_proto protoreflect.FileDescriptor
+
+const file_base_v1_boards_proto_rawDesc = "" +
 	"\n" +
-	"\x0fv1/boards.proto\x12\ftaskboard.v1\x1a\x0fv1/common.proto\"j\n" +
+	"\x14base/v1/boards.proto\x12\ftaskboard.v1\x1a\x14base/v1/common.proto\"j\n" +
 	"\x05Board\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\bowner_id\x18\x02 \x01(\tR\aownerId\x12\x14\n" +
@@ -615,31 +655,36 @@ const file_v1_boards_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x19\n" +
 	"\bowner_id\x18\x02 \x01(\tR\aownerId\x12\x14\n" +
 	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x04 \x01(\tR\vdescription\"@\n" +
-	"\x13CreateBoardResponse\x12)\n" +
-	"\x05board\x18\x01 \x01(\v2\x13.taskboard.v1.BoardR\x05board\"[\n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\"p\n" +
+	"\x13CreateBoardResponse\x12.\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12)\n" +
+	"\x05board\x18\x02 \x01(\v2\x13.taskboard.v1.BoardR\x05board\"[\n" +
 	"\x0fGetBoardRequest\x12-\n" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x19\n" +
-	"\bboard_id\x18\x02 \x01(\tR\aboardId\"=\n" +
-	"\x10GetBoardResponse\x12)\n" +
-	"\x05board\x18\x01 \x01(\v2\x13.taskboard.v1.BoardR\x05board\"]\n" +
+	"\bboard_id\x18\x02 \x01(\tR\aboardId\"m\n" +
+	"\x10GetBoardResponse\x12.\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12)\n" +
+	"\x05board\x18\x02 \x01(\v2\x13.taskboard.v1.BoardR\x05board\"]\n" +
 	"\x11ListBoardsRequest\x12-\n" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x19\n" +
-	"\bowner_id\x18\x02 \x01(\tR\aownerId\"A\n" +
-	"\x12ListBoardsResponse\x12+\n" +
-	"\x06boards\x18\x01 \x03(\v2\x13.taskboard.v1.BoardR\x06boards\"\xb1\x01\n" +
+	"\bowner_id\x18\x02 \x01(\tR\aownerId\"q\n" +
+	"\x12ListBoardsResponse\x12.\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12+\n" +
+	"\x06boards\x18\x02 \x03(\v2\x13.taskboard.v1.BoardR\x06boards\"\xb1\x01\n" +
 	"\x12UpdateBoardRequest\x12-\n" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x19\n" +
 	"\bboard_id\x18\x02 \x01(\tR\aboardId\x12\x19\n" +
 	"\bowner_id\x18\x03 \x01(\tR\aownerId\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x05 \x01(\tR\vdescription\"@\n" +
-	"\x13UpdateBoardResponse\x12)\n" +
-	"\x05board\x18\x01 \x01(\v2\x13.taskboard.v1.BoardR\x05board\"^\n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\"p\n" +
+	"\x13UpdateBoardResponse\x12.\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12)\n" +
+	"\x05board\x18\x02 \x01(\v2\x13.taskboard.v1.BoardR\x05board\"^\n" +
 	"\x12DeleteBoardRequest\x12-\n" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x19\n" +
-	"\bboard_id\x18\x02 \x01(\tR\aboardId\"\x15\n" +
-	"\x13DeleteBoardResponse2\xa7\x03\n" +
+	"\bboard_id\x18\x02 \x01(\tR\aboardId\"E\n" +
+	"\x13DeleteBoardResponse\x12.\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base2\xa7\x03\n" +
 	"\rBoardsService\x12R\n" +
 	"\vCreateBoard\x12 .taskboard.v1.CreateBoardRequest\x1a!.taskboard.v1.CreateBoardResponse\x12I\n" +
 	"\bGetBoard\x12\x1d.taskboard.v1.GetBoardRequest\x1a\x1e.taskboard.v1.GetBoardResponse\x12O\n" +
@@ -649,19 +694,19 @@ const file_v1_boards_proto_rawDesc = "" +
 	"\vDeleteBoard\x12 .taskboard.v1.DeleteBoardRequest\x1a!.taskboard.v1.DeleteBoardResponseB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
 
 var (
-	file_v1_boards_proto_rawDescOnce sync.Once
-	file_v1_boards_proto_rawDescData []byte
+	file_base_v1_boards_proto_rawDescOnce sync.Once
+	file_base_v1_boards_proto_rawDescData []byte
 )
 
-func file_v1_boards_proto_rawDescGZIP() []byte {
-	file_v1_boards_proto_rawDescOnce.Do(func() {
-		file_v1_boards_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_v1_boards_proto_rawDesc), len(file_v1_boards_proto_rawDesc)))
+func file_base_v1_boards_proto_rawDescGZIP() []byte {
+	file_base_v1_boards_proto_rawDescOnce.Do(func() {
+		file_base_v1_boards_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_base_v1_boards_proto_rawDesc), len(file_base_v1_boards_proto_rawDesc)))
 	})
-	return file_v1_boards_proto_rawDescData
+	return file_base_v1_boards_proto_rawDescData
 }
 
-var file_v1_boards_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
-var file_v1_boards_proto_goTypes = []any{
+var file_base_v1_boards_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_base_v1_boards_proto_goTypes = []any{
 	(*Board)(nil),               // 0: taskboard.v1.Board
 	(*CreateBoardRequest)(nil),  // 1: taskboard.v1.CreateBoardRequest
 	(*CreateBoardResponse)(nil), // 2: taskboard.v1.CreateBoardResponse
@@ -674,55 +719,61 @@ var file_v1_boards_proto_goTypes = []any{
 	(*DeleteBoardRequest)(nil),  // 9: taskboard.v1.DeleteBoardRequest
 	(*DeleteBoardResponse)(nil), // 10: taskboard.v1.DeleteBoardResponse
 	(*BaseRequest)(nil),         // 11: taskboard.v1.BaseRequest
+	(*BaseResponse)(nil),        // 12: taskboard.v1.BaseResponse
 }
-var file_v1_boards_proto_depIdxs = []int32{
+var file_base_v1_boards_proto_depIdxs = []int32{
 	11, // 0: taskboard.v1.CreateBoardRequest.base:type_name -> taskboard.v1.BaseRequest
-	0,  // 1: taskboard.v1.CreateBoardResponse.board:type_name -> taskboard.v1.Board
-	11, // 2: taskboard.v1.GetBoardRequest.base:type_name -> taskboard.v1.BaseRequest
-	0,  // 3: taskboard.v1.GetBoardResponse.board:type_name -> taskboard.v1.Board
-	11, // 4: taskboard.v1.ListBoardsRequest.base:type_name -> taskboard.v1.BaseRequest
-	0,  // 5: taskboard.v1.ListBoardsResponse.boards:type_name -> taskboard.v1.Board
-	11, // 6: taskboard.v1.UpdateBoardRequest.base:type_name -> taskboard.v1.BaseRequest
-	0,  // 7: taskboard.v1.UpdateBoardResponse.board:type_name -> taskboard.v1.Board
-	11, // 8: taskboard.v1.DeleteBoardRequest.base:type_name -> taskboard.v1.BaseRequest
-	1,  // 9: taskboard.v1.BoardsService.CreateBoard:input_type -> taskboard.v1.CreateBoardRequest
-	3,  // 10: taskboard.v1.BoardsService.GetBoard:input_type -> taskboard.v1.GetBoardRequest
-	5,  // 11: taskboard.v1.BoardsService.ListBoards:input_type -> taskboard.v1.ListBoardsRequest
-	7,  // 12: taskboard.v1.BoardsService.UpdateBoard:input_type -> taskboard.v1.UpdateBoardRequest
-	9,  // 13: taskboard.v1.BoardsService.DeleteBoard:input_type -> taskboard.v1.DeleteBoardRequest
-	2,  // 14: taskboard.v1.BoardsService.CreateBoard:output_type -> taskboard.v1.CreateBoardResponse
-	4,  // 15: taskboard.v1.BoardsService.GetBoard:output_type -> taskboard.v1.GetBoardResponse
-	6,  // 16: taskboard.v1.BoardsService.ListBoards:output_type -> taskboard.v1.ListBoardsResponse
-	8,  // 17: taskboard.v1.BoardsService.UpdateBoard:output_type -> taskboard.v1.UpdateBoardResponse
-	10, // 18: taskboard.v1.BoardsService.DeleteBoard:output_type -> taskboard.v1.DeleteBoardResponse
-	14, // [14:19] is the sub-list for method output_type
-	9,  // [9:14] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	12, // 1: taskboard.v1.CreateBoardResponse.base:type_name -> taskboard.v1.BaseResponse
+	0,  // 2: taskboard.v1.CreateBoardResponse.board:type_name -> taskboard.v1.Board
+	11, // 3: taskboard.v1.GetBoardRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 4: taskboard.v1.GetBoardResponse.base:type_name -> taskboard.v1.BaseResponse
+	0,  // 5: taskboard.v1.GetBoardResponse.board:type_name -> taskboard.v1.Board
+	11, // 6: taskboard.v1.ListBoardsRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 7: taskboard.v1.ListBoardsResponse.base:type_name -> taskboard.v1.BaseResponse
+	0,  // 8: taskboard.v1.ListBoardsResponse.boards:type_name -> taskboard.v1.Board
+	11, // 9: taskboard.v1.UpdateBoardRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 10: taskboard.v1.UpdateBoardResponse.base:type_name -> taskboard.v1.BaseResponse
+	0,  // 11: taskboard.v1.UpdateBoardResponse.board:type_name -> taskboard.v1.Board
+	11, // 12: taskboard.v1.DeleteBoardRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 13: taskboard.v1.DeleteBoardResponse.base:type_name -> taskboard.v1.BaseResponse
+	1,  // 14: taskboard.v1.BoardsService.CreateBoard:input_type -> taskboard.v1.CreateBoardRequest
+	3,  // 15: taskboard.v1.BoardsService.GetBoard:input_type -> taskboard.v1.GetBoardRequest
+	5,  // 16: taskboard.v1.BoardsService.ListBoards:input_type -> taskboard.v1.ListBoardsRequest
+	7,  // 17: taskboard.v1.BoardsService.UpdateBoard:input_type -> taskboard.v1.UpdateBoardRequest
+	9,  // 18: taskboard.v1.BoardsService.DeleteBoard:input_type -> taskboard.v1.DeleteBoardRequest
+	2,  // 19: taskboard.v1.BoardsService.CreateBoard:output_type -> taskboard.v1.CreateBoardResponse
+	4,  // 20: taskboard.v1.BoardsService.GetBoard:output_type -> taskboard.v1.GetBoardResponse
+	6,  // 21: taskboard.v1.BoardsService.ListBoards:output_type -> taskboard.v1.ListBoardsResponse
+	8,  // 22: taskboard.v1.BoardsService.UpdateBoard:output_type -> taskboard.v1.UpdateBoardResponse
+	10, // 23: taskboard.v1.BoardsService.DeleteBoard:output_type -> taskboard.v1.DeleteBoardResponse
+	19, // [19:24] is the sub-list for method output_type
+	14, // [14:19] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
-func init() { file_v1_boards_proto_init() }
-func file_v1_boards_proto_init() {
-	if File_v1_boards_proto != nil {
+func init() { file_base_v1_boards_proto_init() }
+func file_base_v1_boards_proto_init() {
+	if File_base_v1_boards_proto != nil {
 		return
 	}
-	file_v1_common_proto_init()
+	file_base_v1_common_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_boards_proto_rawDesc), len(file_v1_boards_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_base_v1_boards_proto_rawDesc), len(file_base_v1_boards_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_v1_boards_proto_goTypes,
-		DependencyIndexes: file_v1_boards_proto_depIdxs,
-		MessageInfos:      file_v1_boards_proto_msgTypes,
+		GoTypes:           file_base_v1_boards_proto_goTypes,
+		DependencyIndexes: file_base_v1_boards_proto_depIdxs,
+		MessageInfos:      file_base_v1_boards_proto_msgTypes,
 	}.Build()
-	File_v1_boards_proto = out.File
-	file_v1_boards_proto_goTypes = nil
-	file_v1_boards_proto_depIdxs = nil
+	File_base_v1_boards_proto = out.File
+	file_base_v1_boards_proto_goTypes = nil
+	file_base_v1_boards_proto_depIdxs = nil
 }

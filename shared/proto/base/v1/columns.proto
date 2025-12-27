@@ -1,0 +1,59 @@
+﻿syntax = "proto3";
+
+package taskboard.v1;
+
+option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
+
+import "base/v1/common.proto";
+
+message Column {
+  string id = 1;
+  string board_id = 2;
+  int32 position = 3;
+}
+
+message CreateColumnRequest {
+  BaseRequest base = 1;
+  string board_id = 2;
+  int32 position = 3;
+}
+message CreateColumnResponse {
+  BaseResponse base = 1;
+  Column column = 2;
+}
+
+message GetColumnRequest {
+  BaseRequest base = 1;
+  string column_id = 2;
+}
+message GetColumnResponse {
+  BaseResponse base = 1;
+  Column column = 2;
+}
+
+message UpdateColumnRequest {
+  BaseRequest base = 1;
+  string column_id = 2;
+  string board_id = 3;
+  int32 position = 4;
+}
+message UpdateColumnResponse {
+  BaseResponse base = 1;
+  Column column = 2;
+}
+
+message DeleteColumnRequest {
+  BaseRequest base = 1;
+  string column_id = 2;
+}
+
+message DeleteColumnResponse {
+  BaseResponse base = 1;
+}
+
+service ColumnsService {
+  rpc CreateColumn(CreateColumnRequest) returns (CreateColumnResponse);
+  rpc GetColumn(GetColumnRequest) returns (GetColumnResponse);
+  rpc UpdateColumn(UpdateColumnRequest) returns (UpdateColumnResponse);
+  rpc DeleteColumn(DeleteColumnRequest) returns (DeleteColumnResponse);
+}

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.6.0
 // - protoc             v6.33.2
-// source: v1/boards.proto
+// source: base/v1/boards.proto
 
 package v1
 
@@ -269,5 +269,5 @@ var BoardsService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v1/boards.proto",
+	Metadata: "base/v1/boards.proto",
 }
