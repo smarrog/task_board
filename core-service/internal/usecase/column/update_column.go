@@ -35,7 +35,10 @@ func (uc *UpdateColumnUseCase) Execute(ctx context.Context, input UpdateColumnIn
 	if err != nil {
 		return nil, err
 	}
-	position := input.Position
+	position, err := column.NewPosition(input.Position)
+	if err != nil {
+		return nil, err
+	}
 
 	c, err := uc.repo.Get(ctx, cid)
 	if err != nil {

@@ -30,7 +30,10 @@ func (uc *CreateColumnUseCase) Execute(ctx context.Context, input CreateColumnIn
 	if err != nil {
 		return nil, err
 	}
-	position := input.Position
+	position, err := column.NewPosition(input.Position)
+	if err != nil {
+		return nil, err
+	}
 
 	c := column.New(bid, position)
 

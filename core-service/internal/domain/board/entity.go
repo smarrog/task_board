@@ -10,14 +10,14 @@ import (
 type Board struct {
 	id          Id
 	ownerId     common.UserId
-	title       common.Title
-	description common.Description
+	title       Title
+	description Description
 	createdAt   time.Time
 	updatedAt   time.Time
 	events      []common.DomainEvent
 }
 
-func New(ownerID common.UserId, title common.Title, description common.Description) (*Board, error) {
+func New(ownerID common.UserId, title Title, description Description) (*Board, error) {
 	if ownerID.UUID() == uuid.Nil {
 		return nil, ErrOwnerRequired
 	}
@@ -43,8 +43,8 @@ func New(ownerID common.UserId, title common.Title, description common.Descripti
 func Rehydrate(
 	id Id,
 	ownerId common.UserId,
-	title common.Title,
-	description common.Description,
+	title Title,
+	description Description,
 	createdAt time.Time,
 	updatedAt time.Time,
 ) *Board {
@@ -58,14 +58,14 @@ func Rehydrate(
 	}
 }
 
-func (b *Board) Id() Id                          { return b.id }
-func (b *Board) OwnerId() common.UserId          { return b.ownerId }
-func (b *Board) Title() common.Title             { return b.title }
-func (b *Board) Description() common.Description { return b.description }
-func (b *Board) CreatedAt() time.Time            { return b.createdAt }
-func (b *Board) UpdatedAt() time.Time            { return b.updatedAt }
+func (b *Board) Id() Id                   { return b.id }
+func (b *Board) OwnerId() common.UserId   { return b.ownerId }
+func (b *Board) Title() Title             { return b.title }
+func (b *Board) Description() Description { return b.description }
+func (b *Board) CreatedAt() time.Time     { return b.createdAt }
+func (b *Board) UpdatedAt() time.Time     { return b.updatedAt }
 
-func (b *Board) Update(title common.Title, description common.Description) {
+func (b *Board) Update(title Title, description Description) {
 	b.title = title
 	b.description = description
 	b.updatedAt = time.Now().UTC()

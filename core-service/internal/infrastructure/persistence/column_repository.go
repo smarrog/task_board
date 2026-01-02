@@ -45,8 +45,8 @@ func (r *ColumnsRepo) Save(ctx context.Context, c *column.Column) error {
         INSERT INTO columns (id, board_id, position, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5)
         ON CONFLICT (id) DO UPDATE
-        SET owner_id    = EXCLUDED.board_id,
-            title       = EXCLUDED.position,
+        SET board_id    = EXCLUDED.board_id,
+            position    = EXCLUDED.position,
             updated_at  = EXCLUDED.updated_at
     `,
 		c.Id().UUID(),
@@ -95,7 +95,10 @@ func (r *ColumnsRepo) Get(ctx context.Context, id column.Id) (*column.Column, er
 	if err != nil {
 		return nil, err
 	}
-	position := positionRaw
+	position, err := column.NewPosition(positionRaw)
+	if err != nil {
+		return nil, err
+	}
 
 	return column.Rehydrate(id, boardId, position, createdAt, updatedAt), nil
 }

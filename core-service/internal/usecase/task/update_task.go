@@ -39,18 +39,21 @@ func (uc *UpdateTaskUseCase) Execute(ctx context.Context, input UpdateTaskInput)
 	if err != nil {
 		return nil, err
 	}
-	position := input.Position
-	title, err := common.NewTitle(input.Title)
+	position, err := task.NewPosition(input.Position)
 	if err != nil {
-		return nil, fmt.Errorf("column: %w", err)
+		return nil, err
 	}
-	desc, err := common.NewDescription(input.Description)
+	title, err := task.NewTitle(input.Title)
 	if err != nil {
-		return nil, fmt.Errorf("column: %w", err)
+		return nil, fmt.Errorf("task: %w", err)
+	}
+	desc, err := task.NewDescription(input.Description)
+	if err != nil {
+		return nil, fmt.Errorf("task: %w", err)
 	}
 	aid, err := common.UserIdFromString(input.AssigneeId)
 	if err != nil {
-		return nil, fmt.Errorf("column assignee_id: %w", err)
+		return nil, fmt.Errorf("task assignee_id: %w", err)
 	}
 
 	t, err := uc.repo.Get(ctx, tid)
@@ -62,7 +65,7 @@ func (uc *UpdateTaskUseCase) Execute(ctx context.Context, input UpdateTaskInput)
 
 	err = uc.repo.Save(ctx, t)
 	if err != nil {
-		return nil, fmt.Errorf("save column: %w", err)
+		return nil, fmt.Errorf("save task: %w", err)
 	}
 
 	output = &UpdateTaskOutput{

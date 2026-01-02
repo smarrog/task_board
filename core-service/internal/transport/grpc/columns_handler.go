@@ -101,14 +101,13 @@ func toProtoColumn(c *columdo.Column) *v1.Column {
 	return &v1.Column{
 		Id:       c.Id().String(),
 		BoardId:  c.BoardId().String(),
-		Position: int32(c.Position()),
+		Position: int32(c.Position().Int()),
 	}
 }
 
 func mapColumnsErr(err error) error {
-	if err == nil {
-		return nil
+	switch {
+	default:
+		return mapCommonErr(err)
 	}
-
-	return mapCommonErr(err)
 }

@@ -18,7 +18,7 @@ func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 type MoveEvent struct {
 	Id       Id
 	BoardId  board.Id
-	Position int
+	Position Position
 	At       time.Time
 }
 

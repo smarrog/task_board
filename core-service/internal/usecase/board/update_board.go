@@ -38,12 +38,12 @@ func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInpu
 		return nil, fmt.Errorf("board owner_id: %w", err)
 	}
 
-	t, err := common.NewTitle(input.Title)
+	t, err := board.NewTitle(input.Title)
 	if err != nil {
 		return nil, fmt.Errorf("board: %w", err)
 	}
 
-	d, err := common.NewDescription(input.Description)
+	d, err := board.NewDescription(input.Description)
 	if err != nil {
 		return nil, fmt.Errorf("board: %w", err)
 	}

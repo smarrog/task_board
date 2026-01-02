@@ -9,8 +9,8 @@ import (
 type CreatedEvent struct {
 	Id          Id
 	OwnerId     common.UserId
-	Title       common.Title
-	Description common.Description
+	Title       Title
+	Description Description
 	At          time.Time
 }
 
@@ -18,8 +18,10 @@ func (e CreatedEvent) Name() string          { return "BoardCreated" }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
-	Id Id
-	At time.Time
+	Id          Id
+	Title       Title
+	Description Description
+	At          time.Time
 }
 
 func (e UpdatedEvent) Name() string          { return "BoardUpdated" }

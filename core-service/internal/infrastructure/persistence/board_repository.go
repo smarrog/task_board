@@ -99,11 +99,11 @@ func (r *BoardsRepo) Get(ctx context.Context, id board.Id) (*board.Board, error)
 	if err != nil {
 		return nil, err
 	}
-	title, err := common.NewTitle(titleRaw)
+	title, err := board.NewTitle(titleRaw)
 	if err != nil {
 		return nil, err
 	}
-	desc, err := common.NewDescription(descRaw)
+	desc, err := board.NewDescription(descRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -139,11 +139,11 @@ func (r *BoardsRepo) ListByOwner(ctx context.Context, ownerId common.UserId) ([]
 		if err != nil {
 			return nil, err
 		}
-		t, err := common.NewTitle(titleRaw)
+		t, err := board.NewTitle(titleRaw)
 		if err != nil {
 			return nil, err
 		}
-		d, err := common.NewDescription(descRaw)
+		d, err := board.NewDescription(descRaw)
 		if err != nil {
 			return nil, err
 		}
@@ -179,6 +179,10 @@ func (r *BoardsRepo) Delete(ctx context.Context, id board.Id) error {
 	}
 
 	// TODO send event to outbox
+
+	if err = tx.Commit(ctx); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -107,7 +107,7 @@ func toProtoTask(b *taskdo.Task) *v1.Task {
 	return &v1.Task{
 		Id:          b.Id().String(),
 		ColumnId:    b.ColumnId().String(),
-		Position:    int32(b.Position()),
+		Position:    int32(b.Position().Int()),
 		Title:       b.Title().String(),
 		Description: b.Description().String(),
 		AssigneeId:  b.AssigneeId().String(),
@@ -115,9 +115,8 @@ func toProtoTask(b *taskdo.Task) *v1.Task {
 }
 
 func mapTasksErr(err error) error {
-	if err == nil {
-		return nil
+	switch {
+	default:
+		return mapCommonErr(err)
 	}
-
-	return mapCommonErr(err)
 }

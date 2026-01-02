@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_tasks_column_id ON tasks(column_id);
-CREATE INDEX IF NOT EXISTS ids_tasks_assignee_id ON tasks(assignee_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_assignee_id ON tasks(assignee_id);
 CREATE UNIQUE INDEX ux_tasks_column_position ON tasks(column_id, position);
 
 -- +goose Down

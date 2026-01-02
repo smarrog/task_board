@@ -43,12 +43,14 @@ func (r *TasksRepo) Save(ctx context.Context, t *task.Task) error {
 	}()
 
 	_, err = tx.Exec(ctx, `
-        INSERT INTO boards (id, column_id, position, title, description, assignee_id, created_at, updated_at)
+        INSERT INTO tasks (id, column_id, position, title, description, assignee_id, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         ON CONFLICT (id) DO UPDATE
-        SET owner_id    = EXCLUDED.owner_id,
+        SET column_id   = EXCLUDED.column_id,
+            position    = EXCLUDED.position,
             title       = EXCLUDED.title,
             description = EXCLUDED.description,
+            assignee_id = EXCLUDED.assignee_id,
             updated_at  = EXCLUDED.updated_at
     `,
 		t.Id().UUID(),
@@ -103,12 +105,15 @@ func (r *TasksRepo) Get(ctx context.Context, id task.Id) (*task.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	position := positionRaw
-	title, err := common.NewTitle(titleRaw)
+	position, err := task.NewPosition(positionRaw)
 	if err != nil {
 		return nil, err
 	}
-	desc, err := common.NewDescription(descRaw)
+	title, err := task.NewTitle(titleRaw)
+	if err != nil {
+		return nil, err
+	}
+	desc, err := task.NewDescription(descRaw)
 	if err != nil {
 		return nil, err
 	}

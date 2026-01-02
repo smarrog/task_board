@@ -10,9 +10,9 @@ import (
 type Task struct {
 	id          Id
 	columnId    column.Id
-	position    int
-	title       common.Title
-	description common.Description
+	position    Position
+	title       Title
+	description Description
 	assigneeId  common.UserId
 	createdAt   time.Time
 	updatedAt   time.Time
@@ -21,9 +21,9 @@ type Task struct {
 
 func New(
 	columnId column.Id,
-	position int,
-	title common.Title,
-	desc common.Description,
+	position Position,
+	title Title,
+	desc Description,
 	assigneeId common.UserId,
 ) *Task {
 	now := time.Now().UTC()
@@ -51,9 +51,9 @@ func New(
 func Rehydrate(
 	id Id,
 	columnId column.Id,
-	position int,
-	title common.Title,
-	desc common.Description,
+	position Position,
+	title Title,
+	desc Description,
 	assigneeId common.UserId,
 	createdAt time.Time,
 	updatedAt time.Time,
@@ -70,16 +70,16 @@ func Rehydrate(
 	}
 }
 
-func (t *Task) Id() Id                          { return t.id }
-func (t *Task) ColumnId() column.Id             { return t.columnId }
-func (t *Task) Position() int                   { return t.position }
-func (t *Task) Title() common.Title             { return t.title }
-func (t *Task) Description() common.Description { return t.description }
-func (t *Task) AssigneeId() common.UserId       { return t.assigneeId }
-func (t *Task) CreatedAt() time.Time            { return t.createdAt }
-func (t *Task) UpdatedAt() time.Time            { return t.updatedAt }
+func (t *Task) Id() Id                    { return t.id }
+func (t *Task) ColumnId() column.Id       { return t.columnId }
+func (t *Task) Position() Position        { return t.position }
+func (t *Task) Title() Title              { return t.title }
+func (t *Task) Description() Description  { return t.description }
+func (t *Task) AssigneeId() common.UserId { return t.assigneeId }
+func (t *Task) CreatedAt() time.Time      { return t.createdAt }
+func (t *Task) UpdatedAt() time.Time      { return t.updatedAt }
 
-func (t *Task) Update(columnId column.Id, position int, title common.Title, desc common.Description, assigneeId common.UserId) {
+func (t *Task) Update(columnId column.Id, position Position, title Title, desc Description, assigneeId common.UserId) {
 	t.columnId = columnId
 	t.position = position
 	t.title = title

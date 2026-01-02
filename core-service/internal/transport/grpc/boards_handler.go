@@ -2,11 +2,14 @@ package grpc
 
 import (
 	"context"
+	"errors"
 
 	"github.com/rs/zerolog"
 	boarddo "github.com/smarrog/task-board/core-service/internal/domain/board"
 	boarduc "github.com/smarrog/task-board/core-service/internal/usecase/board"
 	"github.com/smarrog/task-board/shared/proto/base/v1"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type BoardsHandler struct {
@@ -127,9 +130,10 @@ func toProtoBoard(b *boarddo.Board) *v1.Board {
 }
 
 func mapBoardsErr(err error) error {
-	if err == nil {
-		return nil
+	switch {
+	case errors.Is(err, boarddo.ErrOwnerMismatch):
+		return status.Error(codes.PermissionDenied, err.Error())
+	default:
+		return mapCommonErr(err)
 	}
-
-	return mapCommonErr(err)
 }

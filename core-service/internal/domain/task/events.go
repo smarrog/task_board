@@ -10,9 +10,9 @@ import (
 type CreatedEvent struct {
 	Id          Id
 	ColumnId    column.Id
-	Position    int
-	Title       common.Title
-	Description common.Description
+	Position    Position
+	Title       Title
+	Description Description
 	AssigneeId  common.UserId
 	At          time.Time
 }
@@ -32,8 +32,8 @@ func (e MoveEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
 	Id          Id
-	Title       common.Title
-	Description common.Description
+	Title       Title
+	Description Description
 	AssigneeId  common.UserId
 	At          time.Time
 }
