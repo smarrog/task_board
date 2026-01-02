@@ -7,7 +7,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
@@ -15,75 +14,61 @@ import (
 )
 
 type BoardsRepo struct {
-	pg     *pgxpool.Pool
+	txm    *TxManager
 	log    *zerolog.Logger
 	outbox *OutboxRepo
 }
 
-func NewBoardsRepo(pg *pgxpool.Pool, log *zerolog.Logger, outbox *OutboxRepo) *BoardsRepo {
+func NewBoardsRepo(txm *TxManager, log *zerolog.Logger, outbox *OutboxRepo) *BoardsRepo {
 	return &BoardsRepo{
-		pg:     pg,
+		txm:    txm,
 		log:    log,
 		outbox: outbox,
 	}
 }
 
 func (r *BoardsRepo) Save(ctx context.Context, b *board.Board) error {
-	tx, txErr := r.pg.Begin(ctx)
-	if txErr != nil {
-		return txErr
-	}
-
-	var err error
-	defer func() {
-		if err != nil {
-			if errRollback := tx.Rollback(ctx); errRollback != nil {
-				r.log.Error().Err(errRollback).Msg("failed to rollback transaction")
-			}
-		}
-	}()
-
-	_, err = tx.Exec(ctx, `
-        INSERT INTO boards (id, owner_id, title, description, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (id) DO UPDATE
-        SET owner_id    = EXCLUDED.owner_id,
-            title       = EXCLUDED.title,
-            description = EXCLUDED.description,
-            updated_at  = EXCLUDED.updated_at
-    `,
-		b.Id().UUID(),
-		b.OwnerId().UUID(),
-		b.Title().String(),
-		b.Description().String(),
-		b.CreatedAt(),
-		b.UpdatedAt(),
-	)
-	if err != nil {
-		return err
-	}
-
-	events := b.PullEvents()
-	if len(events) != 0 {
-		err = r.outbox.SaveEvents(ctx, tx, events)
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `
+			INSERT INTO boards (id, owner_id, title, description, created_at, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6)
+			ON CONFLICT (id) DO UPDATE
+			SET owner_id    = EXCLUDED.owner_id,
+				title       = EXCLUDED.title,
+				description = EXCLUDED.description,
+				updated_at  = EXCLUDED.updated_at
+		`,
+			b.Id().UUID(),
+			b.OwnerId().UUID(),
+			b.Title().String(),
+			b.Description().String(),
+			b.CreatedAt(),
+			b.UpdatedAt(),
+		)
 		if err != nil {
 			return err
 		}
-	}
 
-	if err = tx.Commit(ctx); err != nil {
-		return err
-	}
+		events := b.PullEvents()
+		if len(events) != 0 {
+			err = r.outbox.SaveEvents(ctx, events)
+			if err != nil {
+				return err
+			}
+		}
 
-	return nil
+		return nil
+	})
 }
 
 func (r *BoardsRepo) Get(ctx context.Context, id board.Id) (*board.Board, error) {
+	db := r.txm.DB(ctx)
+
 	var ownerIdRaw uuid.UUID
 	var titleRaw, descRaw string
 	var createdAt, updatedAt time.Time
 
-	err := r.pg.QueryRow(ctx, `
+	err := db.QueryRow(ctx, `
         SELECT owner_id, title, description, created_at, updated_at
         FROM boards
         WHERE id = $1
@@ -112,7 +97,9 @@ func (r *BoardsRepo) Get(ctx context.Context, id board.Id) (*board.Board, error)
 }
 
 func (r *BoardsRepo) ListByOwner(ctx context.Context, ownerId common.UserId) ([]*board.Board, error) {
-	rows, err := r.pg.Query(ctx, `
+	db := r.txm.DB(ctx)
+
+	rows, err := db.Query(ctx, `
         SELECT id, title, description, created_at, updated_at
         FROM boards
         WHERE owner_id = $1
@@ -156,33 +143,17 @@ func (r *BoardsRepo) ListByOwner(ctx context.Context, ownerId common.UserId) ([]
 }
 
 func (r *BoardsRepo) Delete(ctx context.Context, id board.Id) error {
-	tx, txErr := r.pg.Begin(ctx)
-	if txErr != nil {
-		return txErr
-	}
-
-	var err error
-	defer func() {
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		ct, err := tx.Exec(ctx, `DELETE FROM boards WHERE id = $1`, id.UUID())
 		if err != nil {
-			if errRollback := tx.Rollback(ctx); errRollback != nil {
-				r.log.Error().Err(errRollback).Msg("failed to rollback transaction")
-			}
+			return err
 		}
-	}()
+		if ct.RowsAffected() == 0 {
+			return board.ErrNotFound
+		}
 
-	ct, err := tx.Exec(ctx, `DELETE FROM boards WHERE id = $1`, id.UUID())
-	if err != nil {
-		return err
-	}
-	if ct.RowsAffected() == 0 {
-		return board.ErrNotFound
-	}
+		// TODO send event to outbox
 
-	// TODO send event to outbox
-
-	if err = tx.Commit(ctx); err != nil {
-		return err
-	}
-
-	return nil
+		return nil
+	})
 }

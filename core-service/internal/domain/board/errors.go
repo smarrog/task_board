@@ -16,7 +16,7 @@ var (
 	ErrOwnerRequired = errors.New("owner_id is required")
 	ErrOwnerMismatch = errors.New("owner_id does not match real owner")
 
-	ErrTitleEmpty         = fmt.Errorf("%s %w", "column", common.ErrTitleEmpty)
-	ErrTitleTooLong       = fmt.Errorf("%s %w", "column", common.ErrTitleTooLong)
-	ErrDescriptionTooLong = fmt.Errorf("%s %w", "column", common.ErrDescriptionTooLong)
+	ErrTitleEmpty         = fmt.Errorf("%s %w", "board", common.ErrTitleEmpty)
+	ErrTitleTooLong       = fmt.Errorf("%s %w", "board", common.ErrTitleTooLong)
+	ErrDescriptionTooLong = fmt.Errorf("%s %w", "board", common.ErrDescriptionTooLong)
 )

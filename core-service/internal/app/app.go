@@ -36,10 +36,12 @@ func (a *App) Init() error {
 		return err
 	}
 
-	outboxRepo := persistence.NewOutboxRepo(pg)
-	boardsRepo := persistence.NewBoardsRepo(pg, log, outboxRepo)
-	columnsRepo := persistence.NewColumnsRepo(pg, log, outboxRepo)
-	tasksRepo := persistence.NewTasksRepo(pg, log, outboxRepo)
+	txm := persistence.NewTxManager(pg, log)
+
+	outboxRepo := persistence.NewOutboxRepo(txm)
+	boardsRepo := persistence.NewBoardsRepo(txm, log, outboxRepo)
+	columnsRepo := persistence.NewColumnsRepo(txm, log, outboxRepo)
+	tasksRepo := persistence.NewTasksRepo(txm, log, outboxRepo)
 
 	boardsHandler := createBoardsHandler(log, boardsRepo)
 	columnsHandler := createColumnsHandler(log, columnsRepo)
