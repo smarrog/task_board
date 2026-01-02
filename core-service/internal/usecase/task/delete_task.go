@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
 )
@@ -29,7 +30,7 @@ func (uc *DeleteTaskUseCase) Execute(ctx context.Context, input DeleteTaskInput)
 
 	err = uc.repo.Delete(ctx, tid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("delete task: %w", err)
 	}
 
 	output := &DeleteTaskOutput{}

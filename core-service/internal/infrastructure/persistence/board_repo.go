@@ -50,14 +50,7 @@ func (r *BoardsRepo) Save(ctx context.Context, b *board.Board) error {
 		}
 
 		events := b.PullEvents()
-		if len(events) != 0 {
-			err = r.outbox.SaveEvents(ctx, events)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
+		return r.outbox.SaveEvents(ctx, events)
 	})
 }
 

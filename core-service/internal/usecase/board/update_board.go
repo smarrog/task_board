@@ -40,12 +40,12 @@ func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInpu
 
 	t, err := board.NewTitle(input.Title)
 	if err != nil {
-		return nil, fmt.Errorf("board: %w", err)
+		return nil, err
 	}
 
 	d, err := board.NewDescription(input.Description)
 	if err != nil {
-		return nil, fmt.Errorf("board: %w", err)
+		return nil, err
 	}
 
 	b, err := uc.repo.Get(ctx, bid)

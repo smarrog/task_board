@@ -2,6 +2,7 @@
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
 )
@@ -29,7 +30,7 @@ func (uc *DeleteColumnUseCase) Execute(ctx context.Context, input DeleteColumnIn
 
 	err = uc.repo.Delete(ctx, cid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("delete column: %w", err)
 	}
 
 	output := &DeleteColumnOutput{}

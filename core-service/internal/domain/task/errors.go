@@ -8,10 +8,8 @@ import (
 )
 
 var (
-	ErrNotFound      = fmt.Errorf("%s %w", "task", common.ErrNotFound)
-	ErrInvalidId     = fmt.Errorf("%s %w", "task", common.ErrInvalidId)
-	ErrInvalidUserId = fmt.Errorf("%s %w", "task", common.ErrInvalidUserId)
-	ErrIsEmpty       = fmt.Errorf("%s %w", "task", common.ErrIsEmpty)
+	ErrNotFound  = fmt.Errorf("%s %w", "task", common.ErrNotFound)
+	ErrInvalidId = fmt.Errorf("%s %w", "task", common.ErrInvalidId)
 
 	ErrInvalidPosition = errors.New("invalid task position")
 

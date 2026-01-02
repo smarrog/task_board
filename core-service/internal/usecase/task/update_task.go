@@ -45,11 +45,11 @@ func (uc *UpdateTaskUseCase) Execute(ctx context.Context, input UpdateTaskInput)
 	}
 	title, err := task.NewTitle(input.Title)
 	if err != nil {
-		return nil, fmt.Errorf("task: %w", err)
+		return nil, err
 	}
 	desc, err := task.NewDescription(input.Description)
 	if err != nil {
-		return nil, fmt.Errorf("task: %w", err)
+		return nil, err
 	}
 	aid, err := common.UserIdFromString(input.AssigneeId)
 	if err != nil {

@@ -25,7 +25,7 @@ func NewDeleteBoardUseCase(repo board.Repository) *DeleteBoardUseCase {
 func (uc *DeleteBoardUseCase) Execute(ctx context.Context, input DeleteBoardInput) (*DeleteBoardOutput, error) {
 	id, err := board.IdFromString(input.BoardId)
 	if err != nil {
-		return nil, fmt.Errorf("board_id: %w", err)
+		return nil, err
 	}
 
 	err = uc.repo.Delete(ctx, id)

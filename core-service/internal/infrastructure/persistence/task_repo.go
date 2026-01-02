@@ -53,14 +53,7 @@ func (r *TasksRepo) Save(ctx context.Context, t *task.Task) error {
 		}
 
 		events := t.PullEvents()
-		if len(events) != 0 {
-			err = r.outbox.SaveEvents(ctx, events)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
+		return r.outbox.SaveEvents(ctx, events)
 	})
 }
 

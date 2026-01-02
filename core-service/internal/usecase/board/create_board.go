@@ -34,12 +34,12 @@ func (uc *CreateBoardUseCase) Execute(ctx context.Context, input CreateBoardInpu
 
 	t, err := board.NewTitle(input.Title)
 	if err != nil {
-		return nil, fmt.Errorf("board: %w", err)
+		return nil, err
 	}
 
 	d, err := board.NewDescription(input.Description)
 	if err != nil {
-		return nil, fmt.Errorf("board: %w", err)
+		return nil, err
 	}
 
 	b, err := board.New(userId, t, d)
