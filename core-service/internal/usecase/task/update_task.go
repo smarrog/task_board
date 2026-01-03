@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/smarrog/task-board/core-service/internal/domain/column"
 	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
 )
@@ -15,8 +14,6 @@ type UpdateTaskUseCase struct {
 
 type UpdateTaskInput struct {
 	TaskId      string
-	ColumnId    string
-	Position    int
 	Title       string
 	Description string
 	AssigneeId  string
@@ -32,14 +29,6 @@ func NewUpdateTaskUseCase(repo task.Repository) *UpdateTaskUseCase {
 
 func (uc *UpdateTaskUseCase) Execute(ctx context.Context, input UpdateTaskInput) (output *UpdateTaskOutput, err error) {
 	tid, err := task.IdFromString(input.TaskId)
-	if err != nil {
-		return nil, err
-	}
-	cid, err := column.IdFromString(input.ColumnId)
-	if err != nil {
-		return nil, err
-	}
-	position, err := task.NewPosition(input.Position)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +50,7 @@ func (uc *UpdateTaskUseCase) Execute(ctx context.Context, input UpdateTaskInput)
 		return nil, err
 	}
 
-	t.Update(cid, position, title, desc, aid)
+	t.Update(title, desc, aid)
 
 	err = uc.repo.Save(ctx, t)
 	if err != nil {

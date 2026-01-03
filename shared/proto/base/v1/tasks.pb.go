@@ -349,13 +349,11 @@ type UpdateTaskRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *BaseRequest           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
 	TaskId        string                 `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-	ColumnId      string                 `protobuf:"bytes,3,opt,name=column_id,json=columnId,proto3" json:"column_id,omitempty"`
-	Position      int32                  `protobuf:"varint,4,opt,name=position,proto3" json:"position,omitempty"`
-	Title         string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	Description   string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	Title         string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Description   string                 `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
+	AssigneeId    string                 `protobuf:"bytes,5,opt,name=assignee_id,json=assigneeId,proto3" json:"assignee_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
-	AssigneeId    string
 }
 
 func (x *UpdateTaskRequest) Reset() {
@@ -402,20 +400,6 @@ func (x *UpdateTaskRequest) GetTaskId() string {
 	return ""
 }
 
-func (x *UpdateTaskRequest) GetColumnId() string {
-	if x != nil {
-		return x.ColumnId
-	}
-	return ""
-}
-
-func (x *UpdateTaskRequest) GetPosition() int32 {
-	if x != nil {
-		return x.Position
-	}
-	return 0
-}
-
 func (x *UpdateTaskRequest) GetTitle() string {
 	if x != nil {
 		return x.Title
@@ -426,6 +410,13 @@ func (x *UpdateTaskRequest) GetTitle() string {
 func (x *UpdateTaskRequest) GetDescription() string {
 	if x != nil {
 		return x.Description
+	}
+	return ""
+}
+
+func (x *UpdateTaskRequest) GetAssigneeId() string {
+	if x != nil {
+		return x.AssigneeId
 	}
 	return ""
 }
@@ -482,6 +473,126 @@ func (x *UpdateTaskResponse) GetTask() *Task {
 	return nil
 }
 
+type MoveTaskRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *BaseRequest           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	TaskId        string                 `protobuf:"bytes,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
+	ToColumnId    string                 `protobuf:"bytes,3,opt,name=to_column_id,json=toColumnId,proto3" json:"to_column_id,omitempty"`
+	ToPosition    int32                  `protobuf:"varint,4,opt,name=to_position,json=toPosition,proto3" json:"to_position,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MoveTaskRequest) Reset() {
+	*x = MoveTaskRequest{}
+	mi := &file_base_v1_tasks_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MoveTaskRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoveTaskRequest) ProtoMessage() {}
+
+func (x *MoveTaskRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_base_v1_tasks_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoveTaskRequest.ProtoReflect.Descriptor instead.
+func (*MoveTaskRequest) Descriptor() ([]byte, []int) {
+	return file_base_v1_tasks_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *MoveTaskRequest) GetBase() *BaseRequest {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *MoveTaskRequest) GetTaskId() string {
+	if x != nil {
+		return x.TaskId
+	}
+	return ""
+}
+
+func (x *MoveTaskRequest) GetToColumnId() string {
+	if x != nil {
+		return x.ToColumnId
+	}
+	return ""
+}
+
+func (x *MoveTaskRequest) GetToPosition() int32 {
+	if x != nil {
+		return x.ToPosition
+	}
+	return 0
+}
+
+type MoveTaskResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
+	Task          *Task                  `protobuf:"bytes,2,opt,name=task,proto3" json:"task,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *MoveTaskResponse) Reset() {
+	*x = MoveTaskResponse{}
+	mi := &file_base_v1_tasks_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *MoveTaskResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*MoveTaskResponse) ProtoMessage() {}
+
+func (x *MoveTaskResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_base_v1_tasks_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use MoveTaskResponse.ProtoReflect.Descriptor instead.
+func (*MoveTaskResponse) Descriptor() ([]byte, []int) {
+	return file_base_v1_tasks_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *MoveTaskResponse) GetBase() *BaseResponse {
+	if x != nil {
+		return x.Base
+	}
+	return nil
+}
+
+func (x *MoveTaskResponse) GetTask() *Task {
+	if x != nil {
+		return x.Task
+	}
+	return nil
+}
+
 type DeleteTaskRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Base          *BaseRequest           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
@@ -492,7 +603,7 @@ type DeleteTaskRequest struct {
 
 func (x *DeleteTaskRequest) Reset() {
 	*x = DeleteTaskRequest{}
-	mi := &file_base_v1_tasks_proto_msgTypes[7]
+	mi := &file_base_v1_tasks_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -504,7 +615,7 @@ func (x *DeleteTaskRequest) String() string {
 func (*DeleteTaskRequest) ProtoMessage() {}
 
 func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_tasks_proto_msgTypes[7]
+	mi := &file_base_v1_tasks_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -517,7 +628,7 @@ func (x *DeleteTaskRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTaskRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTaskRequest) Descriptor() ([]byte, []int) {
-	return file_base_v1_tasks_proto_rawDescGZIP(), []int{7}
+	return file_base_v1_tasks_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteTaskRequest) GetBase() *BaseRequest {
@@ -543,7 +654,7 @@ type DeleteTaskResponse struct {
 
 func (x *DeleteTaskResponse) Reset() {
 	*x = DeleteTaskResponse{}
-	mi := &file_base_v1_tasks_proto_msgTypes[8]
+	mi := &file_base_v1_tasks_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -555,7 +666,7 @@ func (x *DeleteTaskResponse) String() string {
 func (*DeleteTaskResponse) ProtoMessage() {}
 
 func (x *DeleteTaskResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_tasks_proto_msgTypes[8]
+	mi := &file_base_v1_tasks_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -568,7 +679,7 @@ func (x *DeleteTaskResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTaskResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTaskResponse) Descriptor() ([]byte, []int) {
-	return file_base_v1_tasks_proto_rawDescGZIP(), []int{8}
+	return file_base_v1_tasks_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteTaskResponse) GetBase() *BaseResponse {
@@ -607,28 +718,39 @@ const file_base_v1_tasks_proto_rawDesc = "" +
 	"\atask_id\x18\x02 \x01(\tR\x06taskId\"i\n" +
 	"\x0fGetTaskResponse\x12.\n" +
 	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12&\n" +
-	"\x04task\x18\x02 \x01(\v2\x12.taskboard.v1.TaskR\x04task\"\xcc\x01\n" +
+	"\x04task\x18\x02 \x01(\v2\x12.taskboard.v1.TaskR\x04task\"\xb4\x01\n" +
 	"\x11UpdateTaskRequest\x12-\n" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x17\n" +
-	"\atask_id\x18\x02 \x01(\tR\x06taskId\x12\x1b\n" +
-	"\tcolumn_id\x18\x03 \x01(\tR\bcolumnId\x12\x1a\n" +
-	"\bposition\x18\x04 \x01(\x05R\bposition\x12\x14\n" +
-	"\x05title\x18\x05 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x06 \x01(\tR\vdescription\"l\n" +
+	"\atask_id\x18\x02 \x01(\tR\x06taskId\x12\x14\n" +
+	"\x05title\x18\x03 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x04 \x01(\tR\vdescription\x12\x1f\n" +
+	"\vassignee_id\x18\x05 \x01(\tR\n" +
+	"assigneeId\"l\n" +
 	"\x12UpdateTaskResponse\x12.\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12&\n" +
+	"\x04task\x18\x02 \x01(\v2\x12.taskboard.v1.TaskR\x04task\"\x9c\x01\n" +
+	"\x0fMoveTaskRequest\x12-\n" +
+	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x17\n" +
+	"\atask_id\x18\x02 \x01(\tR\x06taskId\x12 \n" +
+	"\fto_column_id\x18\x03 \x01(\tR\n" +
+	"toColumnId\x12\x1f\n" +
+	"\vto_position\x18\x04 \x01(\x05R\n" +
+	"toPosition\"j\n" +
+	"\x10MoveTaskResponse\x12.\n" +
 	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12&\n" +
 	"\x04task\x18\x02 \x01(\v2\x12.taskboard.v1.TaskR\x04task\"[\n" +
 	"\x11DeleteTaskRequest\x12-\n" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x17\n" +
 	"\atask_id\x18\x02 \x01(\tR\x06taskId\"D\n" +
 	"\x12DeleteTaskResponse\x12.\n" +
-	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base2\xc9\x02\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base2\x94\x03\n" +
 	"\fTasksService\x12O\n" +
 	"\n" +
 	"CreateTask\x12\x1f.taskboard.v1.CreateTaskRequest\x1a .taskboard.v1.CreateTaskResponse\x12F\n" +
 	"\aGetTask\x12\x1c.taskboard.v1.GetTaskRequest\x1a\x1d.taskboard.v1.GetTaskResponse\x12O\n" +
 	"\n" +
-	"UpdateTask\x12\x1f.taskboard.v1.UpdateTaskRequest\x1a .taskboard.v1.UpdateTaskResponse\x12O\n" +
+	"UpdateTask\x12\x1f.taskboard.v1.UpdateTaskRequest\x1a .taskboard.v1.UpdateTaskResponse\x12I\n" +
+	"\bMoveTask\x12\x1d.taskboard.v1.MoveTaskRequest\x1a\x1e.taskboard.v1.MoveTaskResponse\x12O\n" +
 	"\n" +
 	"DeleteTask\x12\x1f.taskboard.v1.DeleteTaskRequest\x1a .taskboard.v1.DeleteTaskResponseB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
 
@@ -644,7 +766,7 @@ func file_base_v1_tasks_proto_rawDescGZIP() []byte {
 	return file_base_v1_tasks_proto_rawDescData
 }
 
-var file_base_v1_tasks_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_base_v1_tasks_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_base_v1_tasks_proto_goTypes = []any{
 	(*Task)(nil),               // 0: taskboard.v1.Task
 	(*CreateTaskRequest)(nil),  // 1: taskboard.v1.CreateTaskRequest
@@ -653,36 +775,43 @@ var file_base_v1_tasks_proto_goTypes = []any{
 	(*GetTaskResponse)(nil),    // 4: taskboard.v1.GetTaskResponse
 	(*UpdateTaskRequest)(nil),  // 5: taskboard.v1.UpdateTaskRequest
 	(*UpdateTaskResponse)(nil), // 6: taskboard.v1.UpdateTaskResponse
-	(*DeleteTaskRequest)(nil),  // 7: taskboard.v1.DeleteTaskRequest
-	(*DeleteTaskResponse)(nil), // 8: taskboard.v1.DeleteTaskResponse
-	(*BaseRequest)(nil),        // 9: taskboard.v1.BaseRequest
-	(*BaseResponse)(nil),       // 10: taskboard.v1.BaseResponse
+	(*MoveTaskRequest)(nil),    // 7: taskboard.v1.MoveTaskRequest
+	(*MoveTaskResponse)(nil),   // 8: taskboard.v1.MoveTaskResponse
+	(*DeleteTaskRequest)(nil),  // 9: taskboard.v1.DeleteTaskRequest
+	(*DeleteTaskResponse)(nil), // 10: taskboard.v1.DeleteTaskResponse
+	(*BaseRequest)(nil),        // 11: taskboard.v1.BaseRequest
+	(*BaseResponse)(nil),       // 12: taskboard.v1.BaseResponse
 }
 var file_base_v1_tasks_proto_depIdxs = []int32{
-	9,  // 0: taskboard.v1.CreateTaskRequest.base:type_name -> taskboard.v1.BaseRequest
-	10, // 1: taskboard.v1.CreateTaskResponse.base:type_name -> taskboard.v1.BaseResponse
+	11, // 0: taskboard.v1.CreateTaskRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 1: taskboard.v1.CreateTaskResponse.base:type_name -> taskboard.v1.BaseResponse
 	0,  // 2: taskboard.v1.CreateTaskResponse.task:type_name -> taskboard.v1.Task
-	9,  // 3: taskboard.v1.GetTaskRequest.base:type_name -> taskboard.v1.BaseRequest
-	10, // 4: taskboard.v1.GetTaskResponse.base:type_name -> taskboard.v1.BaseResponse
+	11, // 3: taskboard.v1.GetTaskRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 4: taskboard.v1.GetTaskResponse.base:type_name -> taskboard.v1.BaseResponse
 	0,  // 5: taskboard.v1.GetTaskResponse.task:type_name -> taskboard.v1.Task
-	9,  // 6: taskboard.v1.UpdateTaskRequest.base:type_name -> taskboard.v1.BaseRequest
-	10, // 7: taskboard.v1.UpdateTaskResponse.base:type_name -> taskboard.v1.BaseResponse
+	11, // 6: taskboard.v1.UpdateTaskRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 7: taskboard.v1.UpdateTaskResponse.base:type_name -> taskboard.v1.BaseResponse
 	0,  // 8: taskboard.v1.UpdateTaskResponse.task:type_name -> taskboard.v1.Task
-	9,  // 9: taskboard.v1.DeleteTaskRequest.base:type_name -> taskboard.v1.BaseRequest
-	10, // 10: taskboard.v1.DeleteTaskResponse.base:type_name -> taskboard.v1.BaseResponse
-	1,  // 11: taskboard.v1.TasksService.CreateTask:input_type -> taskboard.v1.CreateTaskRequest
-	3,  // 12: taskboard.v1.TasksService.GetTask:input_type -> taskboard.v1.GetTaskRequest
-	5,  // 13: taskboard.v1.TasksService.UpdateTask:input_type -> taskboard.v1.UpdateTaskRequest
-	7,  // 14: taskboard.v1.TasksService.DeleteTask:input_type -> taskboard.v1.DeleteTaskRequest
-	2,  // 15: taskboard.v1.TasksService.CreateTask:output_type -> taskboard.v1.CreateTaskResponse
-	4,  // 16: taskboard.v1.TasksService.GetTask:output_type -> taskboard.v1.GetTaskResponse
-	6,  // 17: taskboard.v1.TasksService.UpdateTask:output_type -> taskboard.v1.UpdateTaskResponse
-	8,  // 18: taskboard.v1.TasksService.DeleteTask:output_type -> taskboard.v1.DeleteTaskResponse
-	15, // [15:19] is the sub-list for method output_type
-	11, // [11:15] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	11, // 9: taskboard.v1.MoveTaskRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 10: taskboard.v1.MoveTaskResponse.base:type_name -> taskboard.v1.BaseResponse
+	0,  // 11: taskboard.v1.MoveTaskResponse.task:type_name -> taskboard.v1.Task
+	11, // 12: taskboard.v1.DeleteTaskRequest.base:type_name -> taskboard.v1.BaseRequest
+	12, // 13: taskboard.v1.DeleteTaskResponse.base:type_name -> taskboard.v1.BaseResponse
+	1,  // 14: taskboard.v1.TasksService.CreateTask:input_type -> taskboard.v1.CreateTaskRequest
+	3,  // 15: taskboard.v1.TasksService.GetTask:input_type -> taskboard.v1.GetTaskRequest
+	5,  // 16: taskboard.v1.TasksService.UpdateTask:input_type -> taskboard.v1.UpdateTaskRequest
+	7,  // 17: taskboard.v1.TasksService.MoveTask:input_type -> taskboard.v1.MoveTaskRequest
+	9,  // 18: taskboard.v1.TasksService.DeleteTask:input_type -> taskboard.v1.DeleteTaskRequest
+	2,  // 19: taskboard.v1.TasksService.CreateTask:output_type -> taskboard.v1.CreateTaskResponse
+	4,  // 20: taskboard.v1.TasksService.GetTask:output_type -> taskboard.v1.GetTaskResponse
+	6,  // 21: taskboard.v1.TasksService.UpdateTask:output_type -> taskboard.v1.UpdateTaskResponse
+	8,  // 22: taskboard.v1.TasksService.MoveTask:output_type -> taskboard.v1.MoveTaskResponse
+	10, // 23: taskboard.v1.TasksService.DeleteTask:output_type -> taskboard.v1.DeleteTaskResponse
+	19, // [19:24] is the sub-list for method output_type
+	14, // [14:19] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_base_v1_tasks_proto_init() }
@@ -697,7 +826,7 @@ func file_base_v1_tasks_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_base_v1_tasks_proto_rawDesc), len(file_base_v1_tasks_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

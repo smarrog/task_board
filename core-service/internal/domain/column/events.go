@@ -16,10 +16,10 @@ func (e CreatedEvent) Name() string          { return "ColumnCreated" }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type MoveEvent struct {
-	Id       Id
-	BoardId  board.Id
-	Position Position
-	At       time.Time
+	Id           Id
+	FromPosition Position
+	ToPosition   Position
+	At           time.Time
 }
 
 func (e MoveEvent) Name() string          { return "ColumnMoved" }

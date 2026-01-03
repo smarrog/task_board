@@ -112,10 +112,10 @@ func createBoardsHandler(log *zerolog.Logger, boardsRepo board.Repository) *grpc
 func createColumnsHandler(log *zerolog.Logger, columnsRepo column.Repository) *grpc.ColumnsHandler {
 	createColumn := columnuc.NewCreateColumnUseCase(columnsRepo)
 	getColumn := columnuc.NewGetColumnUseCase(columnsRepo)
-	updateColumn := columnuc.NewUpdateColumnUseCase(columnsRepo)
+	moveColumn := columnuc.NewMoveColumnUseCase(columnsRepo)
 	deleteColumn := columnuc.NewDeleteColumnUseCase(columnsRepo)
 
-	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, updateColumn, deleteColumn)
+	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, moveColumn, deleteColumn)
 	return columnsHandler
 }
 
@@ -123,8 +123,9 @@ func createTasksHandler(log *zerolog.Logger, tasksRepo task.Repository) *grpc.Ta
 	createTask := taskuc.NewCreateTaskUseCase(tasksRepo)
 	getTask := taskuc.NewGetTaskUseCase(tasksRepo)
 	updateTask := taskuc.NewUpdateTaskUseCase(tasksRepo)
+	moveTask := taskuc.NewMoveTaskUseCase(tasksRepo)
 	deleteTask := taskuc.NewDeleteTaskUseCase(tasksRepo)
 
-	tasksHandler := grpc.NewTasksHandler(log, createTask, getTask, updateTask, deleteTask)
+	tasksHandler := grpc.NewTasksHandler(log, createTask, getTask, updateTask, moveTask, deleteTask)
 	return tasksHandler
 }

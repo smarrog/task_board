@@ -40,12 +40,22 @@ message GetTaskResponse {
 message UpdateTaskRequest {
   BaseRequest base = 1;
   string task_id = 2;
-  string column_id = 3;
-  int32 position = 4;
-  string title = 5;
-  string description = 6;
+  string title = 3;
+  string description = 4;
+  string assignee_id = 5;
 }
 message UpdateTaskResponse {
+  BaseResponse base = 1;
+  Task task = 2;
+}
+
+message MoveTaskRequest {
+  BaseRequest base = 1;
+  string task_id = 2;
+  string to_column_id = 3;
+  int32 to_position = 4;
+}
+message MoveTaskResponse {
   BaseResponse base = 1;
   Task task = 2;
 }
@@ -62,5 +72,6 @@ service TasksService {
   rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
   rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
   rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse);
+  rpc MoveTask(MoveTaskRequest) returns (MoveTaskResponse);
   rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse);
 }

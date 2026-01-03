@@ -27,6 +27,12 @@ func NewBoardsRepo(txm *TxManager, log *zerolog.Logger, outbox *OutboxRepo) *Boa
 	}
 }
 
+func (r *BoardsRepo) InTx(ctx context.Context, fn func(ctx context.Context) error) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, _ pgx.Tx) error {
+		return fn(ctx)
+	})
+}
+
 func (r *BoardsRepo) Save(ctx context.Context, b *board.Board) error {
 	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		_, err := tx.Exec(ctx, `

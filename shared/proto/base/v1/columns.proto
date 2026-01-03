@@ -31,13 +31,12 @@ message GetColumnResponse {
   Column column = 2;
 }
 
-message UpdateColumnRequest {
+message MoveColumnRequest {
   BaseRequest base = 1;
   string column_id = 2;
-  string board_id = 3;
-  int32 position = 4;
+  int32 to_position = 3;
 }
-message UpdateColumnResponse {
+message MoveColumnResponse {
   BaseResponse base = 1;
   Column column = 2;
 }
@@ -54,6 +53,6 @@ message DeleteColumnResponse {
 service ColumnsService {
   rpc CreateColumn(CreateColumnRequest) returns (CreateColumnResponse);
   rpc GetColumn(GetColumnRequest) returns (GetColumnResponse);
-  rpc UpdateColumn(UpdateColumnRequest) returns (UpdateColumnResponse);
+  rpc MoveColumn(MoveColumnRequest) returns (MoveColumnResponse);
   rpc DeleteColumn(DeleteColumnRequest) returns (DeleteColumnResponse);
 }

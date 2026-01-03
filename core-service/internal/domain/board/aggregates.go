@@ -92,3 +92,7 @@ func (b *Board) PullEvents() []common.DomainEvent {
 	b.events = nil
 	return out
 }
+
+type Columns struct {
+	boardId Id
+}

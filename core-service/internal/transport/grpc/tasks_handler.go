@@ -10,13 +10,14 @@ import (
 )
 
 type TasksHandler struct {
-	v1.UnimplementedBoardsServiceServer
+	v1.UnimplementedTasksServiceServer
 
 	log *zerolog.Logger
 
 	createTask *taskuc.CreateTaskUseCase
 	getTask    *taskuc.GetTaskUseCase
 	updateTask *taskuc.UpdateTaskUseCase
+	moveTask   *taskuc.MoveTaskUseCase
 	deleteTask *taskuc.DeleteTaskUseCase
 }
 
@@ -25,6 +26,7 @@ func NewTasksHandler(
 	createTask *taskuc.CreateTaskUseCase,
 	getTask *taskuc.GetTaskUseCase,
 	updateTask *taskuc.UpdateTaskUseCase,
+	moveTask *taskuc.MoveTaskUseCase,
 	deleteTask *taskuc.DeleteTaskUseCase,
 ) *TasksHandler {
 	return &TasksHandler{
@@ -32,6 +34,7 @@ func NewTasksHandler(
 		createTask: createTask,
 		getTask:    getTask,
 		updateTask: updateTask,
+		moveTask:   moveTask,
 		deleteTask: deleteTask,
 	}
 }
@@ -73,8 +76,6 @@ func (h *TasksHandler) GetTask(ctx context.Context, req *v1.GetTaskRequest) (*v1
 func (h *TasksHandler) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest) (*v1.UpdateTaskResponse, error) {
 	input := taskuc.UpdateTaskInput{
 		TaskId:      req.TaskId,
-		ColumnId:    req.ColumnId,
-		Position:    int(req.Position),
 		Title:       req.Title,
 		Description: req.Description,
 		AssigneeId:  req.AssigneeId,
@@ -86,6 +87,22 @@ func (h *TasksHandler) UpdateTask(ctx context.Context, req *v1.UpdateTaskRequest
 	}
 
 	return &v1.UpdateTaskResponse{
+		Task: toProtoTask(output.Task),
+	}, nil
+}
+
+func (h *TasksHandler) MoveTask(ctx context.Context, req *v1.MoveTaskRequest) (*v1.MoveTaskResponse, error) {
+	input := taskuc.MoveTaskInput{
+		TaskId:     req.TaskId,
+		ToColumnId: req.ToColumnId,
+		ToPosition: int(req.ToPosition),
+	}
+	output, err := h.moveTask.Execute(ctx, input)
+	if err != nil {
+		return nil, mapTasksErr(err)
+	}
+
+	return &v1.MoveTaskResponse{
 		Task: toProtoTask(output.Task),
 	}, nil
 }

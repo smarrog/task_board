@@ -21,10 +21,12 @@ func (e CreatedEvent) Name() string          { return "TaskCreated" }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type MoveEvent struct {
-	Id       Id
-	ColumnId column.Id
-	Position int
-	At       time.Time
+	Id           Id
+	FromColumnId column.Id
+	ToColumnId   column.Id
+	FromPosition Position
+	ToPosition   Position
+	At           time.Time
 }
 
 func (e MoveEvent) Name() string          { return "TaskMoved" }

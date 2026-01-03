@@ -55,13 +55,15 @@ func (c *Column) Position() Position   { return c.position }
 func (c *Column) CreatedAt() time.Time { return c.createdAt }
 func (c *Column) UpdatedAt() time.Time { return c.updatedAt }
 
-func (c *Column) Update(boardId board.Id, position Position) {
-	c.boardId = boardId
-	c.position = position
+func (c *Column) Move(toPosition Position) {
+	fromPosition := c.position
+
+	c.position = toPosition
+
 	c.events = append(c.events, MoveEvent{
-		Id:       c.id,
-		BoardId:  c.boardId,
-		Position: position,
+		Id:           c.id,
+		FromPosition: fromPosition,
+		ToPosition:   toPosition,
 	})
 }
 
@@ -73,4 +75,8 @@ func (c *Column) PullEvents() []common.DomainEvent {
 	copy(out, c.events)
 	c.events = nil
 	return out
+}
+
+type Tasks struct {
+	columnId Id
 }

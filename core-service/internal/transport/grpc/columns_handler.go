@@ -10,13 +10,13 @@ import (
 )
 
 type ColumnsHandler struct {
-	v1.UnimplementedBoardsServiceServer
+	v1.UnimplementedColumnsServiceServer
 
 	log *zerolog.Logger
 
 	createColumn *columnuc.CreateColumnUseCase
 	getColumn    *columnuc.GetColumnUseCase
-	updateColumn *columnuc.UpdateColumnUseCase
+	moveColumn   *columnuc.MoveColumnUseCase
 	deleteColumn *columnuc.DeleteColumnUseCase
 }
 
@@ -24,14 +24,14 @@ func NewColumnsHandler(
 	log *zerolog.Logger,
 	createColumn *columnuc.CreateColumnUseCase,
 	getColumn *columnuc.GetColumnUseCase,
-	updateColumn *columnuc.UpdateColumnUseCase,
+	moveColumn *columnuc.MoveColumnUseCase,
 	deleteColumn *columnuc.DeleteColumnUseCase,
 ) *ColumnsHandler {
 	return &ColumnsHandler{
 		log:          log,
 		createColumn: createColumn,
 		getColumn:    getColumn,
-		updateColumn: updateColumn,
+		moveColumn:   moveColumn,
 		deleteColumn: deleteColumn,
 	}
 }
@@ -67,19 +67,19 @@ func (h *ColumnsHandler) GetColumn(ctx context.Context, req *v1.GetColumnRequest
 	}, nil
 }
 
-func (h *ColumnsHandler) UpdateColumn(ctx context.Context, req *v1.UpdateColumnRequest) (*v1.UpdateColumnResponse, error) {
-	input := columnuc.UpdateColumnInput{
+func (h *ColumnsHandler) MoveColumn(ctx context.Context, req *v1.MoveColumnRequest) (*v1.MoveColumnResponse, error) {
+	input := columnuc.MoveColumnRequest{
 		ColumnId: req.ColumnId,
 		BoardId:  req.BoardId,
 		Position: int(req.Position),
 	}
 
-	output, err := h.updateColumn.Execute(ctx, input)
+	output, err := h.moveColumn.Execute(ctx, input)
 	if err != nil {
 		return nil, mapColumnsErr(err)
 	}
 
-	return &v1.UpdateColumnResponse{
+	return &v1.MoveColumnResponse{
 		Column: toProtoColumn(output.Column),
 	}, nil
 }

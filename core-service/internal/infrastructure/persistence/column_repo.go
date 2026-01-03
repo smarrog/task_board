@@ -25,6 +25,12 @@ func NewColumnsRepo(txm *TxManager, log *zerolog.Logger, outbox *OutboxRepo) *Co
 	}
 }
 
+func (r *ColumnsRepo) InTx(ctx context.Context, fn func(ctx context.Context) error) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, _ pgx.Tx) error {
+		return fn(ctx)
+	})
+}
+
 func (r *ColumnsRepo) Save(ctx context.Context, c *column.Column) error {
 	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		_, err := tx.Exec(ctx, `
@@ -94,5 +100,34 @@ func (r *ColumnsRepo) Delete(ctx context.Context, id column.Id) error {
 		// TODO send event to outbox
 
 		return nil
+	})
+}
+
+func (r *ColumnsRepo) LockBoardColumns(ctx context.Context, boardId board.Id) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `SELECT id FROM columns WHERE board_id=$1 FOR UPDATE`, boardId.UUID())
+		return err
+	})
+}
+
+func (r *ColumnsRepo) CountInBoard(ctx context.Context, boardId board.Id) (int, error) {
+	var n int
+	err := r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return tx.QueryRow(ctx, `SELECT COUNT(*) FROM columns WHERE board_id=$1`, boardId.UUID()).Scan(&n)
+	})
+	return n, err
+}
+
+func (r *ColumnsRepo) ShiftPositions(ctx context.Context, boardId board.Id, fromIncl, toIncl int, delta int) error {
+	if fromIncl > toIncl {
+		return nil
+	}
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `
+			UPDATE columns
+			SET position = position + $4
+			WHERE board_id=$1 AND position BETWEEN $2 AND $3
+		`, boardId.UUID(), fromIncl, toIncl, delta)
+		return err
 	})
 }

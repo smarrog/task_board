@@ -27,6 +27,7 @@ func New(
 	assigneeId common.UserId,
 ) *Task {
 	now := time.Now().UTC()
+
 	t := &Task{
 		id:          NewId(),
 		columnId:    columnId,
@@ -37,6 +38,7 @@ func New(
 		createdAt:   now,
 		updatedAt:   now,
 	}
+
 	t.events = append(t.events, CreatedEvent{
 		Id:          t.id,
 		ColumnId:    columnId,
@@ -44,6 +46,7 @@ func New(
 		Title:       title,
 		Description: desc,
 		AssigneeId:  assigneeId,
+		At:          now,
 	})
 	return t
 }
@@ -79,17 +82,40 @@ func (t *Task) AssigneeId() common.UserId { return t.assigneeId }
 func (t *Task) CreatedAt() time.Time      { return t.createdAt }
 func (t *Task) UpdatedAt() time.Time      { return t.updatedAt }
 
-func (t *Task) Update(columnId column.Id, position Position, title Title, desc Description, assigneeId common.UserId) {
-	t.columnId = columnId
-	t.position = position
+func (t *Task) Update(title Title, desc Description, assigneeId common.UserId) {
+	now := time.Now().UTC()
+
 	t.title = title
 	t.description = desc
 	t.assigneeId = assigneeId
+	t.updatedAt = now
+
 	t.events = append(t.events, UpdatedEvent{
 		Id:          t.id,
 		Title:       t.title,
 		Description: t.description,
 		AssigneeId:  assigneeId,
+		At:          t.updatedAt,
+	})
+}
+
+func (t *Task) Move(toColumnId column.Id, toPosition Position) {
+	now := time.Now().UTC()
+
+	fromColumnId := t.columnId
+	fromPosition := t.position
+
+	t.columnId = toColumnId
+	t.position = toPosition
+	t.updatedAt = now
+
+	t.events = append(t.events, MoveEvent{
+		Id:           t.id,
+		FromColumnId: fromColumnId,
+		ToColumnId:   toColumnId,
+		FromPosition: fromPosition,
+		ToPosition:   toPosition,
+		At:           t.updatedAt,
 	})
 }
 

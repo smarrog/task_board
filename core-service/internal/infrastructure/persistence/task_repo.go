@@ -26,6 +26,12 @@ func NewTasksRepo(txm *TxManager, log *zerolog.Logger, outbox *OutboxRepo) *Task
 	}
 }
 
+func (r *TasksRepo) InTx(ctx context.Context, fn func(ctx context.Context) error) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, _ pgx.Tx) error {
+		return fn(ctx)
+	})
+}
+
 func (r *TasksRepo) Save(ctx context.Context, t *task.Task) error {
 	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		_, err := tx.Exec(ctx, `
@@ -116,5 +122,56 @@ func (r *TasksRepo) Delete(ctx context.Context, id task.Id) error {
 		// TODO send event to outbox
 
 		return nil
+	})
+}
+
+func (r *TasksRepo) LockColumnTasks(ctx context.Context, columnId column.Id) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `SELECT id FROM tasks WHERE column_id=$1 FOR UPDATE`, columnId.UUID())
+		return err
+	})
+}
+
+func (r *TasksRepo) CountInColumn(ctx context.Context, columnId column.Id) (int, error) {
+	var n int
+	err := r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		return tx.QueryRow(ctx, `SELECT COUNT(*) FROM tasks WHERE column_id=$1`, columnId.UUID()).Scan(&n)
+	})
+	return n, err
+}
+
+func (r *TasksRepo) ShiftPositions(ctx context.Context, columnId column.Id, fromIncl, toIncl int, delta int) error {
+	if fromIncl > toIncl || delta == 0 {
+		return nil
+	}
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `
+			UPDATE tasks
+			SET position = position + $4
+			WHERE column_id=$1 AND position BETWEEN $2 AND $3
+		`, columnId.UUID(), fromIncl, toIncl, delta)
+		return err
+	})
+}
+
+func (r *TasksRepo) ShiftAfterRemove(ctx context.Context, columnId column.Id, fromPos int) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `
+			UPDATE tasks
+			SET position = position - 1
+			WHERE column_id=$1 AND position > $2
+		`, columnId.UUID(), fromPos)
+		return err
+	})
+}
+
+func (r *TasksRepo) ShiftForInsert(ctx context.Context, columnId column.Id, toPos int) error {
+	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `
+			UPDATE tasks
+			SET position = position + 1
+			WHERE column_id=$1 AND position >= $2
+		`, columnId.UUID(), toPos)
+		return err
 	})
 }

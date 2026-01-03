@@ -22,6 +22,7 @@ const (
 	TasksService_CreateTask_FullMethodName = "/taskboard.v1.TasksService/CreateTask"
 	TasksService_GetTask_FullMethodName    = "/taskboard.v1.TasksService/GetTask"
 	TasksService_UpdateTask_FullMethodName = "/taskboard.v1.TasksService/UpdateTask"
+	TasksService_MoveTask_FullMethodName   = "/taskboard.v1.TasksService/MoveTask"
 	TasksService_DeleteTask_FullMethodName = "/taskboard.v1.TasksService/DeleteTask"
 )
 
@@ -32,6 +33,7 @@ type TasksServiceClient interface {
 	CreateTask(ctx context.Context, in *CreateTaskRequest, opts ...grpc.CallOption) (*CreateTaskResponse, error)
 	GetTask(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*GetTaskResponse, error)
 	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*UpdateTaskResponse, error)
+	MoveTask(ctx context.Context, in *MoveTaskRequest, opts ...grpc.CallOption) (*MoveTaskResponse, error)
 	DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskResponse, error)
 }
 
@@ -73,6 +75,16 @@ func (c *tasksServiceClient) UpdateTask(ctx context.Context, in *UpdateTaskReque
 	return out, nil
 }
 
+func (c *tasksServiceClient) MoveTask(ctx context.Context, in *MoveTaskRequest, opts ...grpc.CallOption) (*MoveTaskResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MoveTaskResponse)
+	err := c.cc.Invoke(ctx, TasksService_MoveTask_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tasksServiceClient) DeleteTask(ctx context.Context, in *DeleteTaskRequest, opts ...grpc.CallOption) (*DeleteTaskResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteTaskResponse)
@@ -90,6 +102,7 @@ type TasksServiceServer interface {
 	CreateTask(context.Context, *CreateTaskRequest) (*CreateTaskResponse, error)
 	GetTask(context.Context, *GetTaskRequest) (*GetTaskResponse, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error)
+	MoveTask(context.Context, *MoveTaskRequest) (*MoveTaskResponse, error)
 	DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskResponse, error)
 	mustEmbedUnimplementedTasksServiceServer()
 }
@@ -109,6 +122,9 @@ func (UnimplementedTasksServiceServer) GetTask(context.Context, *GetTaskRequest)
 }
 func (UnimplementedTasksServiceServer) UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateTask not implemented")
+}
+func (UnimplementedTasksServiceServer) MoveTask(context.Context, *MoveTaskRequest) (*MoveTaskResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MoveTask not implemented")
 }
 func (UnimplementedTasksServiceServer) DeleteTask(context.Context, *DeleteTaskRequest) (*DeleteTaskResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeleteTask not implemented")
@@ -188,6 +204,24 @@ func _TasksService_UpdateTask_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TasksService_MoveTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MoveTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TasksServiceServer).MoveTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TasksService_MoveTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TasksServiceServer).MoveTask(ctx, req.(*MoveTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TasksService_DeleteTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteTaskRequest)
 	if err := dec(in); err != nil {
@@ -224,6 +258,10 @@ var TasksService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateTask",
 			Handler:    _TasksService_UpdateTask_Handler,
+		},
+		{
+			MethodName: "MoveTask",
+			Handler:    _TasksService_MoveTask_Handler,
 		},
 		{
 			MethodName: "DeleteTask",
