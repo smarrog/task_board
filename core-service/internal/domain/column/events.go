@@ -1,33 +1,32 @@
 package column
 
-import (
-	"time"
+import "time"
 
-	"github.com/smarrog/task-board/core-service/internal/domain/board"
-)
+// Domain events are JSON-serializable (primitives + exported fields),
+// so the outbox can marshal them directly.
 
 type CreatedEvent struct {
-	Id      Id
-	BoardId board.Id
-	At      time.Time
+	Id      string    `json:"id"`
+	BoardId string    `json:"board_id"`
+	At      time.Time `json:"at"`
 }
 
 func (e CreatedEvent) Name() string          { return "ColumnCreated" }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type MoveEvent struct {
-	Id           Id
-	FromPosition Position
-	ToPosition   Position
-	At           time.Time
+	Id           string    `json:"id"`
+	FromPosition int       `json:"from_position"`
+	ToPosition   int       `json:"to_position"`
+	At           time.Time `json:"at"`
 }
 
 func (e MoveEvent) Name() string          { return "ColumnMoved" }
 func (e MoveEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
-	Id Id
-	At time.Time
+	Id string    `json:"id"`
+	At time.Time `json:"at"`
 }
 
 func (e DeletedEvent) Name() string          { return "ColumnDeleted" }

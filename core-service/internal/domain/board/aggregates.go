@@ -32,10 +32,11 @@ func New(ownerID common.UserId, title Title, description Description) (*Board, e
 		updatedAt:   now,
 	}
 	b.events = append(b.events, CreatedEvent{
-		Id:      b.id,
-		OwnerId: b.ownerId,
-		Title:   b.title,
-		At:      now,
+		Id:          b.id.String(),
+		OwnerId:     b.ownerId.String(),
+		Title:       b.title.String(),
+		Description: b.description.String(),
+		At:          now,
 	})
 	return b, nil
 }
@@ -70,15 +71,17 @@ func (b *Board) Update(title Title, description Description) {
 	b.description = description
 	b.updatedAt = time.Now().UTC()
 	b.events = append(b.events, UpdatedEvent{
-		Id: b.id,
-		At: b.updatedAt,
+		Id:          b.id.String(),
+		Title:       b.title.String(),
+		Description: b.description.String(),
+		At:          b.updatedAt,
 	})
 }
 
 func (b *Board) MarkDeleted() {
 	at := time.Now().UTC()
 	b.events = append(b.events, DeletedEvent{
-		Id: b.id,
+		Id: b.id.String(),
 		At: at,
 	})
 }

@@ -1,51 +1,50 @@
-﻿package task
+package task
 
-import (
-	"time"
+import "time"
 
-	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
-)
+// IMPORTANT:
+// Domain events are stored in a JSON-friendly shape (primitives + exported fields),
+// so that outbox can serialize them without extra DTO mapping.
 
 type CreatedEvent struct {
-	Id          Id
-	ColumnId    column.Id
-	Position    Position
-	Title       Title
-	Description Description
-	AssigneeId  common.UserId
-	At          time.Time
+	Id          string    `json:"id"`
+	ColumnId    string    `json:"column_id"`
+	Position    int       `json:"position"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	AssigneeId  string    `json:"assignee_id"`
+	At          time.Time `json:"at"`
 }
 
 func (e CreatedEvent) Name() string          { return "TaskCreated" }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type MoveEvent struct {
-	Id           Id
-	FromColumnId column.Id
-	ToColumnId   column.Id
-	FromPosition Position
-	ToPosition   Position
-	At           time.Time
+	Id           string    `json:"id"`
+	FromColumnId string    `json:"from_column_id"`
+	ToColumnId   string    `json:"to_column_id"`
+	FromPosition int       `json:"from_position"`
+	ToPosition   int       `json:"to_position"`
+	At           time.Time `json:"at"`
 }
 
 func (e MoveEvent) Name() string          { return "TaskMoved" }
 func (e MoveEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
-	Id          Id
-	Title       Title
-	Description Description
-	AssigneeId  common.UserId
-	At          time.Time
+	Id          string    `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	AssigneeId  string    `json:"assignee_id"`
+	At          time.Time `json:"at"`
 }
 
 func (e UpdatedEvent) Name() string          { return "TaskUpdated" }
 func (e UpdatedEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
-	Id Id
-	At time.Time
+	Id string    `json:"id"`
+	At time.Time `json:"at"`
 }
 
 func (e DeletedEvent) Name() string          { return "TaskDeleted" }

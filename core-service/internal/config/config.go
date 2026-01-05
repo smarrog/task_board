@@ -26,6 +26,7 @@ type Config struct {
 
 	KafkaGroupId string
 	KafkaBrokers string
+	KafkaAcks    int
 	KafkaTopic   []string
 
 	OutboxPollInterval time.Duration
@@ -53,9 +54,10 @@ func Load() *Config {
 
 		KafkaGroupId: env.GetString("KAFKA_GROUP_ID", ""),
 		KafkaBrokers: env.GetString("KAFKA_BROKERS", ""),
+		KafkaAcks:    env.GetInt("KAFKA_ACKS", -1),
 		KafkaTopic:   env.GetSplitString("KAFKA_TOPICS", []string{}),
 
-		OutboxPollInterval: env.GetDuration("OUTBOX_POLL_INTERVAL", 500*time.Millisecond),
+		OutboxPollInterval: env.GetDuration("OUTBOX_POLL_INTERVAL", 5000*time.Millisecond),
 		OutboxBatchSize:    env.GetInt("OUTBOX_BATCH_SIZE", 50),
 
 		LogLevel: logger.StrToLogLevel(env.GetString("LOG_LEVEL", "info")),

@@ -9,6 +9,7 @@ import (
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
+	appkafka "github.com/smarrog/task-board/core-service/internal/infrastructure/kafka"
 	"github.com/smarrog/task-board/core-service/internal/infrastructure/persistence"
 	"github.com/smarrog/task-board/core-service/internal/transport/grpc"
 	boarduc "github.com/smarrog/task-board/core-service/internal/usecase/board"
@@ -18,10 +19,12 @@ import (
 )
 
 type App struct {
-	log  *zerolog.Logger
-	cfg  *config.Config
-	grpc *grpc.Server
-	pg   *pgxpool.Pool
+	log           *zerolog.Logger
+	cfg           *config.Config
+	grpc          *grpc.Server
+	pg            *pgxpool.Pool
+	outboxWorker  *persistence.OutboxWorker
+	kafkaProducer *appkafka.Producer
 }
 
 func (a *App) Init() error {
@@ -36,9 +39,11 @@ func (a *App) Init() error {
 		return err
 	}
 
+	a.pg = pg
+
 	txm := persistence.NewTxManager(pg, log)
 
-	outboxRepo := persistence.NewOutboxRepo(txm)
+	outboxRepo := persistence.NewOutboxRepo(txm, log)
 	boardsRepo := persistence.NewBoardsRepo(txm, log, outboxRepo)
 	columnsRepo := persistence.NewColumnsRepo(txm, log, outboxRepo)
 	tasksRepo := persistence.NewTasksRepo(txm, log, outboxRepo)
@@ -47,20 +52,36 @@ func (a *App) Init() error {
 	columnsHandler := createColumnsHandler(log, columnsRepo)
 	tasksHandler := createTasksHandler(log, tasksRepo)
 
-	a.pg = pg
 	a.grpc = grpc.NewServer(log, boardsHandler, columnsHandler, tasksHandler)
+
+	producer, err := appkafka.NewProducer(cfg, log)
+	if err != nil {
+		return err
+	}
+
+	a.kafkaProducer = producer
+	a.outboxWorker = persistence.NewOutboxWorker(txm, outboxRepo, producer, cfg.KafkaTopic[0], cfg.OutboxBatchSize, cfg.OutboxPollInterval, log)
 
 	return nil
 }
 
 func (a *App) Run(ctx context.Context) error {
 	errCh := make(chan error, 1)
+
+	if a.outboxWorker != nil {
+		go func() {
+			errCh <- a.outboxWorker.Run(ctx)
+		}()
+	}
 	go func() {
 		errCh <- a.grpc.Run(":" + a.cfg.GRPCPort)
 	}()
 
 	select {
 	case <-ctx.Done():
+		if a.kafkaProducer != nil {
+			a.kafkaProducer.Close()
+		}
 		a.pg.Close()
 		a.grpc.Stop()
 		return nil

@@ -1,35 +1,34 @@
 package board
 
-import (
-	"time"
+import "time"
 
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
-)
+// Domain events are JSON-serializable (primitives + exported fields),
+// so the outbox can marshal them directly.
 
 type CreatedEvent struct {
-	Id          Id
-	OwnerId     common.UserId
-	Title       Title
-	Description Description
-	At          time.Time
+	Id          string    `json:"id"`
+	OwnerId     string    `json:"owner_id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	At          time.Time `json:"at"`
 }
 
 func (e CreatedEvent) Name() string          { return "BoardCreated" }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
-	Id          Id
-	Title       Title
-	Description Description
-	At          time.Time
+	Id          string    `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
+	At          time.Time `json:"at"`
 }
 
 func (e UpdatedEvent) Name() string          { return "BoardUpdated" }
 func (e UpdatedEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
-	Id Id
-	At time.Time
+	Id string    `json:"id"`
+	At time.Time `json:"at"`
 }
 
 func (e DeletedEvent) Name() string          { return "BoardDeleted" }

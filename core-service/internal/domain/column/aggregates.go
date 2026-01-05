@@ -26,8 +26,8 @@ func New(boardId board.Id, position Position) *Column {
 		updatedAt: now,
 	}
 	c.events = append(c.events, CreatedEvent{
-		Id:      c.id,
-		BoardId: c.boardId,
+		Id:      c.id.String(),
+		BoardId: c.boardId.String(),
 		At:      c.createdAt,
 	})
 	return c
@@ -61,9 +61,10 @@ func (c *Column) Move(toPosition Position) {
 	c.position = toPosition
 
 	c.events = append(c.events, MoveEvent{
-		Id:           c.id,
-		FromPosition: fromPosition,
-		ToPosition:   toPosition,
+		Id:           c.id.String(),
+		FromPosition: fromPosition.Int(),
+		ToPosition:   toPosition.Int(),
+		At:           time.Now().UTC(),
 	})
 }
 

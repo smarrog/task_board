@@ -40,12 +40,12 @@ func New(
 	}
 
 	t.events = append(t.events, CreatedEvent{
-		Id:          t.id,
-		ColumnId:    columnId,
-		Position:    position,
-		Title:       title,
-		Description: desc,
-		AssigneeId:  assigneeId,
+		Id:          t.id.String(),
+		ColumnId:    columnId.String(),
+		Position:    position.Int(),
+		Title:       title.String(),
+		Description: desc.String(),
+		AssigneeId:  assigneeId.String(),
 		At:          now,
 	})
 	return t
@@ -91,10 +91,10 @@ func (t *Task) Update(title Title, desc Description, assigneeId common.UserId) {
 	t.updatedAt = now
 
 	t.events = append(t.events, UpdatedEvent{
-		Id:          t.id,
-		Title:       t.title,
-		Description: t.description,
-		AssigneeId:  assigneeId,
+		Id:          t.id.String(),
+		Title:       t.title.String(),
+		Description: t.description.String(),
+		AssigneeId:  assigneeId.String(),
 		At:          t.updatedAt,
 	})
 }
@@ -110,11 +110,11 @@ func (t *Task) Move(toColumnId column.Id, toPosition Position) {
 	t.updatedAt = now
 
 	t.events = append(t.events, MoveEvent{
-		Id:           t.id,
-		FromColumnId: fromColumnId,
-		ToColumnId:   toColumnId,
-		FromPosition: fromPosition,
-		ToPosition:   toPosition,
+		Id:           t.id.String(),
+		FromColumnId: fromColumnId.String(),
+		ToColumnId:   toColumnId.String(),
+		FromPosition: fromPosition.Int(),
+		ToPosition:   toPosition.Int(),
 		At:           t.updatedAt,
 	})
 }
