@@ -119,7 +119,11 @@ func (r *TasksRepo) Delete(ctx context.Context, id task.Id) error {
 			return task.ErrNotFound
 		}
 
-		// TODO send event to outbox
+		events := []common.DomainEvent{task.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
+		if err := r.outbox.SaveEvents(ctx, events); err != nil {
+			return err
+		}
+
 
 		return nil
 	})

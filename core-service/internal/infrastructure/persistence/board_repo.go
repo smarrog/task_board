@@ -151,7 +151,11 @@ func (r *BoardsRepo) Delete(ctx context.Context, id board.Id) error {
 			return board.ErrNotFound
 		}
 
-		// TODO send event to outbox
+		events := []common.DomainEvent{board.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
+		if err := r.outbox.SaveEvents(ctx, events); err != nil {
+			return err
+		}
+
 
 		return nil
 	})
