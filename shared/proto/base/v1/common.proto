@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package taskboard.v1;
 
-option go_package = "github.com/smarrog/task-board/shared/proto/v1;v1";
+option go_package = "github.com/smarrog/task-board/shared/proto/base/v1;v1";
 
 message BaseRequest {
   string requester_id = 1;

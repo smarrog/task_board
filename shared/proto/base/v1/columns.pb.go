@@ -545,7 +545,7 @@ const file_base_v1_columns_proto_rawDesc = "" +
 	"\tGetColumn\x12\x1e.taskboard.v1.GetColumnRequest\x1a\x1f.taskboard.v1.GetColumnResponse\x12O\n" +
 	"\n" +
 	"MoveColumn\x12\x1f.taskboard.v1.MoveColumnRequest\x1a .taskboard.v1.MoveColumnResponse\x12U\n" +
-	"\fDeleteColumn\x12!.taskboard.v1.DeleteColumnRequest\x1a\".taskboard.v1.DeleteColumnResponseB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
+	"\fDeleteColumn\x12!.taskboard.v1.DeleteColumnRequest\x1a\".taskboard.v1.DeleteColumnResponseB7Z5github.com/smarrog/task-board/shared/proto/base/v1;v1b\x06proto3"
 
 var (
 	file_base_v1_columns_proto_rawDescOnce sync.Once

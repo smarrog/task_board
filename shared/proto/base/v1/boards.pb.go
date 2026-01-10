@@ -691,7 +691,7 @@ const file_base_v1_boards_proto_rawDesc = "" +
 	"\n" +
 	"ListBoards\x12\x1f.taskboard.v1.ListBoardsRequest\x1a .taskboard.v1.ListBoardsResponse\x12R\n" +
 	"\vUpdateBoard\x12 .taskboard.v1.UpdateBoardRequest\x1a!.taskboard.v1.UpdateBoardResponse\x12R\n" +
-	"\vDeleteBoard\x12 .taskboard.v1.DeleteBoardRequest\x1a!.taskboard.v1.DeleteBoardResponseB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
+	"\vDeleteBoard\x12 .taskboard.v1.DeleteBoardRequest\x1a!.taskboard.v1.DeleteBoardResponseB7Z5github.com/smarrog/task-board/shared/proto/base/v1;v1b\x06proto3"
 
 var (
 	file_base_v1_boards_proto_rawDescOnce sync.Once

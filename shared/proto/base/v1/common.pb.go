@@ -108,7 +108,7 @@ const file_base_v1_common_proto_rawDesc = "" +
 	"\x14base/v1/common.proto\x12\ftaskboard.v1\"0\n" +
 	"\vBaseRequest\x12!\n" +
 	"\frequester_id\x18\x01 \x01(\tR\vrequesterId\"\x0e\n" +
-	"\fBaseResponseB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
+	"\fBaseResponseB7Z5github.com/smarrog/task-board/shared/proto/base/v1;v1b\x06proto3"
 
 var (
 	file_base_v1_common_proto_rawDescOnce sync.Once

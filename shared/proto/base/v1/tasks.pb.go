@@ -752,7 +752,7 @@ const file_base_v1_tasks_proto_rawDesc = "" +
 	"UpdateTask\x12\x1f.taskboard.v1.UpdateTaskRequest\x1a .taskboard.v1.UpdateTaskResponse\x12I\n" +
 	"\bMoveTask\x12\x1d.taskboard.v1.MoveTaskRequest\x1a\x1e.taskboard.v1.MoveTaskResponse\x12O\n" +
 	"\n" +
-	"DeleteTask\x12\x1f.taskboard.v1.DeleteTaskRequest\x1a .taskboard.v1.DeleteTaskResponseB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
+	"DeleteTask\x12\x1f.taskboard.v1.DeleteTaskRequest\x1a .taskboard.v1.DeleteTaskResponseB7Z5github.com/smarrog/task-board/shared/proto/base/v1;v1b\x06proto3"
 
 var (
 	file_base_v1_tasks_proto_rawDescOnce sync.Once

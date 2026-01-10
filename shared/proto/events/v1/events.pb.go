@@ -415,7 +415,7 @@ const file_events_v1_events_proto_rawDesc = "" +
 	"\bsnapshot\x18\x01 \x01(\v2\x1a.taskboard.v1.TaskSnapshotR\bsnapshot\x12 \n" +
 	"\fto_column_id\x18\x02 \x01(\x03R\n" +
 	"toColumnId\x12\x1e\n" +
-	"\vto_board_id\x18\x03 \x01(\x03R\ttoBoardIdB2Z0github.com/smarrog/task-board/shared/proto/v1;v1b\x06proto3"
+	"\vto_board_id\x18\x03 \x01(\x03R\ttoBoardIdB7Z5github.com/smarrog/task-board/shared/proto/base/v1;v1b\x06proto3"
 
 var (
 	file_events_v1_events_proto_rawDescOnce sync.Once
