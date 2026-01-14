@@ -5,12 +5,18 @@ package taskboard.v1;
 option go_package = "github.com/smarrog/task-board/shared/proto/base/v1;v1";
 
 import "base/v1/common.proto";
+import "base/v1/columns.proto";
 
 message Board {
   string id = 1;
   string owner_id = 2;
   string title = 3;
   string description = 4;
+}
+
+message BoardFull {
+  Board board = 1;
+  repeated ColumnFull columns = 2;
 }
 
 message CreateBoardRequest {
@@ -21,7 +27,7 @@ message CreateBoardRequest {
 }
 message CreateBoardResponse {
   BaseResponse base = 1;
-  Board board = 2;
+  BoardFull data = 2;
 }
 
 message GetBoardRequest {
@@ -30,7 +36,7 @@ message GetBoardRequest {
 }
 message GetBoardResponse {
   BaseResponse base = 1;
-  Board board = 2;
+  BoardFull data = 2;
 }
 
 message ListBoardsRequest {
@@ -39,7 +45,7 @@ message ListBoardsRequest {
 }
 message ListBoardsResponse {
   BaseResponse base = 1;
-  repeated Board boards = 2;
+  repeated BoardFull boards = 2;
 }
 
 message UpdateBoardRequest {
@@ -51,7 +57,7 @@ message UpdateBoardRequest {
 }
 message UpdateBoardResponse {
   BaseResponse base = 1;
-  Board board = 2;
+  BoardFull data = 2;
 }
 
 message DeleteBoardRequest {

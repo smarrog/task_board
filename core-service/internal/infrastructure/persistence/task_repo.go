@@ -1,6 +1,7 @@
 ﻿package persistence
 
 import (
+	"github.com/google/uuid"
 	"context"
 	"errors"
 	"time"
@@ -108,6 +109,131 @@ func (r *TasksRepo) Get(ctx context.Context, id task.Id) (*task.Task, error) {
 
 	return task.Rehydrate(id, columnId, position, title, desc, assigneeId, createdAt, updatedAt), nil
 }
+
+func (r *TasksRepo) ListByColumn(ctx context.Context, columnId column.Id) ([]*task.Task, error) {
+	db := r.txm.DB(ctx)
+
+	rows, err := db.Query(ctx, `
+		SELECT id, position, title, description, assignee_id, created_at, updated_at
+		FROM tasks
+		WHERE column_id = $1
+		ORDER BY position ASC
+	`, columnId.UUID())
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := make([]*task.Task, 0)
+	for rows.Next() {
+		var idRaw string
+		var positionRaw int
+		var titleRaw string
+		var descRaw string
+		var assigneeIdRaw string
+		var createdAt, updatedAt time.Time
+		if err := rows.Scan(&idRaw, &positionRaw, &titleRaw, &descRaw, &assigneeIdRaw, &createdAt, &updatedAt); err != nil {
+			return nil, err
+		}
+		id, err := task.IdFromString(idRaw)
+		if err != nil {
+			return nil, err
+		}
+		pos, err := task.NewPosition(positionRaw)
+		if err != nil {
+			return nil, err
+		}
+		title, err := task.NewTitle(titleRaw)
+		if err != nil {
+			return nil, err
+		}
+		desc, err := task.NewDescription(descRaw)
+		if err != nil {
+			return nil, err
+		}
+		assigneeId, err := common.UserIdFromString(assigneeIdRaw)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, task.Rehydrate(id, columnId, pos, title, desc, assigneeId, createdAt, updatedAt))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
+func (r *TasksRepo) ListByColumns(ctx context.Context, columnIds []column.Id) ([]*task.Task, error) {
+	if len(columnIds) == 0 {
+		return []*task.Task{}, nil
+	}
+	db := r.txm.DB(ctx)
+
+	ids := make([]uuid.UUID, 0, len(columnIds))
+	for _, cid := range columnIds {
+		ids = append(ids, cid.UUID())
+	}
+
+	rows, err := db.Query(ctx, `
+		SELECT id, column_id, position, title, description, assignee_id, created_at, updated_at
+		FROM tasks
+		WHERE column_id = ANY($1)
+		ORDER BY column_id ASC, position ASC
+	`, ids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := make([]*task.Task, 0)
+	for rows.Next() {
+		var (
+			idRaw        string
+			columnIdRaw  string
+			positionRaw  int
+			titleRaw     string
+			descRaw      string
+			assigneeIdRaw string
+			createdAt    time.Time
+			updatedAt    time.Time
+		)
+		if err := rows.Scan(&idRaw, &columnIdRaw, &positionRaw, &titleRaw, &descRaw, &assigneeIdRaw, &createdAt, &updatedAt); err != nil {
+			return nil, err
+		}
+		id, err := task.IdFromString(idRaw)
+		if err != nil {
+			return nil, err
+		}
+		cid, err := column.IdFromString(columnIdRaw)
+		if err != nil {
+			return nil, err
+		}
+		pos, err := task.NewPosition(positionRaw)
+		if err != nil {
+			return nil, err
+		}
+		title, err := task.NewTitle(titleRaw)
+		if err != nil {
+			return nil, err
+		}
+		desc, err := task.NewDescription(descRaw)
+		if err != nil {
+			return nil, err
+		}
+		assigneeId, err := common.UserIdFromString(assigneeIdRaw)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, task.Rehydrate(id, cid, pos, title, desc, assigneeId, createdAt, updatedAt))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
 
 func (r *TasksRepo) Delete(ctx context.Context, id task.Id) error {
 	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {

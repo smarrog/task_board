@@ -1,16 +1,18 @@
 package http
 
 type BoardDTO struct {
-	Id          string `json:"id"`
-	OwnerId     string `json:"owner_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Id          string      `json:"id"`
+	OwnerId     string      `json:"owner_id"`
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Columns     []ColumnDTO `json:"columns"`
 }
 
 type ColumnDTO struct {
-	Id       string `json:"id"`
-	BoardId  string `json:"board_id"`
-	Position int32  `json:"position"`
+	Id       string    `json:"id"`
+	BoardId  string    `json:"board_id"`
+	Position int32     `json:"position"`
+	Tasks    []TaskDTO `json:"tasks"`
 }
 
 type TaskDTO struct {

@@ -14,25 +14,28 @@ type ColumnsHandler struct {
 
 	log *zerolog.Logger
 
-	createColumn *columnuc.CreateColumnUseCase
-	getColumn    *columnuc.GetColumnUseCase
-	moveColumn   *columnuc.MoveColumnUseCase
-	deleteColumn *columnuc.DeleteColumnUseCase
+	createColumn  *columnuc.CreateColumnUseCase
+	getColumn     *columnuc.GetColumnUseCase
+	getColumnFull *columnuc.GetColumnFullUseCase
+	moveColumn    *columnuc.MoveColumnUseCase
+	deleteColumn  *columnuc.DeleteColumnUseCase
 }
 
 func NewColumnsHandler(
 	log *zerolog.Logger,
 	createColumn *columnuc.CreateColumnUseCase,
 	getColumn *columnuc.GetColumnUseCase,
+	getColumnFull *columnuc.GetColumnFullUseCase,
 	moveColumn *columnuc.MoveColumnUseCase,
 	deleteColumn *columnuc.DeleteColumnUseCase,
 ) *ColumnsHandler {
 	return &ColumnsHandler{
-		log:          log,
-		createColumn: createColumn,
-		getColumn:    getColumn,
-		moveColumn:   moveColumn,
-		deleteColumn: deleteColumn,
+		log:           log,
+		createColumn:  createColumn,
+		getColumn:     getColumn,
+		getColumnFull: getColumnFull,
+		moveColumn:    moveColumn,
+		deleteColumn:  deleteColumn,
 	}
 }
 
@@ -67,11 +70,31 @@ func (h *ColumnsHandler) GetColumn(ctx context.Context, req *v1.GetColumnRequest
 	}, nil
 }
 
+func (h *ColumnsHandler) GetColumnFull(ctx context.Context, req *v1.GetColumnFullRequest) (*v1.GetColumnFullResponse, error) {
+	input := columnuc.GetColumnFullInput{ColumnId: req.ColumnId}
+
+	output, err := h.getColumnFull.Execute(ctx, input)
+	if err != nil {
+		return nil, mapColumnsErr(err)
+	}
+
+	tasks := make([]*v1.Task, 0, len(output.Tasks))
+	for _, t := range output.Tasks {
+		tasks = append(tasks, toProtoTask(t))
+	}
+
+	return &v1.GetColumnFullResponse{
+		Data: &v1.ColumnFull{
+			Column: toProtoColumn(output.Column),
+			Tasks:  tasks,
+		},
+	}, nil
+}
+
 func (h *ColumnsHandler) MoveColumn(ctx context.Context, req *v1.MoveColumnRequest) (*v1.MoveColumnResponse, error) {
-	input := columnuc.MoveColumnRequest{
-		ColumnId: req.ColumnId,
-		BoardId:  req.BoardId,
-		Position: int(req.Position),
+	input := columnuc.MoveColumnInput{
+		ColumnId:   req.ColumnId,
+		ToPosition: int(req.ToPosition),
 	}
 
 	output, err := h.moveColumn.Execute(ctx, input)

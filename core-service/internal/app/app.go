@@ -48,8 +48,8 @@ func (a *App) Init() error {
 	columnsRepo := persistence.NewColumnsRepo(txm, log, outboxRepo)
 	tasksRepo := persistence.NewTasksRepo(txm, log, outboxRepo)
 
-	boardsHandler := createBoardsHandler(log, boardsRepo)
-	columnsHandler := createColumnsHandler(log, columnsRepo)
+	boardsHandler := createBoardsHandler(log, boardsRepo, columnsRepo, tasksRepo)
+	columnsHandler := createColumnsHandler(log, columnsRepo, tasksRepo)
 	tasksHandler := createTasksHandler(log, tasksRepo)
 
 	a.grpc = grpc.NewServer(log, boardsHandler, columnsHandler, tasksHandler)
@@ -119,24 +119,31 @@ func newPG(cfg *config.Config) (*pgxpool.Pool, error) {
 	return pool, nil
 }
 
-func createBoardsHandler(log *zerolog.Logger, boardsRepo board.Repository) *grpc.BoardsHandler {
+func createBoardsHandler(
+	log *zerolog.Logger,
+	boardsRepo board.Repository,
+	columnsRepo column.Repository,
+	tasksRepo task.Repository,
+) *grpc.BoardsHandler {
 	createBoard := boarduc.NewCreateBoardUseCase(boardsRepo)
-	getBoard := boarduc.NewGetBoardUseCase(boardsRepo)
+	getBoardFull := boarduc.NewGetBoardFullUseCase(boardsRepo, columnsRepo, tasksRepo)
 	listBoards := boarduc.NewListBoardsUseCase(boardsRepo)
+	listBoardsFull := boarduc.NewListBoardsFullUseCase(boardsRepo, columnsRepo, tasksRepo)
 	updateBoard := boarduc.NewUpdateBoardUseCase(boardsRepo)
 	deleteBoard := boarduc.NewDeleteBoardUseCase(boardsRepo)
 
-	boardsHandler := grpc.NewBoardsHandler(log, createBoard, getBoard, listBoards, updateBoard, deleteBoard)
+	boardsHandler := grpc.NewBoardsHandler(log, createBoard, getBoardFull, listBoards, listBoardsFull, updateBoard, deleteBoard)
 	return boardsHandler
 }
 
-func createColumnsHandler(log *zerolog.Logger, columnsRepo column.Repository) *grpc.ColumnsHandler {
+func createColumnsHandler(log *zerolog.Logger, columnsRepo column.Repository, tasksRepo task.Repository) *grpc.ColumnsHandler {
 	createColumn := columnuc.NewCreateColumnUseCase(columnsRepo)
 	getColumn := columnuc.NewGetColumnUseCase(columnsRepo)
+	getColumnFull := columnuc.NewGetColumnFullUseCase(columnsRepo, tasksRepo)
 	moveColumn := columnuc.NewMoveColumnUseCase(columnsRepo)
 	deleteColumn := columnuc.NewDeleteColumnUseCase(columnsRepo)
 
-	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, moveColumn, deleteColumn)
+	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, getColumnFull, moveColumn, deleteColumn)
 	return columnsHandler
 }
 

@@ -11,6 +11,8 @@ type Repository interface {
 
 	Save(ctx context.Context, t *Task) error
 	Get(ctx context.Context, id Id) (*Task, error)
+	ListByColumn(ctx context.Context, columnId column.Id) ([]*Task, error)
+	ListByColumns(ctx context.Context, columnIds []column.Id) ([]*Task, error)
 	Delete(ctx context.Context, id Id) error
 
 	LockColumnTasks(ctx context.Context, columnId column.Id) error

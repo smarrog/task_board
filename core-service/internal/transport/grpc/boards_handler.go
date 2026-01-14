@@ -6,6 +6,8 @@ import (
 
 	"github.com/rs/zerolog"
 	boarddo "github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/domain/column"
+	"github.com/smarrog/task-board/core-service/internal/domain/task"
 	boarduc "github.com/smarrog/task-board/core-service/internal/usecase/board"
 	"github.com/smarrog/task-board/shared/proto/base/v1"
 	"google.golang.org/grpc/codes"
@@ -17,28 +19,31 @@ type BoardsHandler struct {
 
 	log *zerolog.Logger
 
-	createBoard *boarduc.CreateBoardUseCase
-	getBoard    *boarduc.GetBoardUseCase
-	listBoards  *boarduc.ListBoardsUseCase
-	updateBoard *boarduc.UpdateBoardUseCase
-	deleteBoard *boarduc.DeleteBoardUseCase
+	createBoard    *boarduc.CreateBoardUseCase
+	getBoardFull   *boarduc.GetBoardFullUseCase
+	listBoards     *boarduc.ListBoardsUseCase
+	listBoardsFull *boarduc.ListBoardsFullUseCase
+	updateBoard    *boarduc.UpdateBoardUseCase
+	deleteBoard    *boarduc.DeleteBoardUseCase
 }
 
 func NewBoardsHandler(
 	log *zerolog.Logger,
 	createBoard *boarduc.CreateBoardUseCase,
-	getBoard *boarduc.GetBoardUseCase,
+	getBoardFull *boarduc.GetBoardFullUseCase,
 	listBoards *boarduc.ListBoardsUseCase,
+	listBoardsFull *boarduc.ListBoardsFullUseCase,
 	updateBoard *boarduc.UpdateBoardUseCase,
 	deleteBoard *boarduc.DeleteBoardUseCase,
 ) *BoardsHandler {
 	return &BoardsHandler{
-		log:         log,
-		createBoard: createBoard,
-		getBoard:    getBoard,
-		listBoards:  listBoards,
-		updateBoard: updateBoard,
-		deleteBoard: deleteBoard,
+		log:            log,
+		createBoard:    createBoard,
+		getBoardFull:   getBoardFull,
+		listBoards:     listBoards,
+		listBoardsFull: listBoardsFull,
+		updateBoard:    updateBoard,
+		deleteBoard:    deleteBoard,
 	}
 }
 
@@ -54,41 +59,40 @@ func (h *BoardsHandler) CreateBoard(ctx context.Context, req *v1.CreateBoardRequ
 	}
 
 	return &v1.CreateBoardResponse{
-		Board: toProtoBoard(output.Board),
+		Data: &v1.BoardFull{
+			Board:   toProtoBoard(output.Board),
+			Columns: []*v1.ColumnFull{},
+		},
 	}, nil
 }
 
 func (h *BoardsHandler) GetBoard(ctx context.Context, req *v1.GetBoardRequest) (*v1.GetBoardResponse, error) {
-	input := boarduc.GetBoardInput{
-		BoardId: req.GetBoardId(),
-	}
-	output, err := h.getBoard.Execute(ctx, input)
+	input := boarduc.GetBoardFullInput{BoardId: req.GetBoardId()}
+	output, err := h.getBoardFull.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
 	return &v1.GetBoardResponse{
-		Board: toProtoBoard(output.Board),
+		Data: toProtoBoardFull(output.Board, output.Columns, output.Tasks),
 	}, nil
 }
 
 func (h *BoardsHandler) ListBoards(ctx context.Context, req *v1.ListBoardsRequest) (*v1.ListBoardsResponse, error) {
-	input := boarduc.ListBoardsInput{
+	input := boarduc.ListBoardsFullInput{
 		OwnerId: req.GetOwnerId(),
 	}
-	output, err := h.listBoards.Execute(ctx, input)
+	output, err := h.listBoardsFull.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
 
-	out := make([]*v1.Board, len(output.Boards))
-	for i, b := range output.Boards {
-		out[i] = toProtoBoard(b)
+	full := make([]*v1.BoardFull, 0, len(output.Items))
+	for _, it := range output.Items {
+		full = append(full, toProtoBoardFull(it.Board, it.Columns, it.Tasks))
 	}
 
-	return &v1.ListBoardsResponse{
-		Boards: out,
-	}, nil
+	return &v1.ListBoardsResponse{Boards: full}, nil
 }
 
 func (h *BoardsHandler) UpdateBoard(ctx context.Context, req *v1.UpdateBoardRequest) (*v1.UpdateBoardResponse, error) {
@@ -103,9 +107,12 @@ func (h *BoardsHandler) UpdateBoard(ctx context.Context, req *v1.UpdateBoardRequ
 		return nil, mapBoardsErr(err)
 	}
 
-	return &v1.UpdateBoardResponse{
-		Board: toProtoBoard(output.Board),
-	}, nil
+	// Return updated full board.
+	fo, e := h.getBoardFull.Execute(ctx, boarduc.GetBoardFullInput{BoardId: output.Board.Id().String()})
+	if e != nil {
+		return nil, mapBoardsErr(e)
+	}
+	return &v1.UpdateBoardResponse{Data: toProtoBoardFull(fo.Board, fo.Columns, fo.Tasks)}, nil
 }
 
 func (h *BoardsHandler) DeleteBoard(ctx context.Context, req *v1.DeleteBoardRequest) (*v1.DeleteBoardResponse, error) {
@@ -118,6 +125,29 @@ func (h *BoardsHandler) DeleteBoard(ctx context.Context, req *v1.DeleteBoardRequ
 	}
 
 	return &v1.DeleteBoardResponse{}, nil
+}
+
+func toProtoBoardFull(b *boarddo.Board, cols []*column.Column, ts []*task.Task) *v1.BoardFull {
+	tasksByColumn := make(map[string][]*v1.Task)
+	for _, t := range ts {
+		colID := t.ColumnId().String()
+		tasksByColumn[colID] = append(tasksByColumn[colID], &v1.Task{
+			Id:          t.Id().String(),
+			ColumnId:    t.ColumnId().String(),
+			Position:    int32(t.Position()),
+			Title:       t.Title().String(),
+			Description: t.Description().String(),
+			AssigneeId:  t.AssigneeId().String(),
+		})
+	}
+
+	colWithTasks := make([]*v1.ColumnFull, 0, len(cols))
+	for _, c := range cols {
+		pc := &v1.Column{Id: c.Id().String(), BoardId: c.BoardId().String(), Position: int32(c.Position())}
+		colWithTasks = append(colWithTasks, &v1.ColumnFull{Column: pc, Tasks: tasksByColumn[c.Id().String()]})
+	}
+
+	return &v1.BoardFull{Board: toProtoBoard(b), Columns: colWithTasks}
 }
 
 func toProtoBoard(b *boarddo.Board) *v1.Board {

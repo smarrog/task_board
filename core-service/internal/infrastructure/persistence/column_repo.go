@@ -5,6 +5,8 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
@@ -88,6 +90,100 @@ func (r *ColumnsRepo) Get(ctx context.Context, id column.Id) (*column.Column, er
 	return column.Rehydrate(id, boardId, position, createdAt, updatedAt), nil
 }
 
+func (r *ColumnsRepo) ListByBoard(ctx context.Context, boardId board.Id) ([]*column.Column, error) {
+	db := r.txm.DB(ctx)
+
+	rows, err := db.Query(ctx, `
+		SELECT id, position, created_at, updated_at
+		FROM columns
+		WHERE board_id = $1
+		ORDER BY position ASC
+	`, boardId.UUID())
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := make([]*column.Column, 0)
+	for rows.Next() {
+		var idRaw string
+		var positionRaw int
+		var createdAt, updatedAt time.Time
+		if err := rows.Scan(&idRaw, &positionRaw, &createdAt, &updatedAt); err != nil {
+			return nil, err
+		}
+		id, err := column.IdFromString(idRaw)
+		if err != nil {
+			return nil, err
+		}
+		pos, err := column.NewPosition(positionRaw)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, column.Rehydrate(id, boardId, pos, createdAt, updatedAt))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
+func (r *ColumnsRepo) ListByBoards(ctx context.Context, boardIds []board.Id) ([]*column.Column, error) {
+	if len(boardIds) == 0 {
+		return []*column.Column{}, nil
+	}
+	db := r.txm.DB(ctx)
+
+	ids := make([]uuid.UUID, 0, len(boardIds))
+	for _, bid := range boardIds {
+		ids = append(ids, bid.UUID())
+	}
+
+	rows, err := db.Query(ctx, `
+		SELECT id, board_id, position, created_at, updated_at
+		FROM columns
+		WHERE board_id = ANY($1)
+		ORDER BY board_id ASC, position ASC
+	`, ids)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	out := make([]*column.Column, 0)
+	for rows.Next() {
+		var (
+			idRaw       string
+			boardIdRaw  string
+			positionRaw int
+			createdAt   time.Time
+			updatedAt   time.Time
+		)
+		if err := rows.Scan(&idRaw, &boardIdRaw, &positionRaw, &createdAt, &updatedAt); err != nil {
+			return nil, err
+		}
+		id, err := column.IdFromString(idRaw)
+		if err != nil {
+			return nil, err
+		}
+		bid, err := board.IdFromString(boardIdRaw)
+		if err != nil {
+			return nil, err
+		}
+		pos, err := column.NewPosition(positionRaw)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, column.Rehydrate(id, bid, pos, createdAt, updatedAt))
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return out, nil
+}
+
 func (r *ColumnsRepo) Delete(ctx context.Context, id column.Id) error {
 	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		ct, err := tx.Exec(ctx, `DELETE FROM columns WHERE id = $1`, id.UUID())
@@ -102,7 +198,6 @@ func (r *ColumnsRepo) Delete(ctx context.Context, id column.Id) error {
 		if err := r.outbox.SaveEvents(ctx, events); err != nil {
 			return err
 		}
-
 
 		return nil
 	})

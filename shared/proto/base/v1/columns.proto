@@ -5,6 +5,7 @@ package taskboard.v1;
 option go_package = "github.com/smarrog/task-board/shared/proto/base/v1;v1";
 
 import "base/v1/common.proto";
+import "base/v1/tasks.proto";
 
 message Column {
   string id = 1;
@@ -31,6 +32,21 @@ message GetColumnResponse {
   Column column = 2;
 }
 
+message ColumnFull {
+  Column column = 1;
+  repeated Task tasks = 2;
+}
+
+message GetColumnFullRequest {
+  BaseRequest base = 1;
+  string column_id = 2;
+}
+
+message GetColumnFullResponse {
+  BaseResponse base = 1;
+  ColumnFull data = 2;
+}
+
 message MoveColumnRequest {
   BaseRequest base = 1;
   string column_id = 2;
@@ -53,6 +69,7 @@ message DeleteColumnResponse {
 service ColumnsService {
   rpc CreateColumn(CreateColumnRequest) returns (CreateColumnResponse);
   rpc GetColumn(GetColumnRequest) returns (GetColumnResponse);
+  rpc GetColumnFull(GetColumnFullRequest) returns (GetColumnFullResponse);
   rpc MoveColumn(MoveColumnRequest) returns (MoveColumnResponse);
   rpc DeleteColumn(DeleteColumnRequest) returns (DeleteColumnResponse);
 }

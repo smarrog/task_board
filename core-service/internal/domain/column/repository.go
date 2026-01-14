@@ -11,6 +11,8 @@ type Repository interface {
 
 	Save(ctx context.Context, c *Column) error
 	Get(ctx context.Context, id Id) (*Column, error)
+	ListByBoard(ctx context.Context, boardId board.Id) ([]*Column, error)
+	ListByBoards(ctx context.Context, boardIds []board.Id) ([]*Column, error)
 	Delete(ctx context.Context, id Id) error
 
 	LockBoardColumns(ctx context.Context, boardId board.Id) error
