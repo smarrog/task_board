@@ -19,31 +19,28 @@ type BoardsHandler struct {
 
 	log *zerolog.Logger
 
-	createBoard    *boarduc.CreateBoardUseCase
-	getBoardFull   *boarduc.GetBoardFullUseCase
-	listBoards     *boarduc.ListBoardsUseCase
-	listBoardsFull *boarduc.ListBoardsFullUseCase
-	updateBoard    *boarduc.UpdateBoardUseCase
-	deleteBoard    *boarduc.DeleteBoardUseCase
+	createBoard *boarduc.CreateBoardUseCase
+	getBoard    *boarduc.GetBoardUseCase
+	listBoards  *boarduc.ListBoardsUseCase
+	updateBoard *boarduc.UpdateBoardUseCase
+	deleteBoard *boarduc.DeleteBoardUseCase
 }
 
 func NewBoardsHandler(
 	log *zerolog.Logger,
 	createBoard *boarduc.CreateBoardUseCase,
-	getBoardFull *boarduc.GetBoardFullUseCase,
+	getBoard *boarduc.GetBoardUseCase,
 	listBoards *boarduc.ListBoardsUseCase,
-	listBoardsFull *boarduc.ListBoardsFullUseCase,
 	updateBoard *boarduc.UpdateBoardUseCase,
 	deleteBoard *boarduc.DeleteBoardUseCase,
 ) *BoardsHandler {
 	return &BoardsHandler{
-		log:            log,
-		createBoard:    createBoard,
-		getBoardFull:   getBoardFull,
-		listBoards:     listBoards,
-		listBoardsFull: listBoardsFull,
-		updateBoard:    updateBoard,
-		deleteBoard:    deleteBoard,
+		log:         log,
+		createBoard: createBoard,
+		getBoard:    getBoard,
+		listBoards:  listBoards,
+		updateBoard: updateBoard,
+		deleteBoard: deleteBoard,
 	}
 }
 
@@ -67,8 +64,8 @@ func (h *BoardsHandler) CreateBoard(ctx context.Context, req *v1.CreateBoardRequ
 }
 
 func (h *BoardsHandler) GetBoard(ctx context.Context, req *v1.GetBoardRequest) (*v1.GetBoardResponse, error) {
-	input := boarduc.GetBoardFullInput{BoardId: req.GetBoardId()}
-	output, err := h.getBoardFull.Execute(ctx, input)
+	input := boarduc.GetBoardInput{BoardId: req.GetBoardId()}
+	output, err := h.getBoard.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
@@ -79,10 +76,10 @@ func (h *BoardsHandler) GetBoard(ctx context.Context, req *v1.GetBoardRequest) (
 }
 
 func (h *BoardsHandler) ListBoards(ctx context.Context, req *v1.ListBoardsRequest) (*v1.ListBoardsResponse, error) {
-	input := boarduc.ListBoardsFullInput{
+	input := boarduc.ListBoardsInput{
 		OwnerId: req.GetOwnerId(),
 	}
-	output, err := h.listBoardsFull.Execute(ctx, input)
+	output, err := h.listBoards.Execute(ctx, input)
 	if err != nil {
 		return nil, mapBoardsErr(err)
 	}
@@ -108,7 +105,7 @@ func (h *BoardsHandler) UpdateBoard(ctx context.Context, req *v1.UpdateBoardRequ
 	}
 
 	// Return updated full board.
-	fo, e := h.getBoardFull.Execute(ctx, boarduc.GetBoardFullInput{BoardId: output.Board.Id().String()})
+	fo, e := h.getBoard.Execute(ctx, boarduc.GetBoardInput{BoardId: output.Board.Id().String()})
 	if e != nil {
 		return nil, mapBoardsErr(e)
 	}

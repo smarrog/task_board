@@ -126,24 +126,22 @@ func createBoardsHandler(
 	tasksRepo task.Repository,
 ) *grpc.BoardsHandler {
 	createBoard := boarduc.NewCreateBoardUseCase(boardsRepo)
-	getBoardFull := boarduc.NewGetBoardFullUseCase(boardsRepo, columnsRepo, tasksRepo)
-	listBoards := boarduc.NewListBoardsUseCase(boardsRepo)
-	listBoardsFull := boarduc.NewListBoardsFullUseCase(boardsRepo, columnsRepo, tasksRepo)
+	getBoard := boarduc.NewGetBoardUseCase(boardsRepo, columnsRepo, tasksRepo)
+	listBoards := boarduc.NewListBoardsUseCase(boardsRepo, columnsRepo, tasksRepo)
 	updateBoard := boarduc.NewUpdateBoardUseCase(boardsRepo)
 	deleteBoard := boarduc.NewDeleteBoardUseCase(boardsRepo)
 
-	boardsHandler := grpc.NewBoardsHandler(log, createBoard, getBoardFull, listBoards, listBoardsFull, updateBoard, deleteBoard)
+	boardsHandler := grpc.NewBoardsHandler(log, createBoard, getBoard, listBoards, updateBoard, deleteBoard)
 	return boardsHandler
 }
 
 func createColumnsHandler(log *zerolog.Logger, columnsRepo column.Repository, tasksRepo task.Repository) *grpc.ColumnsHandler {
 	createColumn := columnuc.NewCreateColumnUseCase(columnsRepo)
-	getColumn := columnuc.NewGetColumnUseCase(columnsRepo)
-	getColumnFull := columnuc.NewGetColumnFullUseCase(columnsRepo, tasksRepo)
+	getColumn := columnuc.NewGetColumnUseCase(columnsRepo, tasksRepo)
 	moveColumn := columnuc.NewMoveColumnUseCase(columnsRepo)
 	deleteColumn := columnuc.NewDeleteColumnUseCase(columnsRepo)
 
-	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, getColumnFull, moveColumn, deleteColumn)
+	columnsHandler := grpc.NewColumnsHandler(log, createColumn, getColumn, moveColumn, deleteColumn)
 	return columnsHandler
 }
 

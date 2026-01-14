@@ -20,7 +20,6 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ColumnsService_CreateColumn_FullMethodName  = "/taskboard.v1.ColumnsService/CreateColumn"
-	ColumnsService_GetColumn_FullMethodName     = "/taskboard.v1.ColumnsService/GetColumn"
 	ColumnsService_GetColumnFull_FullMethodName = "/taskboard.v1.ColumnsService/GetColumnFull"
 	ColumnsService_MoveColumn_FullMethodName    = "/taskboard.v1.ColumnsService/MoveColumn"
 	ColumnsService_DeleteColumn_FullMethodName  = "/taskboard.v1.ColumnsService/DeleteColumn"
@@ -31,7 +30,6 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ColumnsServiceClient interface {
 	CreateColumn(ctx context.Context, in *CreateColumnRequest, opts ...grpc.CallOption) (*CreateColumnResponse, error)
-	GetColumn(ctx context.Context, in *GetColumnRequest, opts ...grpc.CallOption) (*GetColumnResponse, error)
 	GetColumnFull(ctx context.Context, in *GetColumnFullRequest, opts ...grpc.CallOption) (*GetColumnFullResponse, error)
 	MoveColumn(ctx context.Context, in *MoveColumnRequest, opts ...grpc.CallOption) (*MoveColumnResponse, error)
 	DeleteColumn(ctx context.Context, in *DeleteColumnRequest, opts ...grpc.CallOption) (*DeleteColumnResponse, error)
@@ -49,16 +47,6 @@ func (c *columnsServiceClient) CreateColumn(ctx context.Context, in *CreateColum
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreateColumnResponse)
 	err := c.cc.Invoke(ctx, ColumnsService_CreateColumn_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *columnsServiceClient) GetColumn(ctx context.Context, in *GetColumnRequest, opts ...grpc.CallOption) (*GetColumnResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetColumnResponse)
-	err := c.cc.Invoke(ctx, ColumnsService_GetColumn_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +88,6 @@ func (c *columnsServiceClient) DeleteColumn(ctx context.Context, in *DeleteColum
 // for forward compatibility.
 type ColumnsServiceServer interface {
 	CreateColumn(context.Context, *CreateColumnRequest) (*CreateColumnResponse, error)
-	GetColumn(context.Context, *GetColumnRequest) (*GetColumnResponse, error)
 	GetColumnFull(context.Context, *GetColumnFullRequest) (*GetColumnFullResponse, error)
 	MoveColumn(context.Context, *MoveColumnRequest) (*MoveColumnResponse, error)
 	DeleteColumn(context.Context, *DeleteColumnRequest) (*DeleteColumnResponse, error)
@@ -116,9 +103,6 @@ type UnimplementedColumnsServiceServer struct{}
 
 func (UnimplementedColumnsServiceServer) CreateColumn(context.Context, *CreateColumnRequest) (*CreateColumnResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateColumn not implemented")
-}
-func (UnimplementedColumnsServiceServer) GetColumn(context.Context, *GetColumnRequest) (*GetColumnResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetColumn not implemented")
 }
 func (UnimplementedColumnsServiceServer) GetColumnFull(context.Context, *GetColumnFullRequest) (*GetColumnFullResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetColumnFull not implemented")
@@ -164,24 +148,6 @@ func _ColumnsService_CreateColumn_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ColumnsServiceServer).CreateColumn(ctx, req.(*CreateColumnRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ColumnsService_GetColumn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetColumnRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ColumnsServiceServer).GetColumn(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ColumnsService_GetColumn_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ColumnsServiceServer).GetColumn(ctx, req.(*GetColumnRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -250,10 +216,6 @@ var ColumnsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateColumn",
 			Handler:    _ColumnsService_CreateColumn_Handler,
-		},
-		{
-			MethodName: "GetColumn",
-			Handler:    _ColumnsService_GetColumn_Handler,
 		},
 		{
 			MethodName: "GetColumnFull",

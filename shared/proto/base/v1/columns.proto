@@ -23,15 +23,6 @@ message CreateColumnResponse {
   Column column = 2;
 }
 
-message GetColumnRequest {
-  BaseRequest base = 1;
-  string column_id = 2;
-}
-message GetColumnResponse {
-  BaseResponse base = 1;
-  Column column = 2;
-}
-
 message ColumnFull {
   Column column = 1;
   repeated Task tasks = 2;
@@ -68,7 +59,6 @@ message DeleteColumnResponse {
 
 service ColumnsService {
   rpc CreateColumn(CreateColumnRequest) returns (CreateColumnResponse);
-  rpc GetColumn(GetColumnRequest) returns (GetColumnResponse);
   rpc GetColumnFull(GetColumnFullRequest) returns (GetColumnFullResponse);
   rpc MoveColumn(MoveColumnRequest) returns (MoveColumnResponse);
   rpc DeleteColumn(DeleteColumnRequest) returns (DeleteColumnResponse);

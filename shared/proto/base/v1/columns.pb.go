@@ -193,110 +193,6 @@ func (x *CreateColumnResponse) GetColumn() *Column {
 	return nil
 }
 
-type GetColumnRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *BaseRequest           `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	ColumnId      string                 `protobuf:"bytes,2,opt,name=column_id,json=columnId,proto3" json:"column_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetColumnRequest) Reset() {
-	*x = GetColumnRequest{}
-	mi := &file_base_v1_columns_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetColumnRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetColumnRequest) ProtoMessage() {}
-
-func (x *GetColumnRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetColumnRequest.ProtoReflect.Descriptor instead.
-func (*GetColumnRequest) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GetColumnRequest) GetBase() *BaseRequest {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *GetColumnRequest) GetColumnId() string {
-	if x != nil {
-		return x.ColumnId
-	}
-	return ""
-}
-
-type GetColumnResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Base          *BaseResponse          `protobuf:"bytes,1,opt,name=base,proto3" json:"base,omitempty"`
-	Column        *Column                `protobuf:"bytes,2,opt,name=column,proto3" json:"column,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GetColumnResponse) Reset() {
-	*x = GetColumnResponse{}
-	mi := &file_base_v1_columns_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GetColumnResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetColumnResponse) ProtoMessage() {}
-
-func (x *GetColumnResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetColumnResponse.ProtoReflect.Descriptor instead.
-func (*GetColumnResponse) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *GetColumnResponse) GetBase() *BaseResponse {
-	if x != nil {
-		return x.Base
-	}
-	return nil
-}
-
-func (x *GetColumnResponse) GetColumn() *Column {
-	if x != nil {
-		return x.Column
-	}
-	return nil
-}
-
 type ColumnFull struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Column        *Column                `protobuf:"bytes,1,opt,name=column,proto3" json:"column,omitempty"`
@@ -307,7 +203,7 @@ type ColumnFull struct {
 
 func (x *ColumnFull) Reset() {
 	*x = ColumnFull{}
-	mi := &file_base_v1_columns_proto_msgTypes[5]
+	mi := &file_base_v1_columns_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -319,7 +215,7 @@ func (x *ColumnFull) String() string {
 func (*ColumnFull) ProtoMessage() {}
 
 func (x *ColumnFull) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[5]
+	mi := &file_base_v1_columns_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -332,7 +228,7 @@ func (x *ColumnFull) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ColumnFull.ProtoReflect.Descriptor instead.
 func (*ColumnFull) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{5}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *ColumnFull) GetColumn() *Column {
@@ -359,7 +255,7 @@ type GetColumnFullRequest struct {
 
 func (x *GetColumnFullRequest) Reset() {
 	*x = GetColumnFullRequest{}
-	mi := &file_base_v1_columns_proto_msgTypes[6]
+	mi := &file_base_v1_columns_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -371,7 +267,7 @@ func (x *GetColumnFullRequest) String() string {
 func (*GetColumnFullRequest) ProtoMessage() {}
 
 func (x *GetColumnFullRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[6]
+	mi := &file_base_v1_columns_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -384,7 +280,7 @@ func (x *GetColumnFullRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetColumnFullRequest.ProtoReflect.Descriptor instead.
 func (*GetColumnFullRequest) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{6}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetColumnFullRequest) GetBase() *BaseRequest {
@@ -411,7 +307,7 @@ type GetColumnFullResponse struct {
 
 func (x *GetColumnFullResponse) Reset() {
 	*x = GetColumnFullResponse{}
-	mi := &file_base_v1_columns_proto_msgTypes[7]
+	mi := &file_base_v1_columns_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -423,7 +319,7 @@ func (x *GetColumnFullResponse) String() string {
 func (*GetColumnFullResponse) ProtoMessage() {}
 
 func (x *GetColumnFullResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[7]
+	mi := &file_base_v1_columns_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -436,7 +332,7 @@ func (x *GetColumnFullResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetColumnFullResponse.ProtoReflect.Descriptor instead.
 func (*GetColumnFullResponse) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{7}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetColumnFullResponse) GetBase() *BaseResponse {
@@ -464,7 +360,7 @@ type MoveColumnRequest struct {
 
 func (x *MoveColumnRequest) Reset() {
 	*x = MoveColumnRequest{}
-	mi := &file_base_v1_columns_proto_msgTypes[8]
+	mi := &file_base_v1_columns_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -476,7 +372,7 @@ func (x *MoveColumnRequest) String() string {
 func (*MoveColumnRequest) ProtoMessage() {}
 
 func (x *MoveColumnRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[8]
+	mi := &file_base_v1_columns_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -489,7 +385,7 @@ func (x *MoveColumnRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MoveColumnRequest.ProtoReflect.Descriptor instead.
 func (*MoveColumnRequest) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{8}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *MoveColumnRequest) GetBase() *BaseRequest {
@@ -523,7 +419,7 @@ type MoveColumnResponse struct {
 
 func (x *MoveColumnResponse) Reset() {
 	*x = MoveColumnResponse{}
-	mi := &file_base_v1_columns_proto_msgTypes[9]
+	mi := &file_base_v1_columns_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -535,7 +431,7 @@ func (x *MoveColumnResponse) String() string {
 func (*MoveColumnResponse) ProtoMessage() {}
 
 func (x *MoveColumnResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[9]
+	mi := &file_base_v1_columns_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -548,7 +444,7 @@ func (x *MoveColumnResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MoveColumnResponse.ProtoReflect.Descriptor instead.
 func (*MoveColumnResponse) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{9}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *MoveColumnResponse) GetBase() *BaseResponse {
@@ -575,7 +471,7 @@ type DeleteColumnRequest struct {
 
 func (x *DeleteColumnRequest) Reset() {
 	*x = DeleteColumnRequest{}
-	mi := &file_base_v1_columns_proto_msgTypes[10]
+	mi := &file_base_v1_columns_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -587,7 +483,7 @@ func (x *DeleteColumnRequest) String() string {
 func (*DeleteColumnRequest) ProtoMessage() {}
 
 func (x *DeleteColumnRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[10]
+	mi := &file_base_v1_columns_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -600,7 +496,7 @@ func (x *DeleteColumnRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteColumnRequest.ProtoReflect.Descriptor instead.
 func (*DeleteColumnRequest) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{10}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteColumnRequest) GetBase() *BaseRequest {
@@ -626,7 +522,7 @@ type DeleteColumnResponse struct {
 
 func (x *DeleteColumnResponse) Reset() {
 	*x = DeleteColumnResponse{}
-	mi := &file_base_v1_columns_proto_msgTypes[11]
+	mi := &file_base_v1_columns_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -638,7 +534,7 @@ func (x *DeleteColumnResponse) String() string {
 func (*DeleteColumnResponse) ProtoMessage() {}
 
 func (x *DeleteColumnResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_base_v1_columns_proto_msgTypes[11]
+	mi := &file_base_v1_columns_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -651,7 +547,7 @@ func (x *DeleteColumnResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteColumnResponse.ProtoReflect.Descriptor instead.
 func (*DeleteColumnResponse) Descriptor() ([]byte, []int) {
-	return file_base_v1_columns_proto_rawDescGZIP(), []int{11}
+	return file_base_v1_columns_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteColumnResponse) GetBase() *BaseResponse {
@@ -676,12 +572,6 @@ const file_base_v1_columns_proto_rawDesc = "" +
 	"\bposition\x18\x03 \x01(\x05R\bposition\"t\n" +
 	"\x14CreateColumnResponse\x12.\n" +
 	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12,\n" +
-	"\x06column\x18\x02 \x01(\v2\x14.taskboard.v1.ColumnR\x06column\"^\n" +
-	"\x10GetColumnRequest\x12-\n" +
-	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x1b\n" +
-	"\tcolumn_id\x18\x02 \x01(\tR\bcolumnId\"q\n" +
-	"\x11GetColumnResponse\x12.\n" +
-	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base\x12,\n" +
 	"\x06column\x18\x02 \x01(\v2\x14.taskboard.v1.ColumnR\x06column\"d\n" +
 	"\n" +
 	"ColumnFull\x12,\n" +
@@ -705,10 +595,9 @@ const file_base_v1_columns_proto_rawDesc = "" +
 	"\x04base\x18\x01 \x01(\v2\x19.taskboard.v1.BaseRequestR\x04base\x12\x1b\n" +
 	"\tcolumn_id\x18\x02 \x01(\tR\bcolumnId\"F\n" +
 	"\x14DeleteColumnResponse\x12.\n" +
-	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base2\xb7\x03\n" +
+	"\x04base\x18\x01 \x01(\v2\x1a.taskboard.v1.BaseResponseR\x04base2\xe9\x02\n" +
 	"\x0eColumnsService\x12U\n" +
-	"\fCreateColumn\x12!.taskboard.v1.CreateColumnRequest\x1a\".taskboard.v1.CreateColumnResponse\x12L\n" +
-	"\tGetColumn\x12\x1e.taskboard.v1.GetColumnRequest\x1a\x1f.taskboard.v1.GetColumnResponse\x12X\n" +
+	"\fCreateColumn\x12!.taskboard.v1.CreateColumnRequest\x1a\".taskboard.v1.CreateColumnResponse\x12X\n" +
 	"\rGetColumnFull\x12\".taskboard.v1.GetColumnFullRequest\x1a#.taskboard.v1.GetColumnFullResponse\x12O\n" +
 	"\n" +
 	"MoveColumn\x12\x1f.taskboard.v1.MoveColumnRequest\x1a .taskboard.v1.MoveColumnResponse\x12U\n" +
@@ -726,56 +615,49 @@ func file_base_v1_columns_proto_rawDescGZIP() []byte {
 	return file_base_v1_columns_proto_rawDescData
 }
 
-var file_base_v1_columns_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_base_v1_columns_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_base_v1_columns_proto_goTypes = []any{
 	(*Column)(nil),                // 0: taskboard.v1.Column
 	(*CreateColumnRequest)(nil),   // 1: taskboard.v1.CreateColumnRequest
 	(*CreateColumnResponse)(nil),  // 2: taskboard.v1.CreateColumnResponse
-	(*GetColumnRequest)(nil),      // 3: taskboard.v1.GetColumnRequest
-	(*GetColumnResponse)(nil),     // 4: taskboard.v1.GetColumnResponse
-	(*ColumnFull)(nil),            // 5: taskboard.v1.ColumnFull
-	(*GetColumnFullRequest)(nil),  // 6: taskboard.v1.GetColumnFullRequest
-	(*GetColumnFullResponse)(nil), // 7: taskboard.v1.GetColumnFullResponse
-	(*MoveColumnRequest)(nil),     // 8: taskboard.v1.MoveColumnRequest
-	(*MoveColumnResponse)(nil),    // 9: taskboard.v1.MoveColumnResponse
-	(*DeleteColumnRequest)(nil),   // 10: taskboard.v1.DeleteColumnRequest
-	(*DeleteColumnResponse)(nil),  // 11: taskboard.v1.DeleteColumnResponse
-	(*BaseRequest)(nil),           // 12: taskboard.v1.BaseRequest
-	(*BaseResponse)(nil),          // 13: taskboard.v1.BaseResponse
-	(*Task)(nil),                  // 14: taskboard.v1.Task
+	(*ColumnFull)(nil),            // 3: taskboard.v1.ColumnFull
+	(*GetColumnFullRequest)(nil),  // 4: taskboard.v1.GetColumnFullRequest
+	(*GetColumnFullResponse)(nil), // 5: taskboard.v1.GetColumnFullResponse
+	(*MoveColumnRequest)(nil),     // 6: taskboard.v1.MoveColumnRequest
+	(*MoveColumnResponse)(nil),    // 7: taskboard.v1.MoveColumnResponse
+	(*DeleteColumnRequest)(nil),   // 8: taskboard.v1.DeleteColumnRequest
+	(*DeleteColumnResponse)(nil),  // 9: taskboard.v1.DeleteColumnResponse
+	(*BaseRequest)(nil),           // 10: taskboard.v1.BaseRequest
+	(*BaseResponse)(nil),          // 11: taskboard.v1.BaseResponse
+	(*Task)(nil),                  // 12: taskboard.v1.Task
 }
 var file_base_v1_columns_proto_depIdxs = []int32{
-	12, // 0: taskboard.v1.CreateColumnRequest.base:type_name -> taskboard.v1.BaseRequest
-	13, // 1: taskboard.v1.CreateColumnResponse.base:type_name -> taskboard.v1.BaseResponse
+	10, // 0: taskboard.v1.CreateColumnRequest.base:type_name -> taskboard.v1.BaseRequest
+	11, // 1: taskboard.v1.CreateColumnResponse.base:type_name -> taskboard.v1.BaseResponse
 	0,  // 2: taskboard.v1.CreateColumnResponse.column:type_name -> taskboard.v1.Column
-	12, // 3: taskboard.v1.GetColumnRequest.base:type_name -> taskboard.v1.BaseRequest
-	13, // 4: taskboard.v1.GetColumnResponse.base:type_name -> taskboard.v1.BaseResponse
-	0,  // 5: taskboard.v1.GetColumnResponse.column:type_name -> taskboard.v1.Column
-	0,  // 6: taskboard.v1.ColumnFull.column:type_name -> taskboard.v1.Column
-	14, // 7: taskboard.v1.ColumnFull.tasks:type_name -> taskboard.v1.Task
-	12, // 8: taskboard.v1.GetColumnFullRequest.base:type_name -> taskboard.v1.BaseRequest
-	13, // 9: taskboard.v1.GetColumnFullResponse.base:type_name -> taskboard.v1.BaseResponse
-	5,  // 10: taskboard.v1.GetColumnFullResponse.data:type_name -> taskboard.v1.ColumnFull
-	12, // 11: taskboard.v1.MoveColumnRequest.base:type_name -> taskboard.v1.BaseRequest
-	13, // 12: taskboard.v1.MoveColumnResponse.base:type_name -> taskboard.v1.BaseResponse
-	0,  // 13: taskboard.v1.MoveColumnResponse.column:type_name -> taskboard.v1.Column
-	12, // 14: taskboard.v1.DeleteColumnRequest.base:type_name -> taskboard.v1.BaseRequest
-	13, // 15: taskboard.v1.DeleteColumnResponse.base:type_name -> taskboard.v1.BaseResponse
-	1,  // 16: taskboard.v1.ColumnsService.CreateColumn:input_type -> taskboard.v1.CreateColumnRequest
-	3,  // 17: taskboard.v1.ColumnsService.GetColumn:input_type -> taskboard.v1.GetColumnRequest
-	6,  // 18: taskboard.v1.ColumnsService.GetColumnFull:input_type -> taskboard.v1.GetColumnFullRequest
-	8,  // 19: taskboard.v1.ColumnsService.MoveColumn:input_type -> taskboard.v1.MoveColumnRequest
-	10, // 20: taskboard.v1.ColumnsService.DeleteColumn:input_type -> taskboard.v1.DeleteColumnRequest
-	2,  // 21: taskboard.v1.ColumnsService.CreateColumn:output_type -> taskboard.v1.CreateColumnResponse
-	4,  // 22: taskboard.v1.ColumnsService.GetColumn:output_type -> taskboard.v1.GetColumnResponse
-	7,  // 23: taskboard.v1.ColumnsService.GetColumnFull:output_type -> taskboard.v1.GetColumnFullResponse
-	9,  // 24: taskboard.v1.ColumnsService.MoveColumn:output_type -> taskboard.v1.MoveColumnResponse
-	11, // 25: taskboard.v1.ColumnsService.DeleteColumn:output_type -> taskboard.v1.DeleteColumnResponse
-	21, // [21:26] is the sub-list for method output_type
-	16, // [16:21] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	0,  // 3: taskboard.v1.ColumnFull.column:type_name -> taskboard.v1.Column
+	12, // 4: taskboard.v1.ColumnFull.tasks:type_name -> taskboard.v1.Task
+	10, // 5: taskboard.v1.GetColumnFullRequest.base:type_name -> taskboard.v1.BaseRequest
+	11, // 6: taskboard.v1.GetColumnFullResponse.base:type_name -> taskboard.v1.BaseResponse
+	3,  // 7: taskboard.v1.GetColumnFullResponse.data:type_name -> taskboard.v1.ColumnFull
+	10, // 8: taskboard.v1.MoveColumnRequest.base:type_name -> taskboard.v1.BaseRequest
+	11, // 9: taskboard.v1.MoveColumnResponse.base:type_name -> taskboard.v1.BaseResponse
+	0,  // 10: taskboard.v1.MoveColumnResponse.column:type_name -> taskboard.v1.Column
+	10, // 11: taskboard.v1.DeleteColumnRequest.base:type_name -> taskboard.v1.BaseRequest
+	11, // 12: taskboard.v1.DeleteColumnResponse.base:type_name -> taskboard.v1.BaseResponse
+	1,  // 13: taskboard.v1.ColumnsService.CreateColumn:input_type -> taskboard.v1.CreateColumnRequest
+	4,  // 14: taskboard.v1.ColumnsService.GetColumnFull:input_type -> taskboard.v1.GetColumnFullRequest
+	6,  // 15: taskboard.v1.ColumnsService.MoveColumn:input_type -> taskboard.v1.MoveColumnRequest
+	8,  // 16: taskboard.v1.ColumnsService.DeleteColumn:input_type -> taskboard.v1.DeleteColumnRequest
+	2,  // 17: taskboard.v1.ColumnsService.CreateColumn:output_type -> taskboard.v1.CreateColumnResponse
+	5,  // 18: taskboard.v1.ColumnsService.GetColumnFull:output_type -> taskboard.v1.GetColumnFullResponse
+	7,  // 19: taskboard.v1.ColumnsService.MoveColumn:output_type -> taskboard.v1.MoveColumnResponse
+	9,  // 20: taskboard.v1.ColumnsService.DeleteColumn:output_type -> taskboard.v1.DeleteColumnResponse
+	17, // [17:21] is the sub-list for method output_type
+	13, // [13:17] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_base_v1_columns_proto_init() }
@@ -791,7 +673,7 @@ func file_base_v1_columns_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_base_v1_columns_proto_rawDesc), len(file_base_v1_columns_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

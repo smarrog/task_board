@@ -1,14 +1,16 @@
-﻿package column
+package column
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/smarrog/task-board/core-service/internal/domain/column"
+	columndo "github.com/smarrog/task-board/core-service/internal/domain/column"
+	taskdo "github.com/smarrog/task-board/core-service/internal/domain/task"
 )
 
 type GetColumnUseCase struct {
-	repo column.Repository
+	columns columndo.Repository
+	tasks   taskdo.Repository
 }
 
 type GetColumnInput struct {
@@ -16,27 +18,29 @@ type GetColumnInput struct {
 }
 
 type GetColumnOutput struct {
-	Column *column.Column
+	Column *columndo.Column
+	Tasks  []*taskdo.Task
 }
 
-func NewGetColumnUseCase(repo column.Repository) *GetColumnUseCase {
-	return &GetColumnUseCase{repo: repo}
+func NewGetColumnUseCase(columns columndo.Repository, tasks taskdo.Repository) *GetColumnUseCase {
+	return &GetColumnUseCase{columns: columns, tasks: tasks}
 }
 
 func (uc *GetColumnUseCase) Execute(ctx context.Context, input GetColumnInput) (*GetColumnOutput, error) {
-	id, err := column.IdFromString(input.ColumnId)
+	id, err := columndo.IdFromString(input.ColumnId)
 	if err != nil {
 		return nil, err
 	}
 
-	c, err := uc.repo.Get(ctx, id)
+	c, err := uc.columns.Get(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get column: %w", err)
 	}
 
-	output := &GetColumnOutput{
-		Column: c,
+	ts, err := uc.tasks.ListByColumn(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("list tasks by column: %w", err)
 	}
 
-	return output, nil
+	return &GetColumnOutput{Column: c, Tasks: ts}, nil
 }

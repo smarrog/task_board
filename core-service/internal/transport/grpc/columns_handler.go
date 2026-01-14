@@ -14,28 +14,25 @@ type ColumnsHandler struct {
 
 	log *zerolog.Logger
 
-	createColumn  *columnuc.CreateColumnUseCase
-	getColumn     *columnuc.GetColumnUseCase
-	getColumnFull *columnuc.GetColumnFullUseCase
-	moveColumn    *columnuc.MoveColumnUseCase
-	deleteColumn  *columnuc.DeleteColumnUseCase
+	createColumn *columnuc.CreateColumnUseCase
+	getColumn    *columnuc.GetColumnUseCase
+	moveColumn   *columnuc.MoveColumnUseCase
+	deleteColumn *columnuc.DeleteColumnUseCase
 }
 
 func NewColumnsHandler(
 	log *zerolog.Logger,
 	createColumn *columnuc.CreateColumnUseCase,
 	getColumn *columnuc.GetColumnUseCase,
-	getColumnFull *columnuc.GetColumnFullUseCase,
 	moveColumn *columnuc.MoveColumnUseCase,
 	deleteColumn *columnuc.DeleteColumnUseCase,
 ) *ColumnsHandler {
 	return &ColumnsHandler{
-		log:           log,
-		createColumn:  createColumn,
-		getColumn:     getColumn,
-		getColumnFull: getColumnFull,
-		moveColumn:    moveColumn,
-		deleteColumn:  deleteColumn,
+		log:          log,
+		createColumn: createColumn,
+		getColumn:    getColumn,
+		moveColumn:   moveColumn,
+		deleteColumn: deleteColumn,
 	}
 }
 
@@ -55,25 +52,10 @@ func (h *ColumnsHandler) CreateColumn(ctx context.Context, req *v1.CreateColumnR
 	}, nil
 }
 
-func (h *ColumnsHandler) GetColumn(ctx context.Context, req *v1.GetColumnRequest) (*v1.GetColumnResponse, error) {
-	input := columnuc.GetColumnInput{
-		ColumnId: req.ColumnId,
-	}
+func (h *ColumnsHandler) GetColumnFull(ctx context.Context, req *v1.GetColumnFullRequest) (*v1.GetColumnFullResponse, error) {
+	input := columnuc.GetColumnInput{ColumnId: req.ColumnId}
 
 	output, err := h.getColumn.Execute(ctx, input)
-	if err != nil {
-		return nil, mapColumnsErr(err)
-	}
-
-	return &v1.GetColumnResponse{
-		Column: toProtoColumn(output.Column),
-	}, nil
-}
-
-func (h *ColumnsHandler) GetColumnFull(ctx context.Context, req *v1.GetColumnFullRequest) (*v1.GetColumnFullResponse, error) {
-	input := columnuc.GetColumnFullInput{ColumnId: req.ColumnId}
-
-	output, err := h.getColumnFull.Execute(ctx, input)
 	if err != nil {
 		return nil, mapColumnsErr(err)
 	}

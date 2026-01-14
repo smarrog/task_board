@@ -5,10 +5,14 @@ import (
 	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/domain/column"
+	"github.com/smarrog/task-board/core-service/internal/domain/task"
 )
 
 type GetBoardUseCase struct {
-	repo board.Repository
+	boards  board.Repository
+	columns column.Repository
+	tasks   task.Repository
 }
 
 type GetBoardInput struct {
@@ -16,11 +20,13 @@ type GetBoardInput struct {
 }
 
 type GetBoardOutput struct {
-	Board *board.Board
+	Board   *board.Board
+	Columns []*column.Column
+	Tasks   []*task.Task
 }
 
-func NewGetBoardUseCase(repo board.Repository) *GetBoardUseCase {
-	return &GetBoardUseCase{repo: repo}
+func NewGetBoardUseCase(boards board.Repository, columns column.Repository, tasks task.Repository) *GetBoardUseCase {
+	return &GetBoardUseCase{boards: boards, columns: columns, tasks: tasks}
 }
 
 func (uc *GetBoardUseCase) Execute(ctx context.Context, input GetBoardInput) (*GetBoardOutput, error) {
@@ -29,14 +35,25 @@ func (uc *GetBoardUseCase) Execute(ctx context.Context, input GetBoardInput) (*G
 		return nil, err
 	}
 
-	b, err := uc.repo.Get(ctx, id)
+	b, err := uc.boards.Get(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("get board: %w", err)
 	}
 
-	output := &GetBoardOutput{
-		Board: b,
+	cols, err := uc.columns.ListByBoard(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("list columns: %w", err)
 	}
 
-	return output, nil
+	columnIds := make([]column.Id, 0, len(cols))
+	for _, c := range cols {
+		columnIds = append(columnIds, c.Id())
+	}
+
+	tasksOut, err := uc.tasks.ListByColumns(ctx, columnIds)
+	if err != nil {
+		return nil, fmt.Errorf("list tasks: %w", err)
+	}
+
+	return &GetBoardOutput{Board: b, Columns: cols, Tasks: tasksOut}, nil
 }
