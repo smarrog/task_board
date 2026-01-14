@@ -13,6 +13,7 @@ type Config struct {
 
 	HTTPAddr        string
 	CoreGRPCAddr    string
+	AuthGRPCAddr    string
 	JWTSecret       string
 	RequestTimeout  time.Duration
 	ShutdownTimeout time.Duration
@@ -29,6 +30,7 @@ func Load() *Config {
 
 		HTTPAddr:        env.GetString("HTTP_ADDR", ":8080"),
 		CoreGRPCAddr:    env.GetString("CORE_GRPC_ADDR", "core-service:50051"),
+		AuthGRPCAddr:    env.GetString("AUTH_GRPC_ADDR", "auth-service:50052"),
 		JWTSecret:       env.GetString("JWT_SECRET", "dev-secret"),
 		RequestTimeout:  env.GetDuration("REQUEST_TIMEOUT", 5*time.Second),
 		ShutdownTimeout: env.GetDuration("SHUTDOWN_TIMEOUT", 10*time.Second),

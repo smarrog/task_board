@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package taskboard.auth.v1;
+
+option go_package = "github.com/smarrog/task-board/shared/proto/auth/v1;authv1";
+
+message User {
+  string id = 1;
+  string email = 2;
+  string username = 3;
+}
+
+message RegisterRequest {
+  string email = 1;
+  string username = 2;
+  string password = 3;
+}
+message RegisterResponse {
+  User user = 1;
+  string access_token = 2;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+message LoginResponse {
+  User user = 1;
+  string access_token = 2;
+}
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+}

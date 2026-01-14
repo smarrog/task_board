@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"errors"
+	"io"
 	"net"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog"
@@ -20,6 +20,7 @@ type App struct {
 	log *zerolog.Logger
 
 	coreConn *grpc.ClientConn
+	authConn *grpc.ClientConn
 	httpApp  *fiber.App
 }
 
@@ -40,6 +41,13 @@ func (a *App) Init() error {
 
 	a.coreConn = conn
 
+	authConn, err := grpc.NewClient(a.cfg.AuthGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		_ = a.coreConn.Close()
+		return err
+	}
+	a.authConn = authConn
+
 	app := fiber.New(fiber.Config{
 		AppName:      a.cfg.FiberAppName,
 		ErrorHandler: http.ErrorHandler(a.log),
@@ -54,13 +62,13 @@ func (a *App) Init() error {
 	app.Use(middleware.RequestID())      // проставляем request id
 	app.Use(middleware.AccessLog(a.log)) // логируем запросы\ответы
 
-	handler := http.NewHandler(a.log, a.cfg, a.coreConn) // вызываем gRPC
+	handler := http.NewHandler(a.log, a.cfg, a.coreConn)
+	authHandler := http.NewAuthHandler(a.log, a.cfg, a.authConn)
 
 	v1 := app.Group("/v1")
 
-	// заглушки
-	v1.Post("/auth/register", http.NotImplemented("use Auth Service"))
-	v1.Post("/auth/login", http.NotImplemented("use Auth Service"))
+	v1.Post("/auth/register", authHandler.Register)
+	v1.Post("/auth/login", authHandler.Login)
 
 	protected := v1.Group("", middleware.JWT(a.cfg.JWTSecret))
 
@@ -79,6 +87,7 @@ func (a *App) Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	defer a.closeAll()
 
 	errCh := make(chan error, 1)
 	go func() {
@@ -97,32 +106,31 @@ func (a *App) Run(ctx context.Context) error {
 			close(done)
 		}()
 
-		timer := time.NewTimer(a.cfg.ShutdownTimeout)
-		defer timer.Stop()
+		shCtx, cancel := context.WithTimeout(context.Background(), a.cfg.ShutdownTimeout)
+		defer cancel()
 
 		select {
 		case <-done:
-			if !timer.Stop() {
-				// если таймер уже успел сработать, вычистим сигнал, чтобы не утекал
-				select {
-				case <-timer.C:
-				default:
-				}
-			}
 			a.log.Info().Msg("HTTP gateway stopped gracefully")
-		case <-timer.C:
+		case <-shCtx.Done():
 			a.log.Error().Msg("HTTP gateway graceful shutdown timeout exceeded")
-		}
-
-		if a.coreConn != nil {
-			_ = a.coreConn.Close()
 		}
 
 		return nil
 	case err := <-errCh:
-		if a.coreConn != nil {
-			_ = a.coreConn.Close()
+		if err == nil || errors.Is(err, io.EOF) {
+			return nil
 		}
+		a.log.Error().Err(err).Msg("HTTP gateway stopped with error")
 		return err
+	}
+}
+
+func (a *App) closeAll() {
+	if a.coreConn != nil {
+		_ = a.coreConn.Close()
+	}
+	if a.authConn != nil {
+		_ = a.authConn.Close()
 	}
 }
