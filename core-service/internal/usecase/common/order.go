@@ -1,4 +1,4 @@
-﻿package common
+package common
 
 type IntLike interface {
 	~int

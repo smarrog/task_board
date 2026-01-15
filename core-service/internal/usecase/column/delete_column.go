@@ -1,4 +1,4 @@
-﻿package column
+package column
 
 import (
 	"context"

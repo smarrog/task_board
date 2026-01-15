@@ -1,4 +1,4 @@
-﻿package persistence
+package persistence
 
 import (
 	"github.com/google/uuid"
