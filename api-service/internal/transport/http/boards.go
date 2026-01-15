@@ -6,6 +6,7 @@ import (
 )
 
 type createBoardBody struct {
+	OwnerId     string `json:"owner_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -20,6 +21,7 @@ func (h *Handler) CreateBoard(c *fiber.Ctx) error {
 
 	resp, err := h.boards.CreateBoard(ctx, &v1.CreateBoardRequest{
 		Base:        &v1.BaseRequest{RequesterId: h.requesterID(c)},
+		OwnerId:     body.OwnerId,
 		Title:       body.Title,
 		Description: body.Description,
 	})

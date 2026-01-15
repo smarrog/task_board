@@ -40,7 +40,7 @@ func Load() *Config {
 	cfg := &Config{
 		AppName: env.GetString("APP_NAME", "core-service"),
 
-		GRPCPort: env.GetString("GRPC_PORT", "50052"),
+		GRPCPort: env.GetString("GRPC_PORT", "50051"),
 
 		PostgresDSN:             env.GetString("POSTGRES_DSN", ""),
 		PostgresMinConns:        env.GetInt("POSTGRES_MIN_CONNS", 1),
@@ -54,7 +54,6 @@ func Load() *Config {
 		RedisDB:       env.GetInt("REDIS_DB", 0),
 		RedisCacheTtl: env.GetDuration("REDIS_CACHE_TTL", 30*time.Second),
 
-		KafkaGroupId: env.GetString("KAFKA_GROUP_ID", ""),
 		KafkaBrokers: env.GetString("KAFKA_BROKERS", ""),
 		KafkaAcks:    env.GetInt("KAFKA_ACKS", -1),
 		KafkaTopic:   env.GetSplitString("KAFKA_TOPICS", []string{}),

@@ -9,11 +9,12 @@ type createTaskBody struct {
 	Position    int32  `json:"position"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
-	AssigneeID  string `json:"assignee_id"`
+	AssigneeId  string `json:"assignee_id"`
 }
 
 func (h *Handler) CreateTask(c *fiber.Ctx) error {
-	columnID := c.Params("columnId")
+	columnId := c.Params("columnId")
+
 	var body createTaskBody
 	if err := c.BodyParser(&body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid_json")
@@ -24,11 +25,11 @@ func (h *Handler) CreateTask(c *fiber.Ctx) error {
 
 	resp, err := h.tasks.CreateTask(ctx, &v1.CreateTaskRequest{
 		Base:        &v1.BaseRequest{RequesterId: h.requesterID(c)},
-		ColumnId:    columnID,
+		ColumnId:    columnId,
 		Position:    body.Position,
 		Title:       body.Title,
 		Description: body.Description,
-		AssigneeId:  body.AssigneeID,
+		AssigneeId:  body.AssigneeId,
 	})
 	if err != nil {
 		return grpcToHTTP(err)
@@ -46,13 +47,14 @@ func (h *Handler) CreateTask(c *fiber.Ctx) error {
 }
 
 func (h *Handler) GetTask(c *fiber.Ctx) error {
-	taskID := c.Params("taskId")
+	taskId := c.Params("taskId")
+
 	ctx, cancel := h.reqCtx(c)
 	defer cancel()
 
 	resp, err := h.tasks.GetTask(ctx, &v1.GetTaskRequest{
 		Base:   &v1.BaseRequest{RequesterId: h.requesterID(c)},
-		TaskId: taskID,
+		TaskId: taskId,
 	})
 	if err != nil {
 		return grpcToHTTP(err)
@@ -70,29 +72,17 @@ func (h *Handler) GetTask(c *fiber.Ctx) error {
 }
 
 type updateTaskBody struct {
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	AssigneeID  *string `json:"assignee_id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	AssigneeId  string `json:"assignee_id"`
 }
 
 func (h *Handler) UpdateTask(c *fiber.Ctx) error {
-	taskID := c.Params("taskId")
+	taskId := c.Params("taskId")
+
 	var body updateTaskBody
 	if err := c.BodyParser(&body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid_json")
-	}
-
-	title := ""
-	desc := ""
-	assignee := ""
-	if body.Title != nil {
-		title = *body.Title
-	}
-	if body.Description != nil {
-		desc = *body.Description
-	}
-	if body.AssigneeID != nil {
-		assignee = *body.AssigneeID
 	}
 
 	ctx, cancel := h.reqCtx(c)
@@ -100,10 +90,10 @@ func (h *Handler) UpdateTask(c *fiber.Ctx) error {
 
 	resp, err := h.tasks.UpdateTask(ctx, &v1.UpdateTaskRequest{
 		Base:        &v1.BaseRequest{RequesterId: h.requesterID(c)},
-		TaskId:      taskID,
-		Title:       title,
-		Description: desc,
-		AssigneeId:  assignee,
+		TaskId:      taskId,
+		Title:       body.Title,
+		Description: body.Description,
+		AssigneeId:  body.AssigneeId,
 	})
 	if err != nil {
 		return grpcToHTTP(err)
@@ -126,7 +116,8 @@ type moveTaskBody struct {
 }
 
 func (h *Handler) MoveTask(c *fiber.Ctx) error {
-	taskID := c.Params("taskId")
+	taskId := c.Params("taskId")
+
 	var body moveTaskBody
 	if err := c.BodyParser(&body); err != nil {
 		return fiber.NewError(fiber.StatusBadRequest, "invalid_json")
@@ -137,7 +128,7 @@ func (h *Handler) MoveTask(c *fiber.Ctx) error {
 
 	resp, err := h.tasks.MoveTask(ctx, &v1.MoveTaskRequest{
 		Base:       &v1.BaseRequest{RequesterId: h.requesterID(c)},
-		TaskId:     taskID,
+		TaskId:     taskId,
 		ToColumnId: body.ToColumnID,
 		ToPosition: body.ToPosition,
 	})
@@ -157,13 +148,13 @@ func (h *Handler) MoveTask(c *fiber.Ctx) error {
 }
 
 func (h *Handler) DeleteTask(c *fiber.Ctx) error {
-	taskID := c.Params("taskId")
+	taskId := c.Params("taskId")
 	ctx, cancel := h.reqCtx(c)
 	defer cancel()
 
 	_, err := h.tasks.DeleteTask(ctx, &v1.DeleteTaskRequest{
 		Base:   &v1.BaseRequest{RequesterId: h.requesterID(c)},
-		TaskId: taskID,
+		TaskId: taskId,
 	})
 	if err != nil {
 		return grpcToHTTP(err)

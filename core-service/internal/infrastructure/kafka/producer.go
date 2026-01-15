@@ -17,7 +17,6 @@ type Producer struct {
 func NewProducer(cfg *config.Config, log *zerolog.Logger) (*Producer, error) {
 	kafkaCfg := &kafka.ConfigMap{
 		"bootstrap.servers": cfg.KafkaBrokers,
-		"group.id":          cfg.KafkaGroupId,
 		"acks":              cfg.KafkaAcks,
 	}
 

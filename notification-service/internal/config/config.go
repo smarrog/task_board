@@ -20,11 +20,11 @@ func Load() *Config {
 	cfg := Config{
 		AppName: env.GetString("APP_NAME", "notification-service"),
 
-		KafkaGroupId:    env.GetString("KAFKA_GROUP_ID", "notification-service"),
-		KafkaBrokers:    env.GetString("KAFKA_BROKERS", "kafka:9092"),
-		KafkaTopics:     env.GetSplitString("KAFKA_TOPICS", []string{"board-events"}),
+		KafkaGroupId:    env.GetString("KAFKA_GROUP_ID", ""),
+		KafkaBrokers:    env.GetString("KAFKA_BROKERS", ""),
+		KafkaTopics:     env.GetSplitString("KAFKA_TOPICS", []string{}),
 		KafkaDLQEnabled: env.GetBool("KAFKA_DLQ_ENABLED", true),
-		KafkaDLQTopic:   env.GetString("KAFKA_DLQ_TOPIC", "board-events-dlq"),
+		KafkaDLQTopic:   env.GetString("KAFKA_DLQ_TOPIC", ""),
 
 		LogLevel: logger.StrToLogLevel(env.GetString("LOG_LEVEL", "info")),
 	}
