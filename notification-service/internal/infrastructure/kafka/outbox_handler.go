@@ -4,8 +4,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/rs/zerolog"
+	"github.com/segmentio/kafka-go"
 	"github.com/smarrog/task-board/notification-service/internal/app"
 	evt "github.com/smarrog/task-board/notification-service/internal/domain/events"
 	"github.com/smarrog/task-board/shared/messaging"
@@ -76,7 +76,7 @@ func makeHandler[T any](
 
 		if err := json.Unmarshal(env.Payload, &e); err != nil {
 			publishToDlq(ctx, msg, err)
-			return nil // чтобы не зациклить консьюмера
+			return nil
 		}
 
 		if err := handle(ctx, e); err != nil {

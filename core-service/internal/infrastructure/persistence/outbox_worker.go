@@ -3,7 +3,6 @@ package persistence
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -93,10 +92,6 @@ func (w *OutboxWorker) processOnce(ctx context.Context) error {
 			}
 
 			ids = append(ids, r.ID)
-		}
-
-		if remaining := w.producer.Flush(10_000); remaining != 0 {
-			return fmt.Errorf("kafka flush: %d messages not delivered", remaining)
 		}
 
 		return w.repo.MarkPublished(ctx, tx, ids)

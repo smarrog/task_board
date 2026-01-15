@@ -7,13 +7,13 @@ import (
 )
 
 type Config struct {
-	AppName         string
-	LogLevel        zerolog.Level
+	AppName  string
+	LogLevel zerolog.Level
 	KafkaGroupId    string
-	KafkaBrokers    string
+	KafkaBrokers    []string
 	KafkaTopics     []string
 	KafkaDLQEnabled bool
-	KafkaDLQTopic   string
+	KafkaDlqTopic   string
 }
 
 func Load() *Config {
@@ -21,10 +21,10 @@ func Load() *Config {
 		AppName: env.GetString("APP_NAME", "notification-service"),
 
 		KafkaGroupId:    env.GetString("KAFKA_GROUP_ID", ""),
-		KafkaBrokers:    env.GetString("KAFKA_BROKERS", ""),
+		KafkaBrokers:    env.GetSplitString("KAFKA_BROKERS", []string{}),
 		KafkaTopics:     env.GetSplitString("KAFKA_TOPICS", []string{}),
 		KafkaDLQEnabled: env.GetBool("KAFKA_DLQ_ENABLED", true),
-		KafkaDLQTopic:   env.GetString("KAFKA_DLQ_TOPIC", ""),
+		KafkaDlqTopic:   env.GetString("KAFKA_DLQ_TOPIC", ""),
 
 		LogLevel: logger.StrToLogLevel(env.GetString("LOG_LEVEL", "info")),
 	}

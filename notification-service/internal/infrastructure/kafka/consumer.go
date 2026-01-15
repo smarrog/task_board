@@ -4,69 +4,67 @@ import (
 	"context"
 	"errors"
 
-	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/rs/zerolog"
+	"github.com/segmentio/kafka-go"
 	"github.com/smarrog/task-board/notification-service/internal/config"
 )
 
 type HandlerFunc func(ctx context.Context, msg *kafka.Message) error
 
 type Consumer struct {
-	reader  *kafka.Consumer
+	readers []*kafka.Reader
 	logger  *zerolog.Logger
 	cfg     *config.Config
 	handler HandlerFunc
 }
 
 func NewConsumer(cfg *config.Config, logger *zerolog.Logger, handlerFunc HandlerFunc) *Consumer {
-	kafkaCfg := &kafka.ConfigMap{
-		"bootstrap.servers":       cfg.KafkaBrokers,
-		"group.id":                cfg.KafkaGroupId,
-		"auto.offset.reset":       "latest",
-		"enable.auto.commit":      true,
-		"auto.commit.interval.ms": 5000,
-	}
-
-	reader, err := kafka.NewConsumer(kafkaCfg)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("Failed to create kafka consumer")
-	}
-
-	return &Consumer{
-		reader:  reader,
-		logger:  logger,
-		cfg:     cfg,
-		handler: handlerFunc,
-	}
+	return &Consumer{logger: logger, cfg: cfg, handler: handlerFunc}
 }
 
 func (c *Consumer) Start(ctx context.Context) error {
-	if err := c.reader.SubscribeTopics(c.cfg.KafkaTopics, nil); err != nil {
-		return errors.New("failed to subscribe to topics")
+	c.readers = make([]*kafka.Reader, 0, len(c.cfg.KafkaBrokers))
+	for _, topic := range c.cfg.KafkaTopics {
+		r := kafka.NewReader(kafka.ReaderConfig{
+			Brokers: c.cfg.KafkaBrokers,
+			Topic:   topic,
+			GroupID: c.cfg.KafkaGroupId,
+		})
+		c.readers = append(c.readers, r)
 	}
 
-	defer func(reader *kafka.Consumer) {
-		err := reader.Close()
-		if err != nil {
-			c.logger.Err(err).Msg("Failed to close kafka consumer")
-		}
-	}(c.reader)
+	errCh := make(chan error, len(c.readers))
+	for _, r := range c.readers {
+		go func() {
+			defer func(r *kafka.Reader) {
+				_ = r.Close()
+			}(r)
+			for {
+				m, err := r.FetchMessage(ctx)
+				if err != nil {
+					if errors.Is(err, context.Canceled) {
+						errCh <- nil
+						return
+					}
+					c.logger.Err(err).Msg("failed to fetch kafka message")
+					continue
+				}
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		default:
-		}
+				hErr := c.handler(ctx, &m)
+				if err := r.CommitMessages(ctx, m); err != nil {
+					c.logger.Err(err).Msg("failed to commit kafka message")
+				}
+				if hErr != nil {
+					c.logger.Err(hErr).Msg("handler returned error")
+				}
+			}
+		}()
+	}
 
-		m, err := c.reader.ReadMessage(-1)
-		if err != nil {
-			c.logger.Err(err).Msg("Failed to read message from kafka consumer")
-			continue
-		}
-
-		if err := c.handler(ctx, m); err != nil {
-			c.logger.Err(err).Msgf("Failed to handle message: %v", m)
-		}
+	select {
+	case <-ctx.Done():
+		return nil
+	case err := <-errCh:
+		return err
 	}
 }

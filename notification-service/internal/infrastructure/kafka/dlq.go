@@ -7,14 +7,14 @@ import (
 	"time"
 	"unicode/utf8"
 
-	ckafka "github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/rs/zerolog"
+	"github.com/segmentio/kafka-go"
 )
 
 type DlqMessage struct {
 	Error           string            `json:"error"`
 	SourceTopic     string            `json:"source_topic"`
-	SourcePartition int32             `json:"source_partition"`
+	SourcePartition int               `json:"source_partition"`
 	SourceOffset    int64             `json:"source_offset"`
 	Timestamp       time.Time         `json:"timestamp"`
 	KeyBase64       string            `json:"key_base64,omitempty"`
@@ -25,45 +25,25 @@ type DlqMessage struct {
 type DlqWriter struct {
 	log   *zerolog.Logger
 	topic string
-	p     *ckafka.Producer
+	kw    *kafka.Writer
 }
 
-func NewDlqWriter(log *zerolog.Logger, brokers, topic string) (*DlqWriter, error) {
-	p, err := ckafka.NewProducer(&ckafka.ConfigMap{
-		"bootstrap.servers":  brokers,
-		"enable.idempotence": true,
-	})
-	if err != nil {
-		return nil, err
+func NewDlqWriter(log *zerolog.Logger, brokers []string, topic string) (*DlqWriter, error) {
+	w := &kafka.Writer{
+		Addr:         kafka.TCP(brokers...),
+		Topic:        topic,
+		Balancer:     &kafka.Hash{},
+		RequiredAcks: kafka.RequireAll,
 	}
-
-	w := &DlqWriter{log: log, topic: topic, p: p}
-	return w, nil
-}
-
-func (w *DlqWriter) Start() {
-	go func() {
-		for e := range w.p.Events() {
-			switch ev := e.(type) {
-			case *ckafka.Message:
-				if ev.TopicPartition.Error != nil {
-					w.log.Error().Err(ev.TopicPartition.Error).Msg("DLQ delivery failed")
-				}
-			}
-		}
-	}()
+	return &DlqWriter{log: log, topic: topic, kw: w}, nil
 }
 
 func (w *DlqWriter) Close() {
-	if w == nil || w.p == nil {
-		return
-	}
-	w.p.Flush(3000)
-	w.p.Close()
+	_ = w.kw.Close()
 }
 
-func (w *DlqWriter) Publish(ctx context.Context, source *ckafka.Message, cause error) error {
-	if w == nil || w.p == nil {
+func (w *DlqWriter) Publish(ctx context.Context, source *kafka.Message, cause error) error {
+	if w == nil || w.kw == nil {
 		return nil
 	}
 
@@ -78,13 +58,12 @@ func (w *DlqWriter) Publish(ctx context.Context, source *ckafka.Message, cause e
 
 	dlqMsg := DlqMessage{
 		Error:           cause.Error(),
-		SourceTopic:     *source.TopicPartition.Topic,
-		SourcePartition: source.TopicPartition.Partition,
-		SourceOffset:    int64(source.TopicPartition.Offset),
-		Timestamp:       source.Timestamp,
+		SourceTopic:     source.Topic,
+		SourcePartition: source.Partition,
+		SourceOffset:    source.Offset,
+		Timestamp:       source.Time,
 		Headers:         headers,
 	}
-
 	if len(source.Key) > 0 {
 		dlqMsg.KeyBase64 = base64.StdEncoding.EncodeToString(source.Key)
 	}
@@ -97,18 +76,16 @@ func (w *DlqWriter) Publish(ctx context.Context, source *ckafka.Message, cause e
 		return err
 	}
 
-	pMsg := &ckafka.Message{
-		TopicPartition: ckafka.TopicPartition{Topic: &w.topic, Partition: ckafka.PartitionAny},
-		Value:          payload,
-		Key:            source.Key,
-		Timestamp:      time.Now(),
-	}
-
-	if err := w.p.Produce(pMsg, nil); err != nil {
+	err = w.kw.WriteMessages(ctx, kafka.Message{
+		Topic: w.topic,
+		Key:   source.Key,
+		Value: payload,
+		Time:  time.Now(),
+	})
+	if err != nil {
 		return err
 	}
 
-	w.p.Flush(2000)
-	w.log.Warn().Str("dlq_topic", w.topic).Str("source_topic", dlqMsg.SourceTopic).Int32("partition", dlqMsg.SourcePartition).Int64("offset", dlqMsg.SourceOffset).Msg("Message sent to DLQ")
+	w.log.Warn().Str("dlq_topic", w.topic).Str("source_topic", dlqMsg.SourceTopic).Int("partition", dlqMsg.SourcePartition).Int64("offset", dlqMsg.SourceOffset).Msg("Message sent to DLQ")
 	return nil
 }

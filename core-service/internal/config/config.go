@@ -25,8 +25,7 @@ type Config struct {
 	RedisDB       int
 	RedisCacheTtl time.Duration
 
-	KafkaGroupId string
-	KafkaBrokers string
+	KafkaBrokers []string
 	KafkaAcks    int
 	KafkaTopic   []string
 
@@ -54,7 +53,7 @@ func Load() *Config {
 		RedisDB:       env.GetInt("REDIS_DB", 0),
 		RedisCacheTtl: env.GetDuration("REDIS_CACHE_TTL", 30*time.Second),
 
-		KafkaBrokers: env.GetString("KAFKA_BROKERS", ""),
+		KafkaBrokers: env.GetSplitString("KAFKA_BROKERS", []string{}),
 		KafkaAcks:    env.GetInt("KAFKA_ACKS", -1),
 		KafkaTopic:   env.GetSplitString("KAFKA_TOPICS", []string{}),
 

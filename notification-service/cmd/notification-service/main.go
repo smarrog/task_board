@@ -25,11 +25,10 @@ func main() {
 
 	var dlqWriter *kafka.DlqWriter
 	if cfg.KafkaDLQEnabled {
-		w, err := kafka.NewDlqWriter(log, cfg.KafkaBrokers, cfg.KafkaDLQTopic)
+		w, err := kafka.NewDlqWriter(log, cfg.KafkaBrokers, cfg.KafkaDlqTopic)
 		if err != nil {
 			log.Fatal().Err(err).Msg("Failed to create DLQ producer")
 		}
-		w.Start()
 		dlqWriter = w
 		defer dlqWriter.Close()
 	}
