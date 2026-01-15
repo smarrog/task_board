@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/smarrog/task-board/core-service/internal/domain/board"
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	uccommon "github.com/smarrog/task-board/core-service/internal/usecase/common"
+	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
+	"github.com/smarrog/task-board/core-service/internal/usecase/common"
 )
 
 type MoveColumnUseCase struct {
-	repo column.Repository
+	repo  column.Repository
+	cache cache.Invalidator
 }
 
 type MoveColumnInput struct {
@@ -21,8 +24,8 @@ type MoveColumnOutput struct {
 	Column *column.Column
 }
 
-func NewMoveColumnUseCase(repo column.Repository) *MoveColumnUseCase {
-	return &MoveColumnUseCase{repo: repo}
+func NewMoveColumnUseCase(repo column.Repository, cache cache.Invalidator) *MoveColumnUseCase {
+	return &MoveColumnUseCase{repo: repo, cache: cache}
 }
 
 func (uc *MoveColumnUseCase) Execute(ctx context.Context, input MoveColumnInput) (*MoveColumnOutput, error) {
@@ -37,6 +40,7 @@ func (uc *MoveColumnUseCase) Execute(ctx context.Context, input MoveColumnInput)
 	}
 
 	var out *MoveColumnOutput
+	var bidToInvalidate *board.Id
 
 	err = uc.repo.InTx(ctx, func(ctx context.Context) error {
 		c, err := uc.repo.Get(ctx, cid)
@@ -45,6 +49,7 @@ func (uc *MoveColumnUseCase) Execute(ctx context.Context, input MoveColumnInput)
 		}
 
 		bid := c.BoardId()
+		bidToInvalidate = &bid
 		fromPos := int(c.Position())
 
 		if err := uc.repo.LockBoardColumns(ctx, bid); err != nil {
@@ -59,8 +64,8 @@ func (uc *MoveColumnUseCase) Execute(ctx context.Context, input MoveColumnInput)
 			return fmt.Errorf("invariant: board has no columns")
 		}
 
-		clampedToPos := uccommon.Clamp(int(toPos), 0, n-1)
-		shift, needShift := uccommon.CalcShift(fromPos, clampedToPos)
+		clampedToPos := common.Clamp(int(toPos), 0, n-1)
+		shift, needShift := common.CalcShift(fromPos, clampedToPos)
 		if needShift {
 			if err := uc.repo.ShiftPositions(ctx, bid, shift.FromPosition, shift.ToPosition, shift.Delta); err != nil {
 				return err
@@ -78,6 +83,10 @@ func (uc *MoveColumnUseCase) Execute(ctx context.Context, input MoveColumnInput)
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if uc.cache != nil && bidToInvalidate != nil {
+		_ = uc.cache.InvalidateBoard(ctx, *bidToInvalidate)
 	}
 
 	return out, nil

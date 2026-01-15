@@ -6,11 +6,14 @@ import (
 
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
-	uccommon "github.com/smarrog/task-board/core-service/internal/usecase/common"
+	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
+	"github.com/smarrog/task-board/core-service/internal/usecase/common"
 )
 
 type MoveTaskUseCase struct {
-	repo task.Repository
+	repo    task.Repository
+	columns column.Repository
+	cache   cache.Invalidator
 }
 
 type MoveTaskInput struct {
@@ -23,8 +26,8 @@ type MoveTaskOutput struct {
 	Task *task.Task
 }
 
-func NewMoveTaskUseCase(repo task.Repository) *MoveTaskUseCase {
-	return &MoveTaskUseCase{repo: repo}
+func NewMoveTaskUseCase(repo task.Repository, columns column.Repository, cache cache.Invalidator) *MoveTaskUseCase {
+	return &MoveTaskUseCase{repo: repo, columns: columns, cache: cache}
 }
 
 func (uc *MoveTaskUseCase) Execute(ctx context.Context, input MoveTaskInput) (*MoveTaskOutput, error) {
@@ -42,6 +45,8 @@ func (uc *MoveTaskUseCase) Execute(ctx context.Context, input MoveTaskInput) (*M
 	}
 
 	var out *MoveTaskOutput
+	var fromColId column.Id
+	var toColId = toCol
 
 	err = uc.repo.InTx(ctx, func(ctx context.Context) error {
 		t, err := uc.repo.Get(ctx, tid)
@@ -50,6 +55,7 @@ func (uc *MoveTaskUseCase) Execute(ctx context.Context, input MoveTaskInput) (*M
 		}
 
 		fromCol := t.ColumnId()
+		fromColId = fromCol
 		fromPos := int(t.Position())
 
 		// смена позиции внутри одной колонки
@@ -66,8 +72,8 @@ func (uc *MoveTaskUseCase) Execute(ctx context.Context, input MoveTaskInput) (*M
 				return fmt.Errorf("column has no tasks")
 			}
 
-			clampedToPos := uccommon.Clamp(int(toPos), 0, n-1)
-			shift, needShift := uccommon.CalcShift(fromPos, clampedToPos)
+			clampedToPos := common.Clamp(int(toPos), 0, n-1)
+			shift, needShift := common.CalcShift(fromPos, clampedToPos)
 			if needShift {
 				if err := uc.repo.ShiftPositions(ctx, toCol, shift.FromPosition, shift.ToPosition, shift.Delta); err != nil {
 					return err
@@ -100,7 +106,7 @@ func (uc *MoveTaskUseCase) Execute(ctx context.Context, input MoveTaskInput) (*M
 			return err
 		}
 
-		insertPos := uccommon.Clamp(int(toPos), 0, nd)
+		insertPos := common.Clamp(int(toPos), 0, nd)
 
 		if err := uc.repo.ShiftAfterRemove(ctx, fromCol, fromPos); err != nil {
 			return err
@@ -119,6 +125,15 @@ func (uc *MoveTaskUseCase) Execute(ctx context.Context, input MoveTaskInput) (*M
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if uc.cache != nil {
+		if c, err := uc.columns.Get(ctx, fromColId); err == nil {
+			_ = uc.cache.InvalidateBoard(ctx, c.BoardId())
+		}
+		if c, err := uc.columns.Get(ctx, toColId); err == nil {
+			_ = uc.cache.InvalidateBoard(ctx, c.BoardId())
+		}
 	}
 
 	return out, nil

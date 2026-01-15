@@ -23,6 +23,7 @@ type Config struct {
 	RedisAddr     string
 	RedisPassword string
 	RedisDB       int
+	RedisCacheTtl time.Duration
 
 	KafkaGroupId string
 	KafkaBrokers string
@@ -51,6 +52,7 @@ func Load() *Config {
 		RedisAddr:     env.GetString("REDIS_ADDR", ""),
 		RedisPassword: env.GetString("REDIS_PASSWORD", ""),
 		RedisDB:       env.GetInt("REDIS_DB", 0),
+		RedisCacheTtl: env.GetDuration("REDIS_CACHE_TTL", 30*time.Second),
 
 		KafkaGroupId: env.GetString("KAFKA_GROUP_ID", ""),
 		KafkaBrokers: env.GetString("KAFKA_BROKERS", ""),

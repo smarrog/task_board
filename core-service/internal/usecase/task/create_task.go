@@ -7,10 +7,13 @@ import (
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
 	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
+	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
 )
 
 type CreateTaskUseCase struct {
-	repo task.Repository
+	repo    task.Repository
+	columns column.Repository
+	cache   cache.Invalidator
 }
 
 type CreateTaskInput struct {
@@ -25,8 +28,8 @@ type CreateTaskOutput struct {
 	Task *task.Task
 }
 
-func NewCreateTaskUseCase(repo task.Repository) *CreateTaskUseCase {
-	return &CreateTaskUseCase{repo: repo}
+func NewCreateTaskUseCase(repo task.Repository, columns column.Repository, cache cache.Invalidator) *CreateTaskUseCase {
+	return &CreateTaskUseCase{repo: repo, columns: columns, cache: cache}
 }
 
 func (uc *CreateTaskUseCase) Execute(ctx context.Context, input CreateTaskInput) (output *CreateTaskOutput, err error) {
@@ -56,6 +59,12 @@ func (uc *CreateTaskUseCase) Execute(ctx context.Context, input CreateTaskInput)
 	err = uc.repo.Save(ctx, t)
 	if err != nil {
 		return nil, fmt.Errorf("save task: %w", err)
+	}
+
+	if uc.cache != nil {
+		if c, err := uc.columns.Get(ctx, cid); err == nil {
+			_ = uc.cache.InvalidateBoard(ctx, c.BoardId())
+		}
 	}
 
 	output = &CreateTaskOutput{

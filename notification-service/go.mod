@@ -5,6 +5,8 @@ go 1.25.4
 require (
 	github.com/confluentinc/confluent-kafka-go/v2 v2.12.0
 	github.com/rs/zerolog v1.34.0
+	github.com/smarrog/task-board/shared v0.0.0-00010101000000-000000000000
+	google.golang.org/protobuf v1.36.11
 )
 
 require (

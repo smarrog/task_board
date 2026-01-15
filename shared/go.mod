@@ -1,6 +1,6 @@
 module github.com/smarrog/task-board/shared
 
-go 1.24.0
+go 1.25.4
 
 require (
 	github.com/rs/zerolog v1.34.0

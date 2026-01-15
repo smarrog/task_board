@@ -7,7 +7,6 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/uuid v1.6.0
 	github.com/rs/zerolog v1.34.0
-
 	github.com/smarrog/task-board/shared v0.0.0
 	google.golang.org/grpc v1.77.0
 )

@@ -6,10 +6,12 @@ import (
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
 	"github.com/smarrog/task-board/core-service/internal/domain/common"
+	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
 )
 
 type UpdateBoardUseCase struct {
-	repo board.Repository
+	repo  board.Repository
+	cache cache.Invalidator
 }
 
 type UpdateBoardInput struct {
@@ -23,8 +25,8 @@ type UpdateBoardOutput struct {
 	Board *board.Board
 }
 
-func NewUpdateBoardUseCase(repo board.Repository) *UpdateBoardUseCase {
-	return &UpdateBoardUseCase{repo: repo}
+func NewUpdateBoardUseCase(repo board.Repository, cache cache.Invalidator) *UpdateBoardUseCase {
+	return &UpdateBoardUseCase{repo: repo, cache: cache}
 }
 
 func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInput) (*UpdateBoardOutput, error) {
@@ -33,7 +35,7 @@ func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInpu
 		return nil, err
 	}
 
-	oid, err := common.UserIdFromString(input.Title)
+	oid, err := common.UserIdFromString(input.OwnerId)
 	if err != nil {
 		return nil, fmt.Errorf("board owner_id: %w", err)
 	}
@@ -62,6 +64,10 @@ func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInpu
 	err = uc.repo.Save(ctx, b)
 	if err != nil {
 		return nil, fmt.Errorf("save board: %w", err)
+	}
+
+	if uc.cache != nil {
+		_ = uc.cache.InvalidateBoard(ctx, bid)
 	}
 
 	output := &UpdateBoardOutput{

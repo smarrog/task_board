@@ -5,10 +5,12 @@ import (
 	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
+	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
 )
 
 type DeleteBoardUseCase struct {
-	repo board.Repository
+	repo  board.Repository
+	cache cache.Invalidator
 }
 
 type DeleteBoardInput struct {
@@ -18,8 +20,8 @@ type DeleteBoardInput struct {
 type DeleteBoardOutput struct {
 }
 
-func NewDeleteBoardUseCase(repo board.Repository) *DeleteBoardUseCase {
-	return &DeleteBoardUseCase{repo: repo}
+func NewDeleteBoardUseCase(repo board.Repository, cache cache.Invalidator) *DeleteBoardUseCase {
+	return &DeleteBoardUseCase{repo: repo, cache: cache}
 }
 
 func (uc *DeleteBoardUseCase) Execute(ctx context.Context, input DeleteBoardInput) (*DeleteBoardOutput, error) {
@@ -31,6 +33,10 @@ func (uc *DeleteBoardUseCase) Execute(ctx context.Context, input DeleteBoardInpu
 	err = uc.repo.Delete(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("delete board: %w", err)
+	}
+
+	if uc.cache != nil {
+		_ = uc.cache.InvalidateBoard(ctx, id)
 	}
 
 	output := &DeleteBoardOutput{}
