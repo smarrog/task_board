@@ -10,17 +10,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	appkafka "github.com/smarrog/task-board/core-service/internal/infrastructure/kafka"
+	msg "github.com/smarrog/task-board/shared/messaging"
 )
-
-type OutboxMessage struct {
-	Id            string          `json:"id"`
-	EventType     string          `json:"event_type"`
-	AggregateType string          `json:"aggregate_type"`
-	AggregateId   string          `json:"aggregate_id"`
-	CreatedAt     time.Time       `json:"created_at"`
-	Payload       json.RawMessage `json:"payload"`
-	Version       int             `json:"version"`
-}
 
 type OutboxWorker struct {
 	txm          *TxManager
@@ -82,7 +73,7 @@ func (w *OutboxWorker) processOnce(ctx context.Context) error {
 
 		ids := make([]uuid.UUID, 0, len(rows))
 		for _, r := range rows {
-			msg := OutboxMessage{
+			oMsg := msg.OutboxMessage{
 				Id:            r.ID.String(),
 				EventType:     r.EventType,
 				AggregateType: r.AggregateType,
@@ -92,7 +83,7 @@ func (w *OutboxWorker) processOnce(ctx context.Context) error {
 				Version:       1,
 			}
 
-			b, err := json.Marshal(msg)
+			b, err := json.Marshal(oMsg)
 			if err != nil {
 				return err
 			}

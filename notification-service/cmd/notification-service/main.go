@@ -6,9 +6,10 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/smarrog/task-board/notification-service/internal/app"
 	"github.com/smarrog/task-board/notification-service/internal/config"
-	"github.com/smarrog/task-board/notification-service/internal/kafka"
-	"github.com/smarrog/task-board/notification-service/internal/processor"
+	"github.com/smarrog/task-board/notification-service/internal/infrastructure/kafka"
+	"github.com/smarrog/task-board/notification-service/internal/infrastructure/notifier"
 	"github.com/smarrog/task-board/shared/logger"
 )
 
@@ -18,8 +19,24 @@ func main() {
 
 	cfg := config.Load()
 	log := logger.New(cfg.AppName, cfg.LogLevel)
-	proc := processor.NewProcessor(log)
-	consumer := kafka.NewConsumer(cfg, log, proc.Handle)
+
+	logNotifier := notifier.NewLoggerNotifier(log)
+	a := app.NewHandler(logNotifier)
+
+	var dlqWriter *kafka.DlqWriter
+	if cfg.KafkaDLQEnabled {
+		w, err := kafka.NewDlqWriter(log, cfg.KafkaBrokers, cfg.KafkaDLQTopic)
+		if err != nil {
+			log.Fatal().Err(err).Msg("Failed to create DLQ producer")
+		}
+		w.Start()
+		dlqWriter = w
+		defer dlqWriter.Close()
+	}
+
+	msgHandler := kafka.NewOutboxHandler(log, a, dlqWriter)
+
+	consumer := kafka.NewConsumer(cfg, log, msgHandler.HandleKafkaMessage)
 
 	if err := consumer.Start(ctx); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start")

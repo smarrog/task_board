@@ -58,3 +58,19 @@ func GetSplitString(key string, def []string) []string {
 	}
 	return out
 }
+
+func GetBool(key string, def bool) bool {
+	v := strings.TrimSpace(strings.ToLower(GetString(key, "")))
+	if v == "" {
+		return def
+	}
+
+	switch v {
+	case "1", "true", "t", "yes", "y", "on":
+		return true
+	case "0", "false", "f", "no", "n", "off":
+		return false
+	default:
+		return def
+	}
+}

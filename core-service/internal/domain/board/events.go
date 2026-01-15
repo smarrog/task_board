@@ -1,9 +1,10 @@
 package board
 
-import "time"
+import (
+	"time"
 
-// Domain events are JSON-serializable (primitives + exported fields),
-// so the outbox can marshal them directly.
+	"github.com/smarrog/task-board/shared/messaging"
+)
 
 type CreatedEvent struct {
 	Id          string    `json:"id"`
@@ -13,7 +14,7 @@ type CreatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e CreatedEvent) Name() string          { return "BoardCreated" }
+func (e CreatedEvent) Name() string          { return messaging.EvtBoardCreated }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
@@ -23,7 +24,7 @@ type UpdatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e UpdatedEvent) Name() string          { return "BoardUpdated" }
+func (e UpdatedEvent) Name() string          { return messaging.EvtBoardUpdated }
 func (e UpdatedEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
@@ -31,5 +32,5 @@ type DeletedEvent struct {
 	At time.Time `json:"at"`
 }
 
-func (e DeletedEvent) Name() string          { return "BoardDeleted" }
+func (e DeletedEvent) Name() string          { return messaging.EvtBoardDeleted }
 func (e DeletedEvent) OccurredAt() time.Time { return e.At }

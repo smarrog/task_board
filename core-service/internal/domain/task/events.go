@@ -1,6 +1,10 @@
 package task
 
-import "time"
+import (
+	"time"
+
+	"github.com/smarrog/task-board/shared/messaging"
+)
 
 // IMPORTANT:
 // Domain events are stored in a JSON-friendly shape (primitives + exported fields),
@@ -16,7 +20,7 @@ type CreatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e CreatedEvent) Name() string          { return "TaskCreated" }
+func (e CreatedEvent) Name() string          { return messaging.EvtTaskCreated }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type MoveEvent struct {
@@ -28,7 +32,7 @@ type MoveEvent struct {
 	At           time.Time `json:"at"`
 }
 
-func (e MoveEvent) Name() string          { return "TaskMoved" }
+func (e MoveEvent) Name() string          { return messaging.EvtTaskMoved }
 func (e MoveEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
@@ -39,7 +43,7 @@ type UpdatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e UpdatedEvent) Name() string          { return "TaskUpdated" }
+func (e UpdatedEvent) Name() string          { return messaging.EvtTaskUpdated }
 func (e UpdatedEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
@@ -47,5 +51,5 @@ type DeletedEvent struct {
 	At time.Time `json:"at"`
 }
 
-func (e DeletedEvent) Name() string          { return "TaskDeleted" }
+func (e DeletedEvent) Name() string          { return messaging.EvtTaskDeleted }
 func (e DeletedEvent) OccurredAt() time.Time { return e.At }

@@ -1,6 +1,10 @@
 package column
 
-import "time"
+import (
+	"time"
+
+	"github.com/smarrog/task-board/shared/messaging"
+)
 
 // Domain events are JSON-serializable (primitives + exported fields),
 // so the outbox can marshal them directly.
@@ -11,7 +15,7 @@ type CreatedEvent struct {
 	At      time.Time `json:"at"`
 }
 
-func (e CreatedEvent) Name() string          { return "ColumnCreated" }
+func (e CreatedEvent) Name() string          { return messaging.EvtColumnCreated }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type MoveEvent struct {
@@ -21,7 +25,7 @@ type MoveEvent struct {
 	At           time.Time `json:"at"`
 }
 
-func (e MoveEvent) Name() string          { return "ColumnMoved" }
+func (e MoveEvent) Name() string          { return messaging.EvtColumnMoved }
 func (e MoveEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
@@ -29,5 +33,5 @@ type DeletedEvent struct {
 	At time.Time `json:"at"`
 }
 
-func (e DeletedEvent) Name() string          { return "ColumnDeleted" }
+func (e DeletedEvent) Name() string          { return messaging.EvtColumnDeleted }
 func (e DeletedEvent) OccurredAt() time.Time { return e.At }
