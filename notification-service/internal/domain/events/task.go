@@ -28,7 +28,7 @@ type TaskMoved struct {
 	ToColumnId   string    `json:"to_column_id"`
 	FromPosition int       `json:"from_position"`
 	ToPosition   int       `json:"to_position"`
-	At          time.Time `json:"at"`
+	At           time.Time `json:"at"`
 }
 
 type TaskDeleted struct {

@@ -6,8 +6,8 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/segmentio/kafka-go"
-	"github.com/smarrog/task-board/notification-service/internal/app"
 	evt "github.com/smarrog/task-board/notification-service/internal/domain/events"
+	"github.com/smarrog/task-board/notification-service/internal/handler"
 	"github.com/smarrog/task-board/shared/messaging"
 )
 
@@ -15,13 +15,13 @@ type handlerFn func(ctx context.Context, msg *kafka.Message, env messaging.Outbo
 
 type OutboxHandler struct {
 	log *zerolog.Logger
-	app *app.Handler
+	app *handler.Handler
 	dlq *DlqWriter
 
 	handlers map[string]handlerFn
 }
 
-func NewOutboxHandler(log *zerolog.Logger, app *app.Handler, dlq *DlqWriter) *OutboxHandler {
+func NewOutboxHandler(log *zerolog.Logger, app *handler.Handler, dlq *DlqWriter) *OutboxHandler {
 	h := &OutboxHandler{log: log, app: app, dlq: dlq}
 
 	h.handlers = map[string]handlerFn{
@@ -68,7 +68,7 @@ func (h *OutboxHandler) publishToDlq(ctx context.Context, msg *kafka.Message, er
 }
 
 func makeHandler[T any](
-	handle func(context.Context, T) error,
+	handle func(context.Context, messaging.OutboxMessage, T) error,
 	publishToDlq func(ctx context.Context, msg *kafka.Message, err error),
 ) handlerFn {
 	return func(ctx context.Context, msg *kafka.Message, env messaging.OutboxMessage) error {
@@ -79,7 +79,7 @@ func makeHandler[T any](
 			return nil
 		}
 
-		if err := handle(ctx, e); err != nil {
+		if err := handle(ctx, env, e); err != nil {
 			publishToDlq(ctx, msg, err)
 			return nil
 		}
