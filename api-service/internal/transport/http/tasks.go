@@ -2,7 +2,7 @@ package http
 
 import (
 	"github.com/gofiber/fiber/v2"
-	v1 "github.com/smarrog/task-board/shared/proto/base/v1"
+	"github.com/smarrog/task-board/shared/proto/base/v1"
 )
 
 type createTaskBody struct {
@@ -72,9 +72,9 @@ func (h *Handler) GetTask(c *fiber.Ctx) error {
 }
 
 type updateTaskBody struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	AssigneeId  string `json:"assignee_id"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	AssigneeId  *string `json:"assignee_id"`
 }
 
 func (h *Handler) UpdateTask(c *fiber.Ctx) error {
@@ -88,12 +88,34 @@ func (h *Handler) UpdateTask(c *fiber.Ctx) error {
 	ctx, cancel := h.reqCtx(c)
 	defer cancel()
 
+	curT, err := h.tasks.GetTask(ctx, &v1.GetTaskRequest{
+		Base:   &v1.BaseRequest{RequesterId: h.requesterID(c)},
+		TaskId: taskId,
+	})
+	if err != nil {
+		return grpcToHTTP(err)
+	}
+
+	title := curT.GetTask().GetTitle()
+	description := curT.GetTask().GetDescription()
+	assigneeId := curT.GetTask().GetAssigneeId()
+
+	if body.Title != nil {
+		title = *body.Title
+	}
+	if body.Description != nil {
+		description = *body.Description
+	}
+	if body.AssigneeId != nil {
+		assigneeId = *body.AssigneeId
+	}
+
 	resp, err := h.tasks.UpdateTask(ctx, &v1.UpdateTaskRequest{
 		Base:        &v1.BaseRequest{RequesterId: h.requesterID(c)},
 		TaskId:      taskId,
-		Title:       body.Title,
-		Description: body.Description,
-		AssigneeId:  body.AssigneeId,
+		Title:       title,
+		Description: description,
+		AssigneeId:  assigneeId,
 	})
 	if err != nil {
 		return grpcToHTTP(err)
