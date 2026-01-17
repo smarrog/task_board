@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 type CreateBoardUseCase struct {
@@ -27,7 +27,7 @@ func NewCreateBoardUseCase(repo board.Repository) *CreateBoardUseCase {
 }
 
 func (uc *CreateBoardUseCase) Execute(ctx context.Context, input CreateBoardInput) (*CreateBoardOutput, error) {
-	userId, err := common.UserIdFromString(input.OwnerId)
+	userId, err := shared.UserIdFromString(input.OwnerId)
 	if err != nil {
 		return nil, fmt.Errorf("board owner_id: %w", err)
 	}

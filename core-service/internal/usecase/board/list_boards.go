@@ -7,9 +7,9 @@ import (
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
 	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 type ListBoardsUseCase struct {
@@ -39,7 +39,7 @@ func NewListBoardsUseCase(
 }
 
 func (uc *ListBoardsUseCase) Execute(ctx context.Context, input ListBoardsInput) (*ListBoardsOutput, error) {
-	oid, err := common.UserIdFromString(input.OwnerId)
+	oid, err := shared.UserIdFromString(input.OwnerId)
 	if err != nil {
 		return nil, fmt.Errorf("owner_id: %w", err)
 	}

@@ -1,19 +1,16 @@
 package task
 
 import (
-	"errors"
 	"fmt"
 
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 var (
-	ErrNotFound  = fmt.Errorf("%s %w", "task", common.ErrNotFound)
-	ErrInvalidId = fmt.Errorf("%s %w", "task", common.ErrInvalidId)
-
-	ErrInvalidPosition = errors.New("invalid task position")
-
-	ErrTitleEmpty         = fmt.Errorf("%s %w", "task", common.ErrTitleEmpty)
-	ErrTitleTooLong       = fmt.Errorf("%s %w", "task", common.ErrTitleTooLong)
-	ErrDescriptionTooLong = fmt.Errorf("%s %w", "task", common.ErrDescriptionTooLong)
+	ErrNotFound           = fmt.Errorf("%s %w", "task", shared.ErrNotFound)
+	ErrInvalidId          = fmt.Errorf("%s %w", "task id", shared.ErrIsInvalid)
+	ErrTitleEmpty         = fmt.Errorf("%s %w", "task title", shared.ErrIsEmpty)
+	ErrInvalidPosition    = fmt.Errorf("%s %w", "task position", shared.ErrIsInvalid)
+	ErrTitleTooLong       = fmt.Errorf("%s %w", "task title", shared.ErrIsTooLong)
+	ErrDescriptionTooLong = fmt.Errorf("%s %w", "task description", shared.ErrIsTooLong)
 )

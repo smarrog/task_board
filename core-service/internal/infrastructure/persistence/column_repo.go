@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/smarrog/task-board/shared/domain/shared"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 )
 
 type ColumnsRepo struct {
@@ -194,7 +194,7 @@ func (r *ColumnsRepo) Delete(ctx context.Context, id column.Id) error {
 			return column.ErrNotFound
 		}
 
-		events := []common.DomainEvent{column.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
+		events := []shared.DomainEvent{column.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
 		if err := r.outbox.SaveEvents(ctx, events); err != nil {
 			return err
 		}

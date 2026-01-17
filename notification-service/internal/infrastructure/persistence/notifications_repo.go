@@ -2,22 +2,11 @@ package persistence
 
 import (
 	"context"
-	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
+	"github.com/smarrog/task-board/notification-service/internal/domain/notification"
 )
-
-type NotificationRecord struct {
-	OutboxId       string
-	EventType      string
-	AggregateType  string
-	AggregateId    string
-	EventCreatedAt time.Time
-	Version        int
-	Payload        []byte
-	Text           string
-}
 
 type NotificationsRepo struct {
 	pg  *pgxpool.Pool
@@ -28,7 +17,7 @@ func NewNotificationsRepo(pg *pgxpool.Pool, log *zerolog.Logger) *NotificationsR
 	return &NotificationsRepo{pg: pg, log: log}
 }
 
-func (r *NotificationsRepo) Save(ctx context.Context, n NotificationRecord) error {
+func (r *NotificationsRepo) Save(ctx context.Context, n notification.HistoryRecord) error {
 	_, err := r.pg.Exec(ctx, `
 		INSERT INTO notifications (
 			outbox_id,

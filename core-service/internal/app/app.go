@@ -81,7 +81,9 @@ func (a *App) Init() error {
 	}
 
 	a.kafkaProducer = producer
-	a.outboxWorker = persistence.NewOutboxWorker(txm, outboxRepo, producer, cfg.KafkaTopic[0], cfg.OutboxBatchSize, cfg.OutboxPollInterval, log)
+	if len(cfg.KafkaTopic) > 0 {
+		a.outboxWorker = persistence.NewOutboxWorker(txm, outboxRepo, producer, cfg.KafkaTopic[0], cfg.OutboxBatchSize, cfg.OutboxPollInterval, log)
+	}
 
 	return nil
 }

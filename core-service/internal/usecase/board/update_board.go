@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 type UpdateBoardUseCase struct {
@@ -35,7 +35,7 @@ func (uc *UpdateBoardUseCase) Execute(ctx context.Context, input UpdateBoardInpu
 		return nil, err
 	}
 
-	oid, err := common.UserIdFromString(input.OwnerId)
+	oid, err := shared.UserIdFromString(input.OwnerId)
 	if err != nil {
 		return nil, fmt.Errorf("board owner_id: %w", err)
 	}

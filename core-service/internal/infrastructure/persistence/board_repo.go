@@ -8,9 +8,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
+	"github.com/smarrog/task-board/shared/domain/shared"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 )
 
 type BoardsRepo struct {
@@ -79,7 +79,7 @@ func (r *BoardsRepo) Get(ctx context.Context, id board.Id) (*board.Board, error)
 		return nil, err
 	}
 
-	ownerId, err := common.UserIdFromUUID(ownerIdRaw)
+	ownerId, err := shared.UserIdFromUUID(ownerIdRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (r *BoardsRepo) Get(ctx context.Context, id board.Id) (*board.Board, error)
 	return board.Rehydrate(id, ownerId, title, desc, createdAt, updatedAt), nil
 }
 
-func (r *BoardsRepo) ListByOwner(ctx context.Context, ownerId common.UserId) ([]*board.Board, error) {
+func (r *BoardsRepo) ListByOwner(ctx context.Context, ownerId shared.UserId) ([]*board.Board, error) {
 	db := r.txm.DB(ctx)
 
 	rows, err := db.Query(ctx, `
@@ -151,11 +151,10 @@ func (r *BoardsRepo) Delete(ctx context.Context, id board.Id) error {
 			return board.ErrNotFound
 		}
 
-		events := []common.DomainEvent{board.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
+		events := []shared.DomainEvent{board.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
 		if err := r.outbox.SaveEvents(ctx, events); err != nil {
 			return err
 		}
-
 
 		return nil
 	})

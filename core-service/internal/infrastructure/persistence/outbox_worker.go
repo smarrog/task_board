@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	appkafka "github.com/smarrog/task-board/core-service/internal/infrastructure/kafka"
-	msg "github.com/smarrog/task-board/shared/messaging"
+	"github.com/smarrog/task-board/shared/domain/outbox"
 )
 
 type OutboxWorker struct {
@@ -72,7 +72,7 @@ func (w *OutboxWorker) processOnce(ctx context.Context) error {
 
 		ids := make([]uuid.UUID, 0, len(rows))
 		for _, r := range rows {
-			oMsg := msg.OutboxMessage{
+			oMsg := outbox.Message{
 				Id:            r.ID.String(),
 				EventType:     r.EventType,
 				AggregateType: r.AggregateType,

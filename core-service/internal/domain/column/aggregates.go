@@ -4,7 +4,8 @@ import (
 	"time"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
+	"github.com/smarrog/task-board/shared/domain/column"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 type Column struct {
@@ -13,7 +14,7 @@ type Column struct {
 	position  Position
 	createdAt time.Time
 	updatedAt time.Time
-	events    []common.DomainEvent
+	events    []shared.DomainEvent
 }
 
 func New(boardId board.Id, position Position) *Column {
@@ -25,7 +26,7 @@ func New(boardId board.Id, position Position) *Column {
 		createdAt: now,
 		updatedAt: now,
 	}
-	c.events = append(c.events, CreatedEvent{
+	c.events = append(c.events, column.CreatedEvent{
 		Id:      c.id.String(),
 		BoardId: c.boardId.String(),
 		At:      c.createdAt,
@@ -60,7 +61,7 @@ func (c *Column) Move(toPosition Position) {
 
 	c.position = toPosition
 
-	c.events = append(c.events, MoveEvent{
+	c.events = append(c.events, column.MovedEvent{
 		Id:           c.id.String(),
 		FromPosition: fromPosition.Int(),
 		ToPosition:   toPosition.Int(),
@@ -68,11 +69,11 @@ func (c *Column) Move(toPosition Position) {
 	})
 }
 
-func (c *Column) PullEvents() []common.DomainEvent {
+func (c *Column) PullEvents() []shared.DomainEvent {
 	if len(c.events) == 0 {
 		return nil
 	}
-	out := make([]common.DomainEvent, len(c.events))
+	out := make([]shared.DomainEvent, len(c.events))
 	copy(out, c.events)
 	c.events = nil
 	return out

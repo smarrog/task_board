@@ -10,10 +10,10 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/rs/zerolog"
-	"github.com/smarrog/task-board/core-service/internal/domain/board"
-	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
-	"github.com/smarrog/task-board/core-service/internal/domain/task"
+	shboard "github.com/smarrog/task-board/shared/domain/board"
+	shcolumn "github.com/smarrog/task-board/shared/domain/column"
+	"github.com/smarrog/task-board/shared/domain/shared"
+	shtask "github.com/smarrog/task-board/shared/domain/task"
 )
 
 type outboxEventRow struct {
@@ -34,7 +34,7 @@ func NewOutboxRepo(txm *TxManager, log *zerolog.Logger) *OutboxRepo {
 	return &OutboxRepo{txm: txm, log: log}
 }
 
-func (r *OutboxRepo) SaveEvents(ctx context.Context, events []common.DomainEvent) error {
+func (r *OutboxRepo) SaveEvents(ctx context.Context, events []shared.DomainEvent) error {
 	if len(events) == 0 {
 		return nil
 	}
@@ -122,40 +122,42 @@ func (r *OutboxRepo) MarkPublished(ctx context.Context, tx pgx.Tx, ids []uuid.UU
 	return err
 }
 
-func (r *OutboxRepo) aggregateInfoFromEvent(ev common.DomainEvent) (string, uuid.UUID, error) {
+func (r *OutboxRepo) aggregateInfoFromEvent(ev shared.DomainEvent) (string, uuid.UUID, error) {
 	switch e := ev.(type) {
-	case task.CreatedEvent:
-		id, err := uuid.Parse(e.Id)
-		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
-	case task.UpdatedEvent:
-		id, err := uuid.Parse(e.Id)
-		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
-	case task.MoveEvent:
-		id, err := uuid.Parse(e.Id)
-		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
-	case task.DeletedEvent:
-		id, err := uuid.Parse(e.Id)
-		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
 
-	case column.CreatedEvent:
+	case shboard.CreatedEvent:
+		id, err := uuid.Parse(e.Id)
+		return "board", id, r.wrapAggregateIdErr("board", e.Id, err)
+	case shboard.UpdatedEvent:
+		id, err := uuid.Parse(e.Id)
+		return "board", id, r.wrapAggregateIdErr("board", e.Id, err)
+	case shboard.DeletedEvent:
+		id, err := uuid.Parse(e.Id)
+		return "board", id, r.wrapAggregateIdErr("board", e.Id, err)
+
+	case shcolumn.CreatedEvent:
 		id, err := uuid.Parse(e.Id)
 		return "column", id, r.wrapAggregateIdErr("column", e.Id, err)
-	case column.MoveEvent:
+	case shcolumn.MovedEvent:
 		id, err := uuid.Parse(e.Id)
 		return "column", id, r.wrapAggregateIdErr("column", e.Id, err)
-	case column.DeletedEvent:
+	case shcolumn.DeletedEvent:
 		id, err := uuid.Parse(e.Id)
 		return "column", id, r.wrapAggregateIdErr("column", e.Id, err)
 
-	case board.CreatedEvent:
+	case shtask.CreatedEvent:
 		id, err := uuid.Parse(e.Id)
-		return "board", id, r.wrapAggregateIdErr("board", e.Id, err)
-	case board.UpdatedEvent:
+		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
+	case shtask.UpdatedEvent:
 		id, err := uuid.Parse(e.Id)
-		return "board", id, r.wrapAggregateIdErr("board", e.Id, err)
-	case board.DeletedEvent:
+		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
+	case shtask.MovedEvent:
 		id, err := uuid.Parse(e.Id)
-		return "board", id, r.wrapAggregateIdErr("board", e.Id, err)
+		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
+	case shtask.DeletedEvent:
+		id, err := uuid.Parse(e.Id)
+		return "task", id, r.wrapAggregateIdErr("task", e.Id, err)
+
 	default:
 		return "", uuid.Nil, errors.New("unknown domain event type")
 	}

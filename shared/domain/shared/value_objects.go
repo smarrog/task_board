@@ -1,11 +1,17 @@
-package common
+package shared
 
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
 )
+
+type DomainEvent interface {
+	Name() string
+	OccurredAt() time.Time
+}
 
 type UserId struct {
 	value uuid.UUID
@@ -13,7 +19,7 @@ type UserId struct {
 
 func UserIdFromUUID(id uuid.UUID) (UserId, error) {
 	if id == uuid.Nil {
-		return UserId{}, ErrInvalidUserId
+		return UserId{}, ErrIsInvalid
 	}
 	return UserId{value: id}, nil
 }
@@ -21,7 +27,7 @@ func UserIdFromUUID(id uuid.UUID) (UserId, error) {
 func UserIdFromString(s string) (UserId, error) {
 	id, err := uuid.Parse(strings.TrimSpace(s))
 	if err != nil {
-		return UserId{}, fmt.Errorf("%w: %v", ErrInvalidUserId, err)
+		return UserId{}, fmt.Errorf("%w: %v", ErrIsInvalid, err)
 	}
 
 	return UserIdFromUUID(id)
