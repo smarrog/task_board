@@ -10,9 +10,9 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/smarrog/task-board/core-service/internal/domain/board"
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
 	commonuc "github.com/smarrog/task-board/core-service/internal/usecase/cache"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 const (
@@ -169,7 +169,7 @@ func (d getBoardDTO) toOutput() (*commonuc.BoardData, error) {
 	if err != nil {
 		return nil, err
 	}
-	oid, err := common.UserIdFromString(d.Board.OwnerId)
+	oid, err := shared.UserIdFromString(d.Board.OwnerId)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +223,7 @@ func (d getBoardDTO) toOutput() (*commonuc.BoardData, error) {
 		if err != nil {
 			return nil, err
 		}
-		aid, err := common.UserIdFromString(t.AssigneeId)
+		aid, err := shared.UserIdFromString(t.AssigneeId)
 		if err != nil {
 			return nil, fmt.Errorf("assignee_id: %w", err)
 		}

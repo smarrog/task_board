@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
 	"github.com/smarrog/task-board/core-service/internal/usecase/cache"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 type UpdateTaskUseCase struct {
@@ -44,7 +44,7 @@ func (uc *UpdateTaskUseCase) Execute(ctx context.Context, input UpdateTaskInput)
 	if err != nil {
 		return nil, err
 	}
-	aid, err := common.UserIdFromString(input.AssigneeId)
+	aid, err := shared.UserIdFromString(input.AssigneeId)
 	if err != nil {
 		return nil, fmt.Errorf("task assignee_id: %w", err)
 	}

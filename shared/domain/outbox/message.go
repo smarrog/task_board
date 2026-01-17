@@ -1,11 +1,11 @@
-package messaging
+package outbox
 
 import (
 	"encoding/json"
 	"time"
 )
 
-type OutboxMessage struct {
+type Message struct {
 	Id            string          `json:"id"`
 	EventType     string          `json:"event_type"`
 	AggregateType string          `json:"aggregate_type"`

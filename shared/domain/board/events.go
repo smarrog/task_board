@@ -2,8 +2,12 @@ package board
 
 import (
 	"time"
+)
 
-	"github.com/smarrog/task-board/shared/messaging"
+const (
+	EvtCreated = "BoardCreated"
+	EvtUpdated = "BoardUpdated"
+	EvtDeleted = "BoardDeleted"
 )
 
 type CreatedEvent struct {
@@ -14,7 +18,7 @@ type CreatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e CreatedEvent) Name() string          { return messaging.EvtBoardCreated }
+func (e CreatedEvent) Name() string          { return EvtCreated }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
@@ -24,7 +28,7 @@ type UpdatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e UpdatedEvent) Name() string          { return messaging.EvtBoardUpdated }
+func (e UpdatedEvent) Name() string          { return EvtUpdated }
 func (e UpdatedEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
@@ -32,5 +36,5 @@ type DeletedEvent struct {
 	At time.Time `json:"at"`
 }
 
-func (e DeletedEvent) Name() string          { return messaging.EvtBoardDeleted }
+func (e DeletedEvent) Name() string          { return EvtDeleted }
 func (e DeletedEvent) OccurredAt() time.Time { return e.At }

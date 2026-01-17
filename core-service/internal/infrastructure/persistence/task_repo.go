@@ -2,6 +2,8 @@ package persistence
 
 import (
 	"github.com/google/uuid"
+	"github.com/smarrog/task-board/shared/domain/shared"
+
 	"context"
 	"errors"
 	"time"
@@ -9,7 +11,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
 	"github.com/smarrog/task-board/core-service/internal/domain/column"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
 	"github.com/smarrog/task-board/core-service/internal/domain/task"
 )
 
@@ -102,7 +103,7 @@ func (r *TasksRepo) Get(ctx context.Context, id task.Id) (*task.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	assigneeId, err := common.UserIdFromString(assigneeIdRaw)
+	assigneeId, err := shared.UserIdFromString(assigneeIdRaw)
 	if err != nil {
 		return nil, err
 	}
@@ -151,7 +152,7 @@ func (r *TasksRepo) ListByColumn(ctx context.Context, columnId column.Id) ([]*ta
 		if err != nil {
 			return nil, err
 		}
-		assigneeId, err := common.UserIdFromString(assigneeIdRaw)
+		assigneeId, err := shared.UserIdFromString(assigneeIdRaw)
 		if err != nil {
 			return nil, err
 		}
@@ -189,14 +190,14 @@ func (r *TasksRepo) ListByColumns(ctx context.Context, columnIds []column.Id) ([
 	out := make([]*task.Task, 0)
 	for rows.Next() {
 		var (
-			idRaw        string
-			columnIdRaw  string
-			positionRaw  int
-			titleRaw     string
-			descRaw      string
+			idRaw         string
+			columnIdRaw   string
+			positionRaw   int
+			titleRaw      string
+			descRaw       string
 			assigneeIdRaw string
-			createdAt    time.Time
-			updatedAt    time.Time
+			createdAt     time.Time
+			updatedAt     time.Time
 		)
 		if err := rows.Scan(&idRaw, &columnIdRaw, &positionRaw, &titleRaw, &descRaw, &assigneeIdRaw, &createdAt, &updatedAt); err != nil {
 			return nil, err
@@ -221,7 +222,7 @@ func (r *TasksRepo) ListByColumns(ctx context.Context, columnIds []column.Id) ([
 		if err != nil {
 			return nil, err
 		}
-		assigneeId, err := common.UserIdFromString(assigneeIdRaw)
+		assigneeId, err := shared.UserIdFromString(assigneeIdRaw)
 		if err != nil {
 			return nil, err
 		}
@@ -234,7 +235,6 @@ func (r *TasksRepo) ListByColumns(ctx context.Context, columnIds []column.Id) ([
 	return out, nil
 }
 
-
 func (r *TasksRepo) Delete(ctx context.Context, id task.Id) error {
 	return r.txm.InTx(ctx, func(ctx context.Context, tx pgx.Tx) error {
 		ct, err := tx.Exec(ctx, `DELETE FROM tasks WHERE id = $1`, id.UUID())
@@ -245,11 +245,10 @@ func (r *TasksRepo) Delete(ctx context.Context, id task.Id) error {
 			return task.ErrNotFound
 		}
 
-		events := []common.DomainEvent{task.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
+		events := []shared.DomainEvent{task.DeletedEvent{Id: id.String(), At: time.Now().UTC()}}
 		if err := r.outbox.SaveEvents(ctx, events); err != nil {
 			return err
 		}
-
 
 		return nil
 	})

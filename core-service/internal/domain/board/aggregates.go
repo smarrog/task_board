@@ -4,20 +4,21 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/smarrog/task-board/core-service/internal/domain/common"
+	"github.com/smarrog/task-board/shared/domain/board"
+	"github.com/smarrog/task-board/shared/domain/shared"
 )
 
 type Board struct {
 	id          Id
-	ownerId     common.UserId
+	ownerId     shared.UserId
 	title       Title
 	description Description
 	createdAt   time.Time
 	updatedAt   time.Time
-	events      []common.DomainEvent
+	events      []shared.DomainEvent
 }
 
-func New(ownerID common.UserId, title Title, description Description) (*Board, error) {
+func New(ownerID shared.UserId, title Title, description Description) (*Board, error) {
 	if ownerID.UUID() == uuid.Nil {
 		return nil, ErrOwnerRequired
 	}
@@ -31,7 +32,7 @@ func New(ownerID common.UserId, title Title, description Description) (*Board, e
 		createdAt:   now,
 		updatedAt:   now,
 	}
-	b.events = append(b.events, CreatedEvent{
+	b.events = append(b.events, board.CreatedEvent{
 		Id:          b.id.String(),
 		OwnerId:     b.ownerId.String(),
 		Title:       b.title.String(),
@@ -43,7 +44,7 @@ func New(ownerID common.UserId, title Title, description Description) (*Board, e
 
 func Rehydrate(
 	id Id,
-	ownerId common.UserId,
+	ownerId shared.UserId,
 	title Title,
 	description Description,
 	createdAt time.Time,
@@ -60,7 +61,7 @@ func Rehydrate(
 }
 
 func (b *Board) Id() Id                   { return b.id }
-func (b *Board) OwnerId() common.UserId   { return b.ownerId }
+func (b *Board) OwnerId() shared.UserId   { return b.ownerId }
 func (b *Board) Title() Title             { return b.title }
 func (b *Board) Description() Description { return b.description }
 func (b *Board) CreatedAt() time.Time     { return b.createdAt }
@@ -70,7 +71,7 @@ func (b *Board) Update(title Title, description Description) {
 	b.title = title
 	b.description = description
 	b.updatedAt = time.Now().UTC()
-	b.events = append(b.events, UpdatedEvent{
+	b.events = append(b.events, board.UpdatedEvent{
 		Id:          b.id.String(),
 		Title:       b.title.String(),
 		Description: b.description.String(),
@@ -80,17 +81,17 @@ func (b *Board) Update(title Title, description Description) {
 
 func (b *Board) MarkDeleted() {
 	at := time.Now().UTC()
-	b.events = append(b.events, DeletedEvent{
+	b.events = append(b.events, board.DeletedEvent{
 		Id: b.id.String(),
 		At: at,
 	})
 }
 
-func (b *Board) PullEvents() []common.DomainEvent {
+func (b *Board) PullEvents() []shared.DomainEvent {
 	if len(b.events) == 0 {
 		return nil
 	}
-	out := make([]common.DomainEvent, len(b.events))
+	out := make([]shared.DomainEvent, len(b.events))
 	copy(out, b.events)
 	b.events = nil
 	return out

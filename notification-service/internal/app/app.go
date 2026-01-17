@@ -7,10 +7,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog"
 	"github.com/smarrog/task-board/notification-service/internal/config"
-	"github.com/smarrog/task-board/notification-service/internal/handler"
-	"github.com/smarrog/task-board/notification-service/internal/infrastructure/kafka"
+	appkafka "github.com/smarrog/task-board/notification-service/internal/infrastructure/kafka"
 	"github.com/smarrog/task-board/notification-service/internal/infrastructure/notifier"
 	"github.com/smarrog/task-board/notification-service/internal/infrastructure/persistence"
+	transportkafka "github.com/smarrog/task-board/notification-service/internal/transport/kafka"
+	uc "github.com/smarrog/task-board/notification-service/internal/usecase/notification"
 	"github.com/smarrog/task-board/shared/logger"
 )
 
@@ -20,8 +21,8 @@ type App struct {
 	log      *zerolog.Logger
 	cfg      *config.Config
 	pg       *pgxpool.Pool
-	dlq      *kafka.DlqWriter
-	consumer *kafka.Consumer
+	dlq      *appkafka.DlqWriter
+	consumer *appkafka.Consumer
 }
 
 func (a *App) Init() error {
@@ -39,11 +40,11 @@ func (a *App) Init() error {
 
 	nRepo := persistence.NewNotificationsRepo(pg, log)
 	logNotifier := notifier.NewLoggerNotifier(log)
-	h := handler.NewHandler(logNotifier, nRepo)
+	ucHandler := uc.NewHandler(logNotifier, nRepo)
 
-	var dlqWriter *kafka.DlqWriter
+	var dlqWriter *appkafka.DlqWriter
 	if cfg.KafkaDLQEnabled {
-		w, err := kafka.NewDlqWriter(log, cfg.KafkaBrokers, cfg.KafkaDlqTopic)
+		w, err := appkafka.NewDlqWriter(log, cfg.KafkaBrokers, cfg.KafkaDlqTopic)
 		if err != nil {
 			return err
 		}
@@ -51,8 +52,8 @@ func (a *App) Init() error {
 	}
 	a.dlq = dlqWriter
 
-	msgHandler := kafka.NewOutboxHandler(log, h, dlqWriter)
-	consumer := kafka.NewConsumer(cfg, log, msgHandler.HandleKafkaMessage)
+	msgHandler := transportkafka.NewOutboxHandler(log, ucHandler, dlqWriter)
+	consumer := appkafka.NewConsumer(cfg, log, msgHandler.HandleKafkaMessage)
 	a.consumer = consumer
 
 	return nil

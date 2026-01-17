@@ -2,13 +2,14 @@ package task
 
 import (
 	"time"
-
-	"github.com/smarrog/task-board/shared/messaging"
 )
 
-// IMPORTANT:
-// Domain events are stored in a JSON-friendly shape (primitives + exported fields),
-// so that outbox can serialize them without extra DTO mapping.
+const (
+	EvtCreated = "TaskCreated"
+	EvtUpdated = "TaskUpdated"
+	EvtMoved   = "TaskMoved"
+	EvtDeleted = "TaskDeleted"
+)
 
 type CreatedEvent struct {
 	Id          string    `json:"id"`
@@ -20,10 +21,10 @@ type CreatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e CreatedEvent) Name() string          { return messaging.EvtTaskCreated }
+func (e CreatedEvent) Name() string          { return EvtCreated }
 func (e CreatedEvent) OccurredAt() time.Time { return e.At }
 
-type MoveEvent struct {
+type MovedEvent struct {
 	Id           string    `json:"id"`
 	FromColumnId string    `json:"from_column_id"`
 	ToColumnId   string    `json:"to_column_id"`
@@ -32,8 +33,8 @@ type MoveEvent struct {
 	At           time.Time `json:"at"`
 }
 
-func (e MoveEvent) Name() string          { return messaging.EvtTaskMoved }
-func (e MoveEvent) OccurredAt() time.Time { return e.At }
+func (e MovedEvent) Name() string          { return EvtMoved }
+func (e MovedEvent) OccurredAt() time.Time { return e.At }
 
 type UpdatedEvent struct {
 	Id          string    `json:"id"`
@@ -43,7 +44,7 @@ type UpdatedEvent struct {
 	At          time.Time `json:"at"`
 }
 
-func (e UpdatedEvent) Name() string          { return messaging.EvtTaskUpdated }
+func (e UpdatedEvent) Name() string          { return EvtUpdated }
 func (e UpdatedEvent) OccurredAt() time.Time { return e.At }
 
 type DeletedEvent struct {
@@ -51,5 +52,5 @@ type DeletedEvent struct {
 	At time.Time `json:"at"`
 }
 
-func (e DeletedEvent) Name() string          { return messaging.EvtTaskDeleted }
+func (e DeletedEvent) Name() string          { return EvtDeleted }
 func (e DeletedEvent) OccurredAt() time.Time { return e.At }
