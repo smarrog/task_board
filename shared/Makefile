@@ -2,7 +2,10 @@ PROTO_DIR = proto
 PROTO_GEN_DIR = proto
 PROTO_FILES := $(wildcard $(PROTO_DIR)/*.proto) $(wildcard $(PROTO_DIR)/*/*.proto) $(wildcard $(PROTO_DIR)/*/*/*.proto)
 
+.DEFAULT_GOAL := proto
+
 .PHONY: proto
+
 proto:
 	@echo "Generating protobuf files..."
 	protoc \
