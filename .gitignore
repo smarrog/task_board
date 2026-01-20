@@ -5,6 +5,7 @@
 *.dylib
 
 *.test
+test/*
 
 go.work
 
@@ -20,7 +21,6 @@ go.work
 .DS_Store
 
 *.zip
-
 
 
 
